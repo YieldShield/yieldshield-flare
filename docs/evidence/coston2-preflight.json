@@ -1,0 +1,20 @@
+{
+  "network": "Flare Testnet Coston2 (chain 114); read-only preflight, nothing signed or broadcast",
+  "command": "npm run deploy:coston2",
+  "ranAt": "2026-10-19T07:31:33.781Z",
+  "blockNumber": "36791615",
+  "deployer": "0x2b7EEEAEc982E59F18621650FedFf8C3723B5226",
+  "deployerBalanceWei": "0",
+  "faucet": "https://faucet.flare.network/coston2",
+  "exitCode": 1,
+  "scriptHash": "0x31b5af25932082975678f0740937bde5d3d9816d48e2d02e7f83c12db7565b44",
+  "output": [
+    "{\"chainId\":114,\"rehearsal\":false,\"deployer\":\"0x2b7EEEAEc982E59F18621650FedFf8C3723B5226\",\"balanceWei\":\"0\",\"requiredWei\":\"43985000000000000000\",\"deploymentId\":null,\"recordedTransactions\":0,\"replacementRound\":null,\"commit\":\"ba4bb06070d0f97d3462f857b47efc11cdc91a59\",\"uncommitted\":[\"scripts/coston2-journey.mjs\"],\"staleSources\":0,\"broadcast\":false}",
+    "Funding: requires 43.985 C2FLR = 24600000 gas x 750 gwei max fee x 1.3 (23.985 C2FLR) + 20 C2FLR sent by the plan. Balance: 0 C2FLR.",
+    "Uncommitted deployment inputs: scripts/coston2-journey.mjs",
+    "FlareContractRegistry 0xaD67FE66660Fb8dFE9d6b1b4240d8650e30F6019: WNat 0xC67DCE33D7A8efA5FfEB961899C73fe01bCe9273, FtsoV2 0xC4e9c78EA53db782E28f28Fdf80BaF59336B304d.",
+    "FTSOv2 FLR/USD via 0xC4e9c78EA53db782E28f28Fdf80BaF59336B304d: 640924 with 8 decimals, updated 1s ago (maxPriceAge 300s), read fee 0.",
+    "Preflight: not ready to broadcast.",
+    "  - balance 0 C2FLR is below the required 43.985 C2FLR; fund 0x2b7EEEAEc982E59F18621650FedFf8C3723B5226 with test C2FLR from https://faucet.flare.network/coston2 only (the faucet's reCAPTCHA is an owner step)"
+  ]
+}

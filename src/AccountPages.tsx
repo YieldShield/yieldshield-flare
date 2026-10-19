@@ -418,6 +418,10 @@ export function Status() {
               ["Chain ID", String(config.chainId)],
               ["Manifest state", config.status],
               [
+                "Deployer (test signer)",
+                config.deployer ? short(config.deployer) : "Not created yet",
+              ],
+              [
                 "Read status",
                 !ready
                   ? "Available after verified deployment"
@@ -438,6 +442,30 @@ export function Status() {
           >
             {loading ? "Refreshing…" : "Refresh network reads"}
           </button>
+          {config.status === "awaiting-testnet-gas" && config.funding && (
+            <p className="card-description">
+              The deployer{" "}
+              <a
+                className="inline-link"
+                href={explorer("address", config.deployer)}
+                target="_blank"
+                rel="noreferrer"
+              >
+                {short(config.deployer)} ↗
+              </a>{" "}
+              awaits test C2FLR from the{" "}
+              <a
+                className="inline-link"
+                href={faucetUrl}
+                target="_blank"
+                rel="noreferrer"
+              >
+                Flare faucet ↗
+              </a>
+              . The faucet’s reCAPTCHA is completed by the owner, not by a
+              script.
+            </p>
+          )}
           <p className="card-description">
             Local test results do not confirm a Coston2 deployment.
           </p>

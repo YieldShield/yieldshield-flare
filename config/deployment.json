@@ -1,11 +1,19 @@
 {
   "network": "Flare Testnet Coston2",
   "chainId": 114,
-  "status": "not-deployed",
+  "status": "awaiting-testnet-gas",
   "rpcUrl": "https://coston2-api.flare.network/ext/C/rpc",
   "explorer": "https://coston2-explorer.flare.network",
   "faucet": "https://faucet.flare.network/coston2",
-  "deployer": null,
+  "deployer": "0x2b7EEEAEc982E59F18621650FedFf8C3723B5226",
+  "funding": {
+    "state": "awaiting testnet gas",
+    "address": "0x2b7EEEAEc982E59F18621650FedFf8C3723B5226",
+    "faucet": "https://faucet.flare.network/coston2",
+    "request": "100 C2FLR (one claim; the faucet allows one per address per 24 hours)",
+    "blocker": "The official faucet is protected by Google reCAPTCHA; requesting is an owner-only step.",
+    "checkedAt": "2026-10-19"
+  },
   "flareContractRegistry": "0xaD67FE66660Fb8dFE9d6b1b4240d8650e30F6019",
   "ftsoFeed": {
     "name": "FLR/USD",
