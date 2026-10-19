@@ -1,0 +1,201 @@
+{
+  "network": "Flare Testnet Coston2 (chain 114); test assets with no value",
+  "explorer": "https://coston2-explorer.flare.network",
+  "createdAt": "2026-10-19T07:59:53.165Z",
+  "deploymentId": "coston2-2026-10-19T07-50-55Z-34db01",
+  "sourceCommit": "2fcea4056f8e1a6ce300223163ce987a505af837",
+  "deployer": "0x2b7EEEAEc982E59F18621650FedFf8C3723B5226",
+  "tester": "0x9E90302037a8fE591dFd3ffAa704Ea893b164113",
+  "markets": {
+    "referencePool": "0xb92Ba82B221Efc73e5CE9936939aD47c7F800cC6",
+    "scenarioPool": "0xFacA576fEA1e10Ef2823066ba498220ABd3c8a73",
+    "wrappedPool": "0x33A133B04743986581Da486557F42135812A3823",
+    "vaultPool": "0x0AC5a9865D21589BD8ecf7764a08989822993cA6",
+    "vaultBackingPool": "0x5FfD8fF08604Fb27FFd20Bc988Ce387fe7F1c94f"
+  },
+  "scriptHash": "0xbc54d928973ca08f221030988c6d2fbf58d1e38fc3dfa50b87b6ee82530fe805",
+  "steps": [
+    {
+      "label": "deployer-funds-tester",
+      "from": "0x2b7EEEAEc982E59F18621650FedFf8C3723B5226",
+      "hash": "0x4f7ff33f45975549fe46254f17db6c7044d7032599cd38a4cf1e6ebf0a1cb29b",
+      "blockNumber": "36792442",
+      "gasUsed": "21000",
+      "status": "success",
+      "logs": 6
+    },
+    {
+      "label": "tester-faucet-sdemo",
+      "from": "0x9E90302037a8fE591dFd3ffAa704Ea893b164113",
+      "hash": "0x6cc5d9d9a435c987f05e06db408d954d9d68b922e5e8e7ecc0a10630e1976fec",
+      "blockNumber": "36792446",
+      "gasUsed": "73021",
+      "status": "success",
+      "logs": 7
+    },
+    {
+      "label": "tester-approve-scenario-pool",
+      "from": "0x9E90302037a8fE591dFd3ffAa704Ea893b164113",
+      "hash": "0x64ff5dca95c0d137bd981229ff7a50c5c96cc855c0248d06c76b7b00bfcafa2c",
+      "blockNumber": "36792450",
+      "gasUsed": "46330",
+      "status": "success",
+      "logs": 7
+    },
+    {
+      "label": "tester-provides-500-sdemo",
+      "from": "0x9E90302037a8fE591dFd3ffAa704Ea893b164113",
+      "hash": "0x35b0e20d0ed17d725324bbe09d5df1abd5f102f1a2f94df3af69055a2b94fb73",
+      "blockNumber": "36792451",
+      "gasUsed": "99957",
+      "status": "success",
+      "logs": 8
+    },
+    {
+      "label": "tester-protects-5-c2flr",
+      "from": "0x9E90302037a8fE591dFd3ffAa704Ea893b164113",
+      "hash": "0x1b7e9a5ade9d684cd62c5c9d8bea0bb0f4f8c3d1e78b2da819038a5f3d8d44ac",
+      "blockNumber": "36792453",
+      "gasUsed": "334550",
+      "status": "success",
+      "logs": 1
+    },
+    {
+      "label": "tester-wraps-3-c2flr",
+      "from": "0x9E90302037a8fE591dFd3ffAa704Ea893b164113",
+      "hash": "0x17fe8882e40605a9026cf8a33a3598ae98ec3e0c355a5a79d4b4c0b644dd5bea",
+      "blockNumber": "36792457",
+      "gasUsed": "199759",
+      "status": "success",
+      "logs": 2
+    },
+    {
+      "label": "tester-approves-wc2flr",
+      "from": "0x9E90302037a8fE591dFd3ffAa704Ea893b164113",
+      "hash": "0xf75867db05c42a050fd874c5fd1b37a772e469e6b9800bd9aedf8db443b5b592",
+      "blockNumber": "36792460",
+      "gasUsed": "46217",
+      "status": "success",
+      "logs": 7
+    },
+    {
+      "label": "tester-protects-3-wc2flr",
+      "from": "0x9E90302037a8fE591dFd3ffAa704Ea893b164113",
+      "hash": "0xce0ff78048ed866a6963bd03109e949d6bc45a4d060fa98303adfb1745853d67",
+      "blockNumber": "36792463",
+      "gasUsed": "565653",
+      "status": "success",
+      "logs": 9
+    },
+    {
+      "label": "tester-partial-asset-exit",
+      "from": "0x9E90302037a8fE591dFd3ffAa704Ea893b164113",
+      "hash": "0xb48f0dc80bb55dcf259767e0fd78a759d360809c98b0fe8dbfef49de418707f7",
+      "blockNumber": "36792501",
+      "gasUsed": "196712",
+      "status": "success",
+      "logs": 9
+    },
+    {
+      "label": "tester-backing-exit-remainder",
+      "from": "0x9E90302037a8fE591dFd3ffAa704Ea893b164113",
+      "hash": "0x4040b081804726deb8e6644b1c3da25e1975a0746e75fd0037f2159271320434",
+      "blockNumber": "36792505",
+      "gasUsed": "121524",
+      "status": "success",
+      "logs": 8
+    },
+    {
+      "label": "tester-transfers-wc2flr-position",
+      "from": "0x9E90302037a8fE591dFd3ffAa704Ea893b164113",
+      "hash": "0x988322728bbaa593ef1d1b9bf26b69fc5cea7f47063c6c2c2f5d82757f6d356d",
+      "blockNumber": "36792507",
+      "gasUsed": "29275",
+      "status": "success",
+      "logs": 7
+    },
+    {
+      "label": "new-owner-backing-exit",
+      "from": "0x2b7EEEAEc982E59F18621650FedFf8C3723B5226",
+      "hash": "0x4699c854d5b71fb09018d464689c8ad42b2bd456b54129cb3fdb42e70a59f0d7",
+      "blockNumber": "36792508",
+      "gasUsed": "121524",
+      "status": "success",
+      "logs": 8
+    },
+    {
+      "label": "tester-approves-exchange",
+      "from": "0x9E90302037a8fE591dFd3ffAa704Ea893b164113",
+      "hash": "0xed2999a628f6af4da7c6fc5323c735d8fe94d910b2eae5d54f0984424f28da0d",
+      "blockNumber": "36792509",
+      "gasUsed": "46330",
+      "status": "success",
+      "logs": 7
+    },
+    {
+      "label": "tester-buys-1-wc2flr",
+      "from": "0x9E90302037a8fE591dFd3ffAa704Ea893b164113",
+      "hash": "0xb47c4aa6cfd1c00093d8a2ab4dba93dbc0298c650af2c0e55e0829ef6bcf09ae",
+      "blockNumber": "36792513",
+      "gasUsed": "340023",
+      "status": "success",
+      "logs": 9
+    },
+    {
+      "label": "tester-approves-vault",
+      "from": "0x9E90302037a8fE591dFd3ffAa704Ea893b164113",
+      "hash": "0xac7b52a731bbad424cfd6c43042d0e75557cdc6f86f33406491bc5fa47b416ee",
+      "blockNumber": "36792517",
+      "gasUsed": "46330",
+      "status": "success",
+      "logs": 1
+    },
+    {
+      "label": "tester-vault-deposit",
+      "from": "0x9E90302037a8fE591dFd3ffAa704Ea893b164113",
+      "hash": "0xc5fa46c8268e4d49b7792743aca626d0278863251cb5bfa707961f1ab9298257",
+      "blockNumber": "36792518",
+      "gasUsed": "77832",
+      "status": "success",
+      "logs": 9
+    },
+    {
+      "label": "tester-provider-notice",
+      "from": "0x9E90302037a8fE591dFd3ffAa704Ea893b164113",
+      "hash": "0xd362c46d31062893b4568ac84b95bbd5715bd8b2c76cfc505d4e1752182d5953",
+      "blockNumber": "36792521",
+      "gasUsed": "49386",
+      "status": "success",
+      "logs": 7
+    },
+    {
+      "label": "tester-redeems-provider-shares",
+      "from": "0x9E90302037a8fE591dFd3ffAa704Ea893b164113",
+      "hash": "0x78e6097b943176716b41b7d51dc0dd2c31b940bc432bf728d88280847e3b7776",
+      "blockNumber": "36792574",
+      "gasUsed": "82171",
+      "status": "success",
+      "logs": 8
+    },
+    {
+      "label": "tester-unwraps-wc2flr",
+      "from": "0x9E90302037a8fE591dFd3ffAa704Ea893b164113",
+      "hash": "0x0cb4a1adabb21511667d7ec80dcd4651e6aa45cf436c264a9ee467a402e32360",
+      "blockNumber": "36792579",
+      "gasUsed": "165888",
+      "status": "success",
+      "logs": 8
+    }
+  ],
+  "referencePrice": "0.006394 sDEMO per C2FLR",
+  "testerFinalBalances": {
+    "C2FLR": "8.8613773",
+    "sDEMO": "9990.009571",
+    "vsDEMO": "10"
+  },
+  "notExercised": [
+    "wallet-extension signing (scripted keys only)",
+    "permissionless maturity settlement (featured epochs last 30 days)",
+    "gain fees: they depend on FLR/USD rising between entry and exit"
+  ]
+}

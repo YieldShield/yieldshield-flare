@@ -1,0 +1,64 @@
+{
+  "network": "Flare Testnet Coston2 (chain 114); test assets with no value",
+  "explorer": "https://coston2-explorer.flare.network",
+  "createdAt": "2026-10-19T07:52:13.229Z",
+  "deploymentId": "coston2-2026-10-19T07-50-55Z-34db01",
+  "sourceCommit": "2fcea4056f8e1a6ce300223163ce987a505af837",
+  "deployer": "0x2b7EEEAEc982E59F18621650FedFf8C3723B5226",
+  "tester": "0x996b617D5de97B05ECB6683C928931b8FeB10f9b",
+  "markets": {
+    "referencePool": "0xb92Ba82B221Efc73e5CE9936939aD47c7F800cC6",
+    "scenarioPool": "0xFacA576fEA1e10Ef2823066ba498220ABd3c8a73",
+    "wrappedPool": "0x33A133B04743986581Da486557F42135812A3823",
+    "vaultPool": "0x0AC5a9865D21589BD8ecf7764a08989822993cA6",
+    "vaultBackingPool": "0x5FfD8fF08604Fb27FFd20Bc988Ce387fe7F1c94f"
+  },
+  "scriptHash": "0x9c4a3a81bc0c0fb582f6307574cec5972500b60384faa785ae47172b767ea2ed",
+  "steps": [
+    {
+      "label": "deployer-funds-tester",
+      "from": "0x2b7EEEAEc982E59F18621650FedFf8C3723B5226",
+      "hash": "0xf4c2c097c68f6e40492f39ecb82a8b708ad4fc7844d2c359562e1730d42bacd1",
+      "blockNumber": "36792339",
+      "gasUsed": "21000",
+      "status": "success",
+      "logs": 0
+    },
+    {
+      "label": "tester-faucet-sdemo",
+      "from": "0x996b617D5de97B05ECB6683C928931b8FeB10f9b",
+      "hash": "0xf425bdfbff9c61945c8010c58def5c4e22c6873d94349089a92a250a29744bd0",
+      "blockNumber": "36792343",
+      "gasUsed": "73021",
+      "status": "success",
+      "logs": 1
+    },
+    {
+      "label": "tester-approve-scenario-pool",
+      "from": "0x996b617D5de97B05ECB6683C928931b8FeB10f9b",
+      "hash": "0x560f97d004412a4e39e8f0e162bc841d0e34303daaf9a9779a5a734b4573f512",
+      "blockNumber": "36792345",
+      "gasUsed": "46330",
+      "status": "success",
+      "logs": 7
+    },
+    {
+      "label": "tester-provides-500-sdemo",
+      "from": "0x996b617D5de97B05ECB6683C928931b8FeB10f9b",
+      "hash": "0xd10d6009759eb04fbee384537249864a237f81567f2c1aa45837a0811ddddde5",
+      "blockNumber": "36792348",
+      "gasUsed": "99957",
+      "status": "success",
+      "logs": 8
+    },
+    {
+      "label": "tester-protects-5-c2flr",
+      "from": "0x996b617D5de97B05ECB6683C928931b8FeB10f9b",
+      "hash": "0x2cf501cc27882a6e60f44e7e424ba66ec120a1ba55a67b7995f1ceb530f2a9ee",
+      "blockNumber": "36792351",
+      "gasUsed": "341025",
+      "status": "reverted",
+      "logs": 0
+    }
+  ]
+}
