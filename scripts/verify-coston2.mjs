@@ -1,27 +1,39 @@
 import { readFileSync, writeFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
 import {
   createPublicClient,
   decodeEventLog,
   http,
   keccak256,
+  parseAbi,
   zeroAddress,
 } from "viem";
-import { avalancheFuji } from "viem/chains";
+import { flareTestnet } from "viem/chains";
 import {
+  FLARE_CONTRACT_REGISTRY,
   artifactProvenance,
+  coston2Network,
   exchangeInventory,
   planArtifacts,
   terms,
   vaultSeed,
+  wnatAbi,
 } from "./setup-markets.mjs";
-const m = JSON.parse(readFileSync("config/deployment.json"));
-if (m.chainId !== 43113 || m.version !== 2)
-  throw new Error("Expected Fuji v2 manifest");
+process.chdir(fileURLToPath(new URL("../", import.meta.url)));
+/** --local verifies the chain-114 rehearsal manifest in .local/rehearsal/ instead of config/. */
+const local = process.argv.includes("--local");
+const network = coston2Network(local);
+const manifestPath = network.manifestPath;
+const m = JSON.parse(readFileSync(manifestPath));
+if (m.chainId !== 114 || m.version !== 2)
+  throw new Error("Expected a Coston2 (chain 114) v2 manifest");
+if (local && m.rpcUrl !== network.rpcUrl)
+  throw new Error(`The rehearsal manifest must use ${network.rpcUrl}`);
 const c = createPublicClient({
-  chain: avalancheFuji,
+  chain: flareTestnet,
   transport: http(m.rpcUrl),
 });
-if ((await c.getChainId()) !== 43113) throw new Error("Wrong chain");
+if ((await c.getChainId()) !== 114) throw new Error("Wrong chain");
 const read = (address, abi, functionName, args = []) =>
   c.readContract({ address, abi, functionName, args });
 const same = (x, y) => x.toLowerCase() === y.toLowerCase();
@@ -108,7 +120,6 @@ for (const [field, key] of [
   ["backingToken", "token"],
   ["scenarioOracle", "scenario"],
   ["referenceOracle", "reference"],
-  ["wrapper", "wrapper"],
   ["vault", "vault"],
   ["backingVault", "backingVault"],
   ["vaultOracle", "vaultOracle"],
@@ -129,16 +140,42 @@ for (const field of ["referenceOracle", "scenarioOracle", "vaultOracle"])
   );
 if (!same(await read(m.factory, factory, "protocol"), m.deployer))
   throw new Error("Factory protocol fee recipient is not the deployer");
+// The wrapped asset is Flare's canonical WC2FLR, resolved through the canonical registry.
+if (!same(m.flareContractRegistry, FLARE_CONTRACT_REGISTRY))
+  throw new Error("The manifest does not name Flare's canonical FlareContractRegistry");
+const registryAbi = parseAbi([
+  "function getContractAddressByName(string) view returns (address)",
+]);
+const lookup = (name) =>
+  read(m.flareContractRegistry, registryAbi, "getContractAddressByName", [name]);
+if (!same(await lookup("WNat"), m.wrapper))
+  throw new Error("The manifest wrapper is not the registry's WNat (WC2FLR)");
+if (
+  (await read(m.wrapper, wnatAbi, "symbol")) !== "WC2FLR" ||
+  Number(await read(m.wrapper, wnatAbi, "decimals")) !== 18
+)
+  throw new Error("WNat metadata is not WC2FLR with 18 decimals");
 const reference = artifacts.reference.abi;
-if (!same(await read(m.referenceOracle, reference, "feed"), m.chainlinkFeed))
-  throw new Error("Reference oracle does not read the manifest Chainlink feed");
+if (!same(await read(m.referenceOracle, reference, "registry"), m.flareContractRegistry))
+  throw new Error("Reference oracle does not resolve through the manifest registry");
+if ((await read(m.referenceOracle, reference, "feedId")).toLowerCase() !== m.ftsoFeed.id.toLowerCase())
+  throw new Error(`Reference oracle does not read the manifest ${m.ftsoFeed.name} feed`);
 if ((await read(m.referenceOracle, reference, "maxAge")) !== BigInt(m.maxPriceAge))
   throw new Error("Reference oracle maximum price age differs from the manifest");
-await read(m.referenceOracle, reference, "price").catch((error) =>
-  console.log(
-    `Warning: the reference price is unavailable right now (${error.shortMessage ?? error.message}).`,
-  ),
-);
+const ftso = await lookup("FtsoV2");
+if (!same(await read(m.referenceOracle, reference, "ftsoV2"), ftso))
+  throw new Error("Reference oracle does not resolve the registry's current FtsoV2");
+await read(m.referenceOracle, reference, "price")
+  .then((price) =>
+    console.log(
+      `Reference oracle: FTSOv2 ${m.ftsoFeed.name} from ${ftso} = ${price} sDEMO base units per C2FLR.`,
+    ),
+  )
+  .catch((error) =>
+    console.log(
+      `Warning: the reference price is unavailable right now (${error.shortMessage ?? error.message}).`,
+    ),
+  );
 for (const [field, name] of [
   ["backingToken", "backing"],
   ["wrapper", "wrapper"],
@@ -252,7 +289,7 @@ for (const field of ["vault", "backingVault"])
     m.backingToken.toLowerCase()
   )
     throw new Error("Wrong vault underlying");
-// Seed deposits must have minted exactly 10^(vault decimals - 6) shares per aDEMO.
+// Seed deposits must have minted exactly 10^(vault decimals - 6) shares per sDEMO.
 for (const [field, label] of [
   ["vault", "vault-funded-deposit"],
   ["backingVault", "backing-vault-funded-deposit"],
@@ -275,10 +312,9 @@ for (const [field, label] of [
 const tokenAbi = artifacts.token.abi,
   exchangeAbi = artifacts.exchange.abi;
 for (const [field, decimals, symbol] of [
-  ["backingToken", 6, "aDEMO"],
-  ["wrapper", 18, "awAVAX"],
-  ["vault", 18, "vaDEMO"],
-  ["backingVault", 6, "bvaDEMO"],
+  ["backingToken", 6, "sDEMO"],
+  ["vault", 18, "vsDEMO"],
+  ["backingVault", 6, "bvsDEMO"],
 ]) {
   if (
     Number(await read(m[field], tokenAbi, "decimals")) !== decimals ||
@@ -319,10 +355,10 @@ const nativeTx = await c.getTransaction({ hash: nativeFunding });
 if (!same(nativeTx.to, m.exchange) || nativeTx.value !== exchangeInventory.native)
   throw new Error("Missing funded exchange inventory: exchange-native-inventory");
 const live = {
-  AVAX: await read(m.exchange, exchangeAbi, "inventory", [zeroAddress]),
-  awAVAX: await read(m.exchange, exchangeAbi, "inventory", [m.wrapper]),
-  vaDEMO: await read(m.exchange, exchangeAbi, "inventory", [m.vault]),
-  aDEMO: await read(m.backingToken, tokenAbi, "balanceOf", [m.exchange]),
+  C2FLR: await read(m.exchange, exchangeAbi, "inventory", [zeroAddress]),
+  WC2FLR: await read(m.exchange, exchangeAbi, "inventory", [m.wrapper]),
+  vsDEMO: await read(m.exchange, exchangeAbi, "inventory", [m.vault]),
+  sDEMO: await read(m.backingToken, tokenAbi, "balanceOf", [m.exchange]),
 };
 console.log(
   `Live exchange inventory (base units): ${Object.entries(live)
@@ -341,7 +377,7 @@ if (m.failedTransactions?.length)
   );
 m.status = "deployed-and-verified";
 m.verifiedAt = new Date().toISOString();
-writeFileSync("config/deployment.json", JSON.stringify(m, null, 2) + "\n");
+writeFileSync(manifestPath, JSON.stringify(m, null, 2) + "\n");
 console.log(
-  `Verified Fuji runtime code (immutables masked) against contracts/out, factory and oracle wiring, exact asset identities, terms, open epochs, vault and creation seeds, exchange funding and all deployment receipts${m.source?.commit ? ` for source ${m.source.commit}` : ""}.`,
+  `Verified ${local ? "the chain-114 rehearsal's" : "Coston2"} runtime code (immutables masked) against contracts/out, factory, FTSOv2 and WC2FLR wiring, exact asset identities, terms, open epochs, vault and creation seeds, exchange funding and all deployment receipts${m.source?.commit ? ` for source ${m.source.commit}` : ""}.`,
 );

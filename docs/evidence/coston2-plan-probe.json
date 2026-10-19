@@ -1,0 +1,101 @@
+{
+  "network": "Flare Testnet Coston2, read-only eth_call with a state override; nothing signed or broadcast",
+  "chainId": 114,
+  "rpcUrl": "https://coston2-api.flare.network/ext/C/rpc",
+  "probedAt": "2026-10-19T07:23:48.389Z",
+  "blockNumber": "36791398",
+  "probeAddress": "0x89e8dc788ba95aab9b83d4987739decfec629303",
+  "inputs": {
+    "flareContractRegistry": "0xaD67FE66660Fb8dFE9d6b1b4240d8650e30F6019",
+    "feed": {
+      "name": "FLR/USD",
+      "id": "0x01464c522f55534400000000000000000000000000"
+    },
+    "maxPriceAge": 300,
+    "wrapper": "0xC67DCE33D7A8efA5FfEB961899C73fe01bCe9273"
+  },
+  "result": {
+    "planGas": "23443360",
+    "price": "6409",
+    "feedValue": "640948",
+    "feedDecimals": 8,
+    "feedTimestamp": "1792394627",
+    "ftsoV2": "0xC4e9c78EA53db782E28f28Fdf80BaF59336B304d",
+    "blockNumber": "36791398",
+    "blockTimestamp": "1792394628",
+    "factory": "0x8e05551b0853f426725bcD8731b501D794E74cd1",
+    "referenceOracle": "0x8CCF6Ee8f1Fe25f3734a124DEa1f71c23D3abbF2",
+    "poolCount": "5",
+    "nativeFloor": "32045",
+    "wrappedFloor": "32045",
+    "exchangeWnat": "10000000000000000000",
+    "quoteNativeBuy": "12857",
+    "exitPreviewOut": "5000000000000000000",
+    "wnatDepositGas": "188251",
+    "wnatTransferGas": "133334"
+  },
+  "readable": {
+    "feed": "FLR/USD 0.00640948 at 2026-10-19T07:23:47.000Z",
+    "adapterPrice": "0.006409 sDEMO per C2FLR",
+    "nativeEntryClaimFor5C2FLR": "0.032045 sDEMO",
+    "wrappedEntryClaimFor5WC2FLR": "0.032045 sDEMO",
+    "planExecutionGas": "23443360",
+    "realWnatDepositGas": "188251",
+    "realWnatTransferGas": "133334"
+  },
+  "checks": [
+    "every plan contract deploys on Coston2's EVM and passes the chain-114 guard",
+    "ShieldFtsoV2Oracle resolves the registry's FtsoV2 and prices FLR/USD through a static call",
+    "the factory accepts the canonical WC2FLR and creates all five featured markets",
+    "native and WC2FLR protection open at the live feed price"
+  ],
+  "sourceHash": {
+    "contracts/src/ShieldPool.sol": "0x365ec0b392374fe5c7f729a5fbe21095e059e484eec99bca29143ac3dd593449",
+    "contracts/src/ShieldMarket.sol": "0x7ddadda668dcf23e57be577ef2dc51700af5d98352495dbfa1c41aff2f461720",
+    "contracts/src/DemoAssets.sol": "0x0b260aab26f56c996767993dca0ec536610f810ed19847724694d85b97c62973",
+    "contracts/src/ShieldFtsoV2Oracle.sol": "0x1af15cb2016fb1d0e62e4ed5be29f4ae617b591519759ddd09ba625d813bd7d6",
+    "contracts/test/probes/Coston2PlanProbe.sol": "0x063fa57d7f4b45250a973435973bdee74fd85ac54db56866e3c19b4de7f057aa"
+  },
+  "artifacts": {
+    "DemoAssets.sol:ShieldDemoDollar": {
+      "bytecode": "0x48d00956213439004b104cb33a4fb2ed9a16339d9e5e4c56aa79a00458c2e989",
+      "deployedBytecode": "0xaed2cc1217db3c64fc48e5ba46c48c6e188fd18a8d057f154141941be3cc78dd"
+    },
+    "DemoAssets.sol:ShieldScenarioOracle": {
+      "bytecode": "0x3304c27f2a221e5203f2174d3570530a382f303c026d6a4db6f638413bd9be35",
+      "deployedBytecode": "0x35c8948fa86dce031478ddff36efb40cfc7c4ca6ec67174fcb7eb344a7753831"
+    },
+    "ShieldFtsoV2Oracle.sol:ShieldFtsoV2Oracle": {
+      "bytecode": "0x4ed69458b746a9cd0623482c04679f5ecce9b39faeb66f56eea2bac6f52f336a",
+      "deployedBytecode": "0x9ffc5aa7ffb6fbb3ca67af1886bec1594fc34fbd462b26ec97ec819fcdd3d37b"
+    },
+    "ShieldMarket.sol:ShieldDemoVault": {
+      "bytecode": "0x7950644de402143c068d1c09900e00e8c2803f841e283455e6ecea73e6dc0c13",
+      "deployedBytecode": "0xd41d50763acb2dbce410d8d1c6eff7e09b3aa8e76e05a643f1e91787a42b9215"
+    },
+    "ShieldMarket.sol:ShieldBackingVault": {
+      "bytecode": "0xd396decb10930ea6b3c86407b323dd1aa28727434df66ead150544006558f8f8",
+      "deployedBytecode": "0x91b039fd453c523a2898353983d06795dd6117c2c17ba590e144f4601e328b7f"
+    },
+    "ShieldMarket.sol:ShieldVaultOracle": {
+      "bytecode": "0x30639b4664075b8635881fe3ae35fd5a1a86a39df4ad182d95ce541f49f56df7",
+      "deployedBytecode": "0x440a9fe03cc1fd4a8d4075f865c7f64b1c9485286ec93c812471d30ee36a8aa3"
+    },
+    "ShieldMarket.sol:ShieldFactory": {
+      "bytecode": "0x4a75b8f4f7335f0a04d6a24571add42d7e2e5ae42ff88b153c35925c87934eac",
+      "deployedBytecode": "0xbe41e33ba2c81b6d2b82b741c08bc6e0e707729503f0063f7203cce050f2b7b1"
+    },
+    "ShieldMarket.sol:ShieldExchange": {
+      "bytecode": "0x492ba5c2be263b57ce42ed846b5fdbd01f0899a64f5afc1879b0ce08bad464e0",
+      "deployedBytecode": "0x991415755c82797a60e27d060d50012ed1ca6c151f376463a726e57dd5feaed1"
+    },
+    "ShieldPool.sol:ShieldPool": {
+      "bytecode": "0x5252b4dcf946dac470b1021868b850451c4509a53c48cc228d370192c39f8b75",
+      "deployedBytecode": "0x1156f9b9199a306c6493d67fdc098c355c261b4c78a03fdab1ea11947d2146e3"
+    },
+    "ShieldMarket.sol:ShieldBackingOracle": {
+      "bytecode": "0x92152b203fc3df317870741e94f412c1c060dddc83e5effd7c9364edd1ad936f",
+      "deployedBytecode": "0xdd44a39aa893dfd6df08ccb906c55feb06d5e8d80c0158e6f4f26f84f571b550"
+    }
+  }
+}

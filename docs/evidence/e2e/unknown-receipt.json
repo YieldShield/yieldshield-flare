@@ -1,8 +1,0 @@
-{
-  "network": "Local Anvil only",
-  "hash": "0xc1a02ca4c098b099adfe63189ad97011f57e4d32b5ae2f64ff170572eba56e19",
-  "uiBeforeMining": "unknown after120secondreceipt timeout; retained hash and check transaction link; no Confirm button remained",
-  "statusAfterMining": "success",
-  "blockNumber": "75",
-  "autominingRestored": true
-}

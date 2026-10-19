@@ -1,17 +1,18 @@
 import { existsSync, readFileSync } from "node:fs";
-import { decodeEventLog, keccak256, zeroAddress } from "viem";
+import { decodeEventLog, keccak256, parseAbi, zeroAddress } from "viem";
 export const artifact = (source, name = source) => ({
   ...JSON.parse(readFileSync(`contracts/out/${source}.sol/${name}.json`)),
   id: `${source}.sol:${name}`,
 });
-/** Artifacts the plan deploys; the factory itself creates pools and backing oracles. */
-export const planArtifacts = (local = false) => ({
+/**
+ * Artifacts the plan deploys; the factory itself creates pools and backing oracles. The wrapped
+ * native asset is Coston2's canonical WC2FLR, so no wrapper is deployed. Local runs use the same
+ * artifacts against the stand-ins in `mockArtifacts`.
+ */
+export const planArtifacts = () => ({
   token: artifact("DemoAssets", "ShieldDemoDollar"),
   scenario: artifact("DemoAssets", "ShieldScenarioOracle"),
-  reference: local
-    ? artifact("ShieldPool.t", "MutableOracle")
-    : artifact("DemoAssets", "ShieldChainlinkOracle"),
-  wrapper: artifact("ShieldMarket", "ShieldWrappedAVAX"),
+  reference: artifact("ShieldFtsoV2Oracle"),
   vault: artifact("ShieldMarket", "ShieldDemoVault"),
   backingVault: artifact("ShieldMarket", "ShieldBackingVault"),
   vaultOracle: artifact("ShieldMarket", "ShieldVaultOracle"),
@@ -20,6 +21,48 @@ export const planArtifacts = (local = false) => ({
   pool: artifact("ShieldPool"),
   backingOracle: artifact("ShieldMarket", "ShieldBackingOracle"),
 });
+/** Flare's FlareContractRegistry: the same address on every Flare network, Coston2 included. */
+export const FLARE_CONTRACT_REGISTRY = "0xaD67FE66660Fb8dFE9d6b1b4240d8650e30F6019";
+/** RPC of the disposable local chains (chain 114 for the rehearsal, 31337 for the journey). */
+export const LOCAL_RPC = "http://127.0.0.1:8557";
+/**
+ * Where a Coston2 run keeps its manifest and signed intents. The rehearsal (`local`) never touches
+ * config/ or .secrets/ and signs with Anvil's publicly known development account 0.
+ */
+export const coston2Network = (local) =>
+  local
+    ? {
+        manifestPath: ".local/rehearsal/deployment.json",
+        intentsRoot: ".local/rehearsal/transactions",
+        rpcUrl: LOCAL_RPC,
+        rehearsalKey:
+          "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80",
+      }
+    : {
+        manifestPath: "config/deployment.json",
+        intentsRoot: ".secrets/transactions",
+        rpcUrl: null,
+        rehearsalKey: null,
+      };
+/** Local-only Flare stand-ins from contracts/test/mocks; never deployed to Coston2. */
+export const mockArtifacts = () => ({
+  registry: artifact("FlareMocks", "MockFlareContractRegistry"),
+  ftso: artifact("FlareMocks", "MockFtsoV2"),
+  wnat: artifact("FlareMocks", "MockWNat"),
+});
+/** The surface of Coston2's WNat (WC2FLR) the plan and verification use. */
+export const wnatAbi = parseAbi([
+  "function deposit() payable",
+  "function withdraw(uint256)",
+  "function approve(address,uint256) returns (bool)",
+  "function transfer(address,uint256) returns (bool)",
+  "function balanceOf(address) view returns (uint256)",
+  "function decimals() view returns (uint8)",
+  "function symbol() view returns (string)",
+  "event Transfer(address indexed from, address indexed to, uint256 value)",
+]);
+/** FLR/USD as read from Coston2 on 19 October 2026; the local stand-in starts here. */
+export const localFeed = { value: 639928n, decimals: 8 };
 /** Bytecode hashes, plus source files that differ from what the artifacts were compiled from. */
 export function artifactProvenance(artifacts) {
   const hashes = {},
@@ -51,7 +94,7 @@ export const terms = {
 };
 /** Backing units the factory takes from the creator as each market's seed (ShieldFactory CREATION_SEED). */
 export const creationSeed = 500_000000n;
-/** Featured markets: manifest field, protected asset (zero address = native AVAX), oracle, backing. */
+/** Featured markets: manifest field, protected asset (zero address = native C2FLR), oracle, backing. */
 export const featuredMarkets = (m) => [
   ["referencePool", zeroAddress, m.referenceOracle, m.backingToken],
   ["scenarioPool", zeroAddress, m.scenarioOracle, m.backingToken],
@@ -59,14 +102,17 @@ export const featuredMarkets = (m) => [
   ["vaultPool", m.vault, m.vaultOracle, m.backingToken],
   ["vaultBackingPool", zeroAddress, m.referenceOracle, m.backingVault],
 ];
-/** aDEMO the deployer deposits into each vault before creating markets. */
+/** sDEMO the deployer deposits into each vault before creating markets. */
 export const vaultSeed = 1000_000000n;
-/** Finite funded exchange inventory sent by the deployer. */
+/**
+ * Finite funded exchange inventory sent by the deployer: 10 C2FLR and 10 WC2FLR (about 0.06
+ * sDEMO each at FLR/USD 0.0064), enough for the app's 2/5/10 quick amounts.
+ */
 export const exchangeInventory = {
   cash: 1000_000000n,
-  wrapper: 10n ** 16n,
+  wrapper: 10n * 10n ** 18n,
   vault: 100n * 10n ** 18n,
-  native: 10n ** 16n,
+  native: 10n * 10n ** 18n,
 };
 /** Shared deployment plan; executor owns signing, receipts and durable progress. */
 export async function setupMarkets({
@@ -79,15 +125,18 @@ export async function setupMarkets({
 }) {
   // Executors append to m.transactions only for newly mined steps.
   const recordedBefore = m.transactions.length;
-  const a = planArtifacts(local);
+  if (!m.wrapper || !m.flareContractRegistry || !m.ftsoFeed?.id)
+    throw new Error(
+      "The manifest must name WC2FLR (wrapper), the FlareContractRegistry and the FTSOv2 feed.",
+    );
+  const a = planArtifacts();
   await deploy("backingToken", a.token);
   await deploy("scenarioOracle", a.scenario);
-  await deploy(
-    "referenceOracle",
-    a.reference,
-    local ? [] : [m.chainlinkFeed, BigInt(m.maxPriceAge)],
-  );
-  await deploy("wrapper", a.wrapper);
+  await deploy("referenceOracle", a.reference, [
+    m.flareContractRegistry,
+    m.ftsoFeed.id,
+    BigInt(m.maxPriceAge),
+  ]);
   await deploy("vault", a.vault, [m.backingToken]);
   await deploy("backingVault", a.backingVault, [m.backingToken]);
   await deploy("vaultOracle", a.vaultOracle, [m.vault]);
@@ -107,8 +156,8 @@ export async function setupMarkets({
   await run("seed-faucet", m.backingToken, a.token.abi, "faucet");
   const deadline = () => BigInt(Math.floor(Date.now() / 1000) + 86400);
   // ERC-4626 mints assets * (supply + 10^offset) / (held assets + 1) shares, exactly
-  // assets * 10^offset unless aDEMO was donated to the vault first. Requiring that amount
-  // stops a donation front-run from minting the seed as dust: with bvaDEMO's offset 0,
+  // assets * 10^offset unless sDEMO was donated to the vault first. Requiring that amount
+  // stops a donation front-run from minting the seed as dust: with bvsDEMO's offset 0,
   // deposit(1) + donate(1000e6) would leave the deployer 1 share and no market seed.
   for (const [label, address, offset] of [
     ["vault", m.vault, 12n],
@@ -129,7 +178,7 @@ export async function setupMarkets({
   await run(
     "wrapper-funded-deposit",
     m.wrapper,
-    a.wrapper.abi,
+    wnatAbi,
     "deposit",
     [],
     exchangeInventory.wrapper,
@@ -184,7 +233,7 @@ export async function setupMarkets({
   await run(
     "exchange-wrapper-inventory",
     m.wrapper,
-    a.wrapper.abi,
+    wnatAbi,
     "transfer",
     [m.exchange, exchangeInventory.wrapper],
   );
@@ -267,10 +316,10 @@ export async function replaceFeaturedMarkets({
         ])
       : 0n;
     const cashNeeded = cashSeeds + depositAssets;
-    // The faucet mints 10,000 aDEMO per address per hour.
+    // The faucet mints 10,000 sDEMO per address per hour.
     if (cash + 10000_000000n < cashNeeded)
       throw new Error(
-        `The deployer holds ${cash} aDEMO base units; one faucet claim cannot cover the ${cashNeeded} this round needs.`,
+        `The deployer holds ${cash} sDEMO base units; one faucet claim cannot cover the ${cashNeeded} this round needs.`,
       );
     round = {
       round: m.replacements.length + 1,

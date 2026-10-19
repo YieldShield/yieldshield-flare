@@ -12,6 +12,8 @@
     "test:contracts": "forge test --root contracts",
     "deploy:coston2": "node scripts/deploy-coston2.mjs",
     "verify:coston2": "node scripts/verify-coston2.mjs",
+    "rehearse:coston2": "node scripts/rehearse-coston2.mjs",
+    "probe:coston2": "node scripts/probe-coston2.mjs",
     "test:browser": "playwright test",
     "test:journey": "node scripts/local-journey.mjs"
   },

@@ -195,3 +195,48 @@ test("an in-flight quote cannot revive a previous asset review", async ({
     0,
   );
 });
+
+test("status page judges the local FTSOv2 reading like the adapter", async ({
+  page,
+}) => {
+  test.skip(!enabled, "Explicit local-only chain setup required.");
+  const m = JSON.parse(readFileSync(".local/deployment.json", "utf8"));
+  const rpc = createPublicClient({ transport: http("http://127.0.0.1:8557") });
+  expect(await rpc.getChainId()).toBe(31337);
+  const [operator] = (await rpc.request({
+    method: "eth_accounts",
+  } as any)) as string[];
+  const setFeed = (fn: string, args: unknown[]) =>
+    rpc.request({
+      method: "eth_sendTransaction",
+      params: [
+        {
+          from: operator,
+          to: m.mockFtsoV2,
+          data: encodeFunctionData({
+            abi: parseAbi([
+              "function setFeed(bytes21,uint256,int8)",
+              "function setFeedTimestamp(bytes21,uint64)",
+            ]),
+            functionName: fn as any,
+            args: args as any,
+          }),
+        },
+      ],
+    } as any);
+  await setFeed("setFeed", [m.ftsoFeed.id, 639928n, 8]);
+  await page.goto("http://127.0.0.1:5194/status");
+  await expect(page.getByText("Valid: 0.006399 sDEMO per C2FLR")).toBeVisible({
+    timeout: 30000,
+  });
+  await expect(
+    page.getByText("0.006399 sDEMO", { exact: true }).first(),
+  ).toBeVisible();
+  const block = await rpc.getBlock();
+  await setFeed("setFeedTimestamp", [m.ftsoFeed.id, block.timestamp - 301n]);
+  await page.getByRole("button", { name: "Read the feed again" }).click();
+  await expect(
+    page.getByText(/Rejected \(STALE_PRICE\): the adapter would revert/),
+  ).toBeVisible({ timeout: 30000 });
+  await setFeed("setFeed", [m.ftsoFeed.id, 639928n, 8]);
+});

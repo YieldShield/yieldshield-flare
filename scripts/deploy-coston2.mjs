@@ -25,10 +25,12 @@ import {
   recoverTransactionAddress,
 } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
-import { avalancheFuji } from "viem/chains";
+import { flareTestnet } from "viem/chains";
 import { fileURLToPath } from "node:url";
 import {
+  FLARE_CONTRACT_REGISTRY,
   artifactProvenance,
+  coston2Network,
   exchangeInventory,
   featuredMarkets,
   openRound,
@@ -36,11 +38,20 @@ import {
   replaceFeaturedMarkets,
   roundPrefix,
   setupMarkets,
+  wnatAbi,
 } from "./setup-markets.mjs";
 const root = fileURLToPath(new URL("../", import.meta.url));
 process.chdir(root);
 const argv = process.argv.slice(2);
 const broadcast = argv.includes("--broadcast");
+/**
+ * Rehearsal against a disposable chain-114 Anvil at 127.0.0.1:8557 with Flare stand-ins installed
+ * at the canonical Coston2 addresses (scripts/rehearse-coston2.mjs). It signs with Anvil's
+ * publicly known development account 0, never with a real key, and keeps its manifest and signed
+ * intents under .local/rehearsal/.
+ */
+const local = argv.includes("--local");
+const network = coston2Network(local);
 const replacing = argv.includes("--replace-featured");
 const force = argv.includes("--force");
 if (force && !replacing)
@@ -56,20 +67,22 @@ const DEADLINE_WINDOW = 3600n;
 /** An unsent intent this close to its deadline is re-signed instead of rebroadcast. */
 const DEADLINE_MARGIN = 300n;
 /**
- * Sum of the gas limits of all 26 plan steps (24.77M; 24.52M used), measured by a full
- * broadcast against a chain-43113 Anvil. Remeasure when contracts or the plan change.
+ * Gas for all 25 plan steps: 24.26M used in the chain-114 rehearsal
+ * (docs/evidence/coston2-rehearsal.json) plus about 250k because Coston2's WNat deposit and
+ * transfer cost 188k and 133k execution gas (docs/evidence/coston2-plan-probe.json) against the
+ * local stand-in's 48k and 26k. Remeasure when contracts or the plan change.
  */
-const PLAN_GAS = 24_800_000n;
+const PLAN_GAS = 24_600_000n;
 const GAS_HEADROOM_PERCENT = 130n;
 /**
- * Gas limits of a replacement round including both top-ups (14.43M; 14.19M used): faucet,
- * bvaDEMO deposit, two approvals and five creations, measured by --replace-featured
- * broadcasts against a Fuji fork. Remeasure when contracts or the round change.
+ * Gas for a replacement round including both top-ups (faucet and bvsDEMO deposit), two approvals
+ * and five creations. The chain-114 rehearsal's round without top-ups used 14.06M; the template's
+ * 14.45M ceiling with both top-ups is kept. Remeasure when contracts or the round change.
  */
 const REPLACEMENT_GAS = 14_450_000n;
 /** A new replacement round starts only once a featured market closes within this window. */
 const REPLACE_WINDOW = 7n * 86400n;
-/** Markets whose creation reads the Chainlink-backed reference oracle. */
+/** Markets whose creation reads the FTSOv2-backed reference oracle. */
 const REFERENCE_MARKETS = ["referencePool", "wrappedPool", "vaultBackingPool"];
 const POLL_MS = 1500;
 const WAIT_TIMEOUT_MS = 10 * 60 * 1000;
@@ -77,7 +90,6 @@ const CONTRACT_FIELDS = [
   "backingToken",
   "scenarioOracle",
   "referenceOracle",
-  "wrapper",
   "vault",
   "backingVault",
   "vaultOracle",
@@ -89,27 +101,37 @@ const CONTRACT_FIELDS = [
   "vaultPool",
   "vaultBackingPool",
 ];
-const manifestPath = "config/deployment.json";
+const manifestPath = network.manifestPath;
 const manifest = JSON.parse(readFileSync(manifestPath));
 const save = () =>
   writeFileSync(manifestPath, JSON.stringify(manifest, null, 2) + "\n");
 if (manifest.version !== 2)
   throw new Error("This deployment plan requires manifest version 2.");
-if (manifest.chainId !== 43113)
-  throw new Error("Manifest must target Fuji 43113");
+if (manifest.chainId !== 114)
+  throw new Error("Manifest must target Coston2 (chain 114)");
+if (local && manifest.rpcUrl !== network.rpcUrl)
+  throw new Error(`The rehearsal manifest must use ${network.rpcUrl}`);
 const c = createPublicClient({
-  chain: avalancheFuji,
+  chain: flareTestnet,
   transport: http(manifest.rpcUrl),
 });
-if ((await c.getChainId()) !== 43113)
+if ((await c.getChainId()) !== 114)
   throw new Error("RPC identity mismatch; stopped");
-const secretPath = ".secrets/fuji-test-signer.json";
-if (!existsSync(secretPath))
-  throw new Error(
-    "Missing dedicated test signer. See docs/OPERATIONS.md. Never reuse a mainnet signer.",
-  );
-const { privateKey } = JSON.parse(readFileSync(secretPath));
+let privateKey;
+if (local) privateKey = network.rehearsalKey;
+else {
+  const secretPath = ".secrets/coston2-test-signer.json";
+  if (!existsSync(secretPath))
+    throw new Error(
+      "Missing dedicated test signer. See docs/OPERATIONS.md. Never reuse a mainnet signer.",
+    );
+  ({ privateKey } = JSON.parse(readFileSync(secretPath)));
+}
 const account = privateKeyToAccount(privateKey);
+if (!manifest.deployer)
+  throw new Error(
+    "The manifest names no deployer; record the dedicated test signer's address first (docs/OPERATIONS.md).",
+  );
 if (account.address.toLowerCase() !== manifest.deployer.toLowerCase())
   throw new Error("Unexpected test signer");
 if (!existsSync("contracts/out"))
@@ -144,13 +166,13 @@ const changedArtifacts = manifest.source
         JSON.stringify(provenance.hashes[id]),
     )
   : [];
-const intentsRoot = ".secrets/transactions";
+const intentsRoot = network.intentsRoot;
 const legacyIntents = existsSync(intentsRoot)
   ? readdirSync(intentsRoot).filter((name) => name.endsWith(".json"))
   : [];
 const balance = await c.getBalance({ address: account.address });
 // Funding for the steps not yet recorded: gas at today's max fee with 30% headroom, plus the
-// native AVAX the plan sends (awAVAX deposit and exchange inventory).
+// native C2FLR the plan sends (WC2FLR deposit and exchange inventory).
 const recordedLabels = new Set(manifest.transactions.map((t) => t.label));
 const open = replacing ? openRound(manifest) : null;
 const round = replacing
@@ -161,7 +183,7 @@ const usedGas = manifest.transactions
   .reduce((sum, t) => sum + BigInt(t.gasUsed ?? 0), 0n);
 const planGas = replacing ? REPLACEMENT_GAS : PLAN_GAS;
 const remainingGas = usedGas < planGas ? planGas - usedGas : 0n;
-// A replacement round sends no AVAX; its seeds are aDEMO and bvaDEMO.
+// A replacement round sends no C2FLR; its seeds are sDEMO and bvsDEMO.
 const remainingValue = replacing
   ? 0n
   : (recordedLabels.has("wrapper-funded-deposit")
@@ -175,7 +197,8 @@ const gasCost = (maxFeePerGas * remainingGas * GAS_HEADROOM_PERCENT) / 100n;
 const required = gasCost + remainingValue;
 console.log(
   JSON.stringify({
-    chainId: 43113,
+    chainId: 114,
+    rehearsal: local,
     deployer: account.address,
     balanceWei: String(balance),
     requiredWei: String(required),
@@ -189,7 +212,7 @@ console.log(
   }),
 );
 console.log(
-  `Funding: requires ${formatEther(required)} AVAX = ${remainingGas} gas x ${formatGwei(maxFeePerGas)} gwei max fee x ${Number(GAS_HEADROOM_PERCENT) / 100} (${formatEther(gasCost)} AVAX) + ${formatEther(remainingValue)} AVAX sent by the plan. Balance: ${formatEther(balance)} AVAX.`,
+  `Funding: requires ${formatEther(required)} C2FLR = ${remainingGas} gas x ${formatGwei(maxFeePerGas)} gwei max fee x ${Number(GAS_HEADROOM_PERCENT) / 100} (${formatEther(gasCost)} C2FLR) + ${formatEther(remainingValue)} C2FLR sent by the plan. Balance: ${formatEther(balance)} C2FLR.`,
 );
 if (uncommitted.length)
   console.log(`Uncommitted deployment inputs: ${uncommitted.join(", ")}`);
@@ -197,47 +220,77 @@ if (legacyIntents.length)
   console.log(
     `Ignoring ${legacyIntents.length} unbound intent file(s) written by an older script directly in ${intentsRoot}/. They are never reused; check on the explorer that none is pending before archiving them.`,
   );
-/** Mirrors ShieldChainlinkOracle.price(): reference markets cannot be created on a stale feed. */
+const registryAbi = parseAbi([
+  "function getContractAddressByName(string) view returns (address)",
+]);
+const ftsoAbi = parseAbi([
+  "function getFeedById(bytes21) view returns (uint256, int8, uint64)",
+  "function calculateFeeById(bytes21) view returns (uint256)",
+]);
+/** The plan's Flare dependencies: the canonical registry, WC2FLR and a resolvable FtsoV2. */
+async function checkFlare() {
+  const problems = [];
+  const registry = manifest.flareContractRegistry;
+  if (registry?.toLowerCase() !== FLARE_CONTRACT_REGISTRY.toLowerCase())
+    return [
+      `the manifest's flareContractRegistry ${registry} is not Flare's canonical ${FLARE_CONTRACT_REGISTRY}`,
+    ];
+  const code = await c.getCode({ address: registry });
+  if (!code || code === "0x") return [`no contract at the FlareContractRegistry ${registry}`];
+  const [wnat, ftso] = await Promise.all(
+    ["WNat", "FtsoV2"].map((name) =>
+      c.readContract({ address: registry, abi: registryAbi, functionName: "getContractAddressByName", args: [name] }),
+    ),
+  );
+  if (wnat.toLowerCase() !== manifest.wrapper?.toLowerCase())
+    problems.push(`the registry's WNat is ${wnat}, but the manifest's wrapper is ${manifest.wrapper}`);
+  else {
+    const [symbol, decimals] = await Promise.all([
+      c.readContract({ address: wnat, abi: wnatAbi, functionName: "symbol" }),
+      c.readContract({ address: wnat, abi: wnatAbi, functionName: "decimals" }),
+    ]);
+    if (symbol !== "WC2FLR" || decimals !== 18)
+      problems.push(`WNat ${wnat} reports ${symbol} with ${decimals} decimals, not WC2FLR with 18`);
+  }
+  const ftsoCode = await c.getCode({ address: ftso });
+  if (!ftsoCode || ftsoCode === "0x") return [...problems, `the registry's FtsoV2 ${ftso} has no code`];
+  console.log(`FlareContractRegistry ${registry}: WNat ${wnat}, FtsoV2 ${ftso}.`);
+  return problems;
+}
+/** Mirrors ShieldFtsoV2Oracle.price(): reference markets cannot be created on an invalid or stale feed. */
 async function checkFeed() {
-  const feed = manifest.chainlinkFeed;
-  const [code, block] = await Promise.all([
-    c.getCode({ address: feed }),
+  const ftso = await c.readContract({
+    address: manifest.flareContractRegistry,
+    abi: registryAbi,
+    functionName: "getContractAddressByName",
+    args: ["FtsoV2"],
+  });
+  const { id, name } = manifest.ftsoFeed;
+  const [[value, decimals, timestamp], fee, block] = await Promise.all([
+    c.readContract({ address: ftso, abi: ftsoAbi, functionName: "getFeedById", args: [id] }),
+    c.readContract({ address: ftso, abi: ftsoAbi, functionName: "calculateFeeById", args: [id] }),
     c.getBlock(),
   ]);
-  if (!code || code === "0x") return `no contract at chainlinkFeed ${feed}`;
-  const abi = parseAbi([
-    "function decimals() view returns (uint8)",
-    "function latestRoundData() view returns (uint80, int256, uint256, uint256, uint80)",
-  ]);
-  const [decimals, [round, answer, , updatedAt, answeredInRound]] =
-    await Promise.all([
-      c.readContract({ address: feed, abi, functionName: "decimals" }),
-      c.readContract({ address: feed, abi, functionName: "latestRoundData" }),
-    ]);
-  const age = block.timestamp - updatedAt;
   const maxAge = BigInt(manifest.maxPriceAge);
+  const age = block.timestamp - timestamp;
   console.log(
-    `Chainlink AVAX/USD ${feed}: ${formatUnits(answer, decimals)}, updated ${age}s ago (maxPriceAge ${maxAge}s).`,
+    `FTSOv2 ${name} via ${ftso}: ${value} with ${decimals} decimals, updated ${age}s ago (maxPriceAge ${maxAge}s), read fee ${fee}.`,
   );
-  if (
-    answer <= 0n ||
-    answeredInRound < round ||
-    updatedAt === 0n ||
-    updatedAt > block.timestamp
-  )
-    return "the Chainlink feed's latest round is invalid or incomplete";
+  if (fee !== 0n)
+    return `FtsoV2 now charges ${fee} wei to read ${name}; the adapter fails closed, so reference markets cannot be created`;
+  if (value === 0n || timestamp === 0n || timestamp > block.timestamp)
+    return `the FTSOv2 ${name} reading is invalid (value ${value}, timestamp ${timestamp})`;
+  if (decimals < -18 || decimals > 18) return `the feed reports ${decimals} decimals, outside -18..18`;
   if (age > maxAge)
-    return `the Chainlink feed was last updated ${age}s ago, beyond maxPriceAge ${maxAge}s, so reference market creation would revert; retry after its next update`;
-  if (age + 300n > maxAge)
-    console.log(
-      "Warning: the feed may go stale before reference markets are created. A stale feed stops the run before signing that step; resume after the next update.",
-    );
+    return `the FTSOv2 ${name} feed was last updated ${age}s ago, beyond maxPriceAge ${maxAge}s, so reference market creation would revert; retry once it updates`;
   return null;
 }
-const blockers = [];
+const blockers = [...(await checkFlare())];
 if (balance < required)
   blockers.push(
-    `balance ${formatEther(balance)} AVAX is below the required ${formatEther(required)} AVAX; fund ${account.address} with faucet test AVAX only`,
+    local
+      ? `balance ${formatEther(balance)} C2FLR is below the required ${formatEther(required)} C2FLR; rerun scripts/rehearse-coston2.mjs, which funds the rehearsal account`
+      : `balance ${formatEther(balance)} C2FLR is below the required ${formatEther(required)} C2FLR; fund ${account.address} with test C2FLR from ${manifest.faucet} only (the faucet's reCAPTCHA is an owner step)`,
   );
 if (
   replacing
@@ -274,7 +327,7 @@ async function replacementProblems() {
   }
   if (manifest.status !== "deployed-and-verified")
     problems.push(
-      `the deployment is ${manifest.status}; run npm run verify:fuji before replacing its featured markets`,
+      `the deployment is ${manifest.status}; run npm run verify:coston2${local ? " -- --local" : ""} before replacing its featured markets`,
     );
   const now = (await c.getBlock()).timestamp;
   const maturities = await Promise.all(
@@ -311,7 +364,7 @@ if (!broadcast) {
   console.log(
     blockers.length
       ? `Preflight: not ready to broadcast.\n${blockers.map((b) => `  - ${b}`).join("\n")}`
-      : "Preflight: ready. --broadcast is required to spend test AVAX.",
+      : "Preflight: ready. --broadcast is required to spend test C2FLR.",
   );
   process.exit(blockers.length ? 1 : 0);
 }
@@ -321,7 +374,7 @@ if (blockers.length)
   );
 const w = createWalletClient({
   account,
-  chain: avalancheFuji,
+  chain: flareTestnet,
   transport: http(manifest.rpcUrl),
 });
 const source = {
@@ -345,7 +398,7 @@ if (!manifest.deploymentId) {
     throw new Error(
       'The manifest records deployment progress without a deploymentId, so its signed intents cannot be matched safely. Restore the pre-deployment manifest (docs/OPERATIONS.md, "Starting over") before broadcasting.',
     );
-  manifest.deploymentId = `fuji-${new Date().toISOString().slice(0, 19).replace(/:/g, "-")}Z-${randomBytes(3).toString("hex")}`;
+  manifest.deploymentId = `${local ? "rehearsal" : "coston2"}-${new Date().toISOString().slice(0, 19).replace(/:/g, "-")}Z-${randomBytes(3).toString("hex")}`;
   manifest.failedTransactions = [];
   manifest.source = source;
   save();
@@ -464,7 +517,7 @@ async function signIntent(label, plan, nonce) {
     version: 1,
     label,
     deploymentId: manifest.deploymentId,
-    chainId: 43113,
+    chainId: 114,
     from: account.address,
     nonce,
     to: plan.to,
@@ -486,7 +539,7 @@ async function bindingProblems(intent, plan) {
   const problems = [];
   if (intent.deploymentId !== manifest.deploymentId)
     problems.push(`it belongs to deployment ${intent.deploymentId}`);
-  if (intent.chainId !== 43113)
+  if (intent.chainId !== 114)
     problems.push(`it targets chain ${intent.chainId}`);
   if (lower(intent.from) !== lower(account.address))
     problems.push(`it was signed by ${intent.from}`);
@@ -588,7 +641,7 @@ function recordFailure(intent, found) {
       `${intent.label} was mined but reverted (tx ${signed.hash}, nonce ${intent.nonce}, block ${receipt.blockNumber}).`,
       "It is recorded under failedTransactions in the manifest and was not replayed.",
       `Inspect the revert (explorer, or: cast run ${signed.hash} --rpc-url ${manifest.rpcUrl}), fix the cause, then resume with:`,
-      `  npm run deploy:fuji -- --broadcast --retry-reverted ${intent.label}`,
+      `  npm run deploy:coston2 -- ${local ? "--local " : ""}--broadcast --retry-reverted ${intent.label}`,
     ].join("\n"),
   );
 }
@@ -809,6 +862,6 @@ if (retryLabel && !retried)
 const mined = manifest.transactions.length - recordedBefore;
 console.log(
   mined
-    ? `Deployment mined (${mined} new transaction(s)). Run npm run verify:fuji before presenting the markets as verified.`
+    ? `Deployment mined (${mined} new transaction(s)). Run npm run verify:coston2${local ? " -- --local" : ""} before presenting the markets as verified.`
     : `Nothing to send: all ${manifest.transactions.length} steps were already recorded. Status remains ${manifest.status}.`,
 );
