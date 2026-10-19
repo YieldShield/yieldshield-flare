@@ -112,7 +112,7 @@ export function Guide() {
         <p>
           A bvsDEMO-backed position promises a number of vault receipts. The
           underlying sDEMO those receipts redeem for can change. There is no
-          fixed dollar guarantee, and bvsDEMO is not a stablecoin.
+          fixed dollar value, and bvsDEMO is not a stablecoin.
         </p>
       </div>
     </>
@@ -124,7 +124,7 @@ export function Legal() {
       <PageTitle
         eyebrow="TERMS & RISKS"
         title="An experiment with clear limits."
-        description="YieldShield Flare is an unaudited testnet prototype using assets with no value. It is not insurance, a guaranteed return or a production investment product."
+        description="YieldShield Flare is an unaudited testnet prototype using assets with no value. It promises no return and is not a production investment product."
       />
       <div className="field-note">
         <h2>Use test assets only</h2>

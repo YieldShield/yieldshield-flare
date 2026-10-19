@@ -575,7 +575,7 @@ export function Assets() {
             address: config.backingVault,
             decimals: 6,
             description:
-              "Funded sDEMO ERC-4626 receipts used as junior backing. Floors are fixed receipt units, not guaranteed fixed sDEMO value.",
+              "Funded sDEMO ERC-4626 receipts used as junior backing. Floors are fixed receipt units; the sDEMO they redeem for can change.",
           },
         ].map((a) => (
           <article key={a.key}>

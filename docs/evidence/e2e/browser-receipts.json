@@ -1,7 +1,7 @@
 {
   "network": "Disposable local Anvil (chain 31337) with Flare stand-ins; no Coston2 broadcast",
   "chainId": 31337,
-  "recordedAt": "2026-10-19T07:27:53.117Z",
+  "recordedAt": "2026-10-19T07:36:16.952Z",
   "browserDriver": "Playwright with an injected provider that forwards to Anvil's unlocked development accounts; no wallet-extension approval",
   "localFixtureTransactions": 31,
   "browserTransactionCount": 10,
@@ -15,9 +15,9 @@
     "allPassed": true
   },
   "sourceHashes": {
-    "src/AccountPages.tsx": "0x7c48b7e058b54aafc72e091358203a4ea7332d0594c9b3f078645ec815e3d7c5",
+    "src/AccountPages.tsx": "0xd5a48353fb05750537b2a2219401be17b9679283ab7f4e42542468aa0bee5fdf",
     "src/CreatePool.tsx": "0x02b61ed29fe4b945b7f0c62ed24fdfc9c0e4cb81eb3ac8b4f219ebe2d2634e58",
-    "src/Guide.tsx": "0xa4b1cc8125d127a829cbe83659750f3e58137ae80a9a9e153400a23e7e41d76c",
+    "src/Guide.tsx": "0x50e0effe5179be0b0a325b4869382ed7d3a9176c881d04a3e354fa5485a8e194",
     "src/Markets.tsx": "0x43f0052216892a7be8d8f545ce321cba51bab74fd0ed6b1f5e26e780ae88d376",
     "src/SiteNavigation.tsx": "0x398ecb4d1dbf7d5b9527cfec8ec2217173b4418f404f568960a0168009f66850",
     "src/Trade.tsx": "0x4b76afe852dac915206914e047a29cd379fae310393babdd48af64525254a46e",
@@ -32,7 +32,7 @@
     "src/review.ts": "0xa27ed1dc089c698933645a7d74958a86836788a678eaf7ea004b525c41046614",
     "src/state.tsx": "0xe7e96ce4de56506a18c98ac41126dc7b937e71a8f7cf20d0e7582f422d938da6",
     "src/style.css": "0xce52d4e2d33bc8665b5b2f45380e2120ddbdfed6fdc38ca7887fb322d004ec9f",
-    "src/ui.tsx": "0x65847816f984bdd26a5e37f1458ed6a5e180c129162b359847580e1636414e5e",
+    "src/ui.tsx": "0x19d9106528da0fcf38d47c91e1bc9c720de69f17188f99299ffd36b164de0f07",
     "contracts/src/ShieldPool.sol": "0x365ec0b392374fe5c7f729a5fbe21095e059e484eec99bca29143ac3dd593449",
     "contracts/src/ShieldMarket.sol": "0x7ddadda668dcf23e57be577ef2dc51700af5d98352495dbfa1c41aff2f461720",
     "contracts/src/DemoAssets.sol": "0x0b260aab26f56c996767993dca0ec536610f810ed19847724694d85b97c62973",
@@ -48,7 +48,7 @@
       "value": "0",
       "status": "success",
       "blockNumber": "32",
-      "chainTimestamp": "1792394865"
+      "chainTimestamp": "1792395374"
     },
     {
       "hash": "0x9fc16555f7ec3aa3be20e5227ffaa197d508c2f46e82071d712c5048d80a9cd8",
@@ -58,17 +58,17 @@
       "value": "0",
       "status": "success",
       "blockNumber": "33",
-      "chainTimestamp": "1792394866"
+      "chainTimestamp": "1792395374"
     },
     {
-      "hash": "0xa1558888a304ef592f4bd8508dd57f531bdbdb4bb1229299cb5fdf5d82807759",
+      "hash": "0xfe2b6fe3a0b8be43306c0b0159e97c50e5fa87ea77e1e72b2d76823d0a30ed24",
       "from": "0x3c44cdddb6a900fa2b585dd299e03d12fa4293bc",
       "to": "0x436932d6361db21cbdf440a39046093a1c12d2b4",
       "operation": "depositJuniorBounded",
       "value": "0",
       "status": "success",
       "blockNumber": "34",
-      "chainTimestamp": "1792394866"
+      "chainTimestamp": "1792395374"
     },
     {
       "hash": "0xec495d532593bd9eb212bf9ecd7b1478ff5412de7ce57c969a58f67ff490c72d",
@@ -78,17 +78,17 @@
       "value": "0",
       "status": "success",
       "blockNumber": "35",
-      "chainTimestamp": "1792394866"
+      "chainTimestamp": "1792395374"
     },
     {
-      "hash": "0xfa898d53d8434109e3ea08c039728fc9bce56d986b26e261db85bd9ba93d6358",
+      "hash": "0x33f3100a0f6f10be45125d0f5b6274c04f3fcee64b5c8ac0a95c298e98822245",
       "from": "0x3c44cdddb6a900fa2b585dd299e03d12fa4293bc",
       "to": "0x0dcd1bf9a1b36ce34237eeafef220932846bcd82",
       "operation": "buy",
       "value": "0",
       "status": "success",
       "blockNumber": "36",
-      "chainTimestamp": "1792394866"
+      "chainTimestamp": "1792395374"
     },
     {
       "hash": "0x7869c26784f0480b20ecfcd7eb8c477cd6da646aab90db8ae92f6d51052fdff3",
@@ -98,27 +98,27 @@
       "value": "0",
       "status": "success",
       "blockNumber": "37",
-      "chainTimestamp": "1792394866"
+      "chainTimestamp": "1792395374"
     },
     {
-      "hash": "0x91402a1fa06820b875e4ddb44a4d102ec8958c7878c33bf25f86313409df110d",
+      "hash": "0xe4224548a7c0c1e508ed5e52f6a3980448dd65164ced9167176f8d5fb457d5fe",
       "from": "0x3c44cdddb6a900fa2b585dd299e03d12fa4293bc",
       "to": "0x436932d6361db21cbdf440a39046093a1c12d2b4",
       "operation": "protectToken",
       "value": "0",
       "status": "success",
       "blockNumber": "38",
-      "chainTimestamp": "1792394866"
+      "chainTimestamp": "1792395374"
     },
     {
-      "hash": "0x2cb02f041d13c0534faab94bad02126ab180a4949cc23517a7cf984d0737409e",
+      "hash": "0x75db7b90fb9e64ed6aa1837ea72fcda19f3a26cc207ad5e08bafa918abdb860f",
       "from": "0x3c44cdddb6a900fa2b585dd299e03d12fa4293bc",
       "to": "0x436932d6361db21cbdf440a39046093a1c12d2b4",
       "operation": "partialExitAsset",
       "value": "0",
       "status": "success",
       "blockNumber": "41",
-      "chainTimestamp": "1792394927"
+      "chainTimestamp": "1792395435"
     },
     {
       "hash": "0x906e48599428482715c7f4fe2511967d9052774aa1ef2c987204797df0fc714e",
@@ -128,7 +128,7 @@
       "value": "0",
       "status": "success",
       "blockNumber": "42",
-      "chainTimestamp": "1792394927"
+      "chainTimestamp": "1792395436"
     },
     {
       "hash": "0x688e3d5468eca4555193b871f4821b865656e8a2da658993d52b840f264c7d93",
@@ -138,7 +138,7 @@
       "value": "0",
       "status": "success",
       "blockNumber": "43",
-      "chainTimestamp": "1792394928"
+      "chainTimestamp": "1792395436"
     }
   ]
 }

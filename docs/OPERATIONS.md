@@ -1,72 +1,137 @@
 # Operations
 
-## Fuji deployment
+## Coston2 deployment: awaiting testnet gas (19 October 2026)
 
-Deployment was prepared on 11 October 2026 and broadcast on 12 October 2026: deployment `fuji-2026-10-12T18-48-56Z-8bd0c9` is `deployed-and-verified` (see [the Fuji E2E](E2E_REPORT.md#fuji-e2e-12-october-2026)). On 12 October 2026 the maintainers replaced the earlier signer with a new dedicated Fuji-only test signer, `0x24b48b241bB2F8099e70EA664e196a1765845693`. The interim signer named in commit f8eec25 was discarded before funding and must never be funded. The private key remains in the ignored `.secrets/fuji-test-signer.json` file, never in source, browser code or logs. Only faucet-funded test AVAX may be used.
+**Signer.** On 19 October 2026 a new dedicated Coston2-only test signer was created with `cast wallet new`:
+
+- address `0x2b7EEEAEc982E59F18621650FedFf8C3723B5226`;
+- private key only in the ignored `.secrets/coston2-test-signer.json` (mode 600), never in source, browser code, logs or commits;
+- never funded, on Coston2 or Flare mainnet.
+
+Only faucet-funded test C2FLR may ever be sent to it.
+
+**Funding is an owner step.** Flare's only official faucet is https://faucet.flare.network/coston2. It gives 100 C2FLR, 10 USDT0 and 10 FXRP per address per 24 hours, and it is protected by Google reCAPTCHA, so no script requests from it. To fund the signer:
+
+1. Open the faucet with Coston2 selected.
+2. Paste `0x2b7EEEAEc982E59F18621650FedFf8C3723B5226` and click **Request C2FLR**.
+3. Complete the check yourself.
+
+One claim is enough.
+
+**Steps after funding:**
 
 1. Build and verify the exact checkout: `npm ci --ignore-scripts`, `npm run test:contracts`, `npm test`, `npm run build`.
-2. `npm run deploy:fuji` performs a read-only preflight of the chain, balance, git commit and artifact freshness. It does not broadcast.
-3. Once the signer holds faucet test AVAX, `npm run deploy:fuji -- --broadcast` executes the prepared plan. The preflight prints the required balance: the 26-step plan's measured 24.8M gas limits (24.52M gas used) × the node's current `maxFeePerGas` × 1.3, plus the 0.02 AVAX the plan sends (0.01 wrapped into awAVAX, 0.01 native exchange inventory). On a resume, already-recorded gas and value are subtracted. It also reads the Chainlink AVAX/USD feed and refuses to start while `latestRoundData` is older than `maxPriceAge`, because reference market creation would revert at step 18. Both checks, plus the artifact checks, make the read-only preflight exit non-zero with the reasons, and `--broadcast` refuses to send anything.
-4. `npm run verify:fuji` checks chain 43113 and compares every deployed contract's runtime code with `contracts/out`, with immutables masked. This covers the singletons, the five pools and the factory-created backing oracles. It checks factory registration and wiring (including `protocol()`), exchange `backing()` and `registry()`, the reference oracle's `feed()` and `maxAge()` against the manifest, asset and backing identities, and the featured terms recorded in the manifest. It also checks that every featured market still accepts protection, warning when one closes within three days, and that all receipts succeeded. It then marks the manifest `deployed-and-verified`. Creation seeds and exchange funding are checked from the recorded creation and funding receipts, not live balances, so verification can be repeated after public protections or trades. A `deploy:fuji -- --broadcast` rerun with nothing left to send keeps the current status. Only newly mined steps reset the status to `deployed-awaiting-verification`.
-5. Run a public wallet journey and save confirmed receipt/balance evidence before describing Fuji as end-to-end verified. Commit public registry/evidence separately, rebuild and deploy the website.
+2. `npm run deploy:coston2` runs a read-only preflight. It checks:
+   - the chain ID;
+   - that the manifest names Flare's canonical `FlareContractRegistry`;
+   - that the registry's `WNat` is the manifest's WC2FLR, reporting `WC2FLR` with 18 decimals;
+   - that `FtsoV2` resolves to code;
+   - that the FLR/USD read fee is zero and the feed is fresh (`maxPriceAge` 300 s);
+   - the signer's balance, the git commit and artifact freshness.
 
-The public manifest records mined successful operations (label, hash, nonce, block, gas). Scripts have no mainnet mode.
+   Each failure is printed as a reason, and nothing is sent. On 19 October the only blocker was funding ([evidence](evidence/coston2-preflight.json)).
+3. `npm run deploy:coston2 -- --broadcast` executes the 25-step plan. The preflight sizes the required balance as 24.6M gas × the node's `maxFeePerGas` × 1.3, plus the 20 C2FLR the plan sends:
+   - 10 wrapped into WC2FLR for exchange inventory;
+   - 10 as native exchange inventory.
 
-The first broadcast also records `source` in the manifest: the git commit (`git rev-parse HEAD`), the compiler, and the creation and runtime bytecode hashes of every planned artifact. Broadcasting is refused when `contracts/out` was not compiled from the current sources, when contract sources have uncommitted changes, or, on a resume, when any artifact differs from the recorded build.
+   At Coston2's 500 gwei base fee that was 43.985 C2FLR. The gas figure is the chain-114 rehearsal's 24.26M plus about 250k: Coston2's WNat deposit and transfer cost 188k and 133k execution gas against the local stand-in's 48k and 26k ([probe](evidence/coston2-plan-probe.json)).
+4. `npm run verify:coston2` reads back:
+   - every deployed contract's runtime code against `contracts/out`, with immutables masked;
+   - the factory wiring, including that `wrapper` is the registry's WNat;
+   - the adapter's `registry()`, `feedId()`, `maxAge()` and `ftsoV2()` against the manifest and the registry;
+   - asset identities and featured terms, and that each featured market still accepts protection;
+   - the vault seeds, creation receipts and exchange funding.
 
-### Signed intents and resuming
+   It then marks the manifest `deployed-and-verified`. The website enables writes only for that status.
+5. `npm run journey:coston2` runs the public-testnet journey from a **second fresh wallet**:
+   - the key is created in the ignored `.secrets/coston2-journey-wallet.json`, and only the address is printed;
+   - the deployer funds it with 15 C2FLR;
+   - it sends 19 transactions: faucet, provider capital, native and WC2FLR protection, partial asset exit, backing exit, position transfer and the new owner's exit, a trade, a vault deposit, provider notice and redemption, and an unwrap;
+   - evidence goes to `docs/evidence/coston2-e2e.json`.
 
-The first broadcast gives the manifest a `deploymentId`. Every transaction is signed and saved privately as an intent in `.secrets/transactions/<deploymentId>/<label>.json` (mode 600) before it is sent. Each intent is bound to chain 43113, the signer, its nonce, the hash of target, value and calldata and, for contract creations, the artifact bytecode hash. A `deadline` argument is chosen at signing time (chain time plus one hour) and excluded from the payload hash. A rerun refuses any stored intent that does not match the current step exactly, explaining the mismatch and where the intent stands on chain.
+   The same script passed on the chain-114 rehearsal ([evidence](evidence/coston2-rehearsal-journey.json)).
+6. Commit the manifest and evidence, then publish the website ([HOSTING](HOSTING.md)). Then do one real wallet-extension transaction. Every recorded run so far used scripted keys or a test provider.
 
-A rerun resumes each stored intent according to its chain state:
+The scripts have no mainnet mode. Every contract also rejects any chain other than 114 or the local 31337.
 
-- **Mined successfully:** recorded, unless the signer has sent later transactions, which marks the intent as left over from an earlier attempt.
-- **Pending:** waited for; it is never replaced.
-- **Unknown to the node with its nonce still unused:** rebroadcast unchanged. It is re-signed at the same nonce only if its deadline is within five minutes of chain time or the node rejects it. The script logs the re-signing, and the superseded hash remains watched.
-- **Mined but reverted:** recorded under `failedTransactions`, and the run stops. Inspect the revert, fix its cause, then run `npm run deploy:fuji -- --broadcast --retry-reverted <label>`. The step is signed again at the next nonce, and the reverted intent is kept as `<label>.reverted-nonce-<n>.json`.
-- **Nonce consumed by another transaction:** the run stops.
+### Signed intents, resuming and starting over
 
-Never delete or edit an intent that may be pending or mined, never casually replace a nonce, and do not send other transactions from the test signer during a deployment.
+The intent rules are the template's, bound to chain 114:
 
-**Starting over** (for example after contract changes): restore the pre-deployment manifest with every contract field `null`, `transactions: []`, and no `deploymentId` or `failedTransactions`, for example `git checkout <pre-deployment commit> -- config/deployment.json`. The next broadcast creates a new deployment folder, so old intents are never consulted. An emptied manifest that keeps the old `deploymentId` stops at the first intent that already mined.
+- The first broadcast gives the manifest a `deploymentId` and records `source`: the commit, compiler and the bytecode hashes of every planned artifact.
+- Each transaction is signed and saved as an intent in `.secrets/transactions/<deploymentId>/<label>.json` before it is sent. The intent is bound to the chain, signer, nonce, payload hash and, for creations, the artifact's bytecode hash.
+- A rerun resumes each intent according to its chain state:
+  - **mined:** recorded;
+  - **pending:** waited for, never replaced;
+  - **unknown with its nonce unused:** rebroadcast unchanged, and re-signed only near its deadline;
+  - **reverted:** recorded under `failedTransactions`, and the run stops. Resume with `--broadcast --retry-reverted <label>` after fixing the cause.
+- Never edit or delete an intent that may be pending or mined, and never send other transactions from the signer during a deployment.
 
-## Version 2 deployment plan
+To start over, restore the pre-deployment manifest: every contract field `null`, `transactions: []`, and no `deploymentId`.
 
-The shared `setup-markets.mjs` plan deploys the aDEMO faucet token, separate scenario/reference oracles, awAVAX, vaDEMO, bvaDEMO, vault oracle, factory (including backing-unit adapters), and funded exchange. The factory creates five featured markets: reference AVAX, synthetic AVAX, wrapped AVAX, protected vault receipts, and reference AVAX backed by bvaDEMO. Every creation seeds 500 units of selected backing and credits corresponding provider shares to the creator.
+## Deployment plan
 
-The seed faucet provides 10,000 aDEMO. Each vault receives a real 1,000 aDEMO deposit through `depositBounded`. That deposit must mint exactly one aDEMO's worth of shares per aDEMO: 1,000 vaDEMO (decimals offset 12) or 1,000 bvaDEMO (offset 0). Without that bound, anyone who first deposited 1 unit and donated aDEMO could make the seed mint dust and break the bvaDEMO-backed market. If such a donation lands first, the seed reverts or fails gas estimation. The vault's rate then stays skewed, so start over rather than retrying. Exchange inventory receives 1,000 aDEMO, 0.01 native AVAX, 0.01 awAVAX and 100 vaDEMO. These are finite balances. **No holder positions are seeded** so initial testers can provide capital immediately. Creator/protocol fee recipients are the dedicated test signer for this pilot.
+The plan lives in `scripts/setup-markets.mjs`.
 
-The factory registers at most 32 markets. Ten slots are reserved for the protocol account (featured markets and their replacements after maturity); community wallets share the other 22, at most two per wallet. Each market allows at most 100 concurrently open positions and a 0.01 backing-unit minimum entry claim. Closed positions free their slot. It allows approved asset/oracle/backing combinations and bounded immutable terms; no arbitrary token can be listed. The factory's 500 unit seed is provider capital, not a listing fee. Fixed epochs are not renewed automatically. Featured markets therefore use the 30-day contract maximum (`epochSeconds` 2,592,000) and mature 30 days after creation. `verify:fuji` prints each closing date and fails once a featured market can no longer accept protection, which means replacement markets are needed. Custom markets keep their creator's 1–30 day choice.
+1. **Contracts.** It deploys:
+   - sDEMO;
+   - the scenario oracle;
+   - `ShieldFtsoV2Oracle(registry, FLR/USD, 300)`;
+   - vsDEMO and bvsDEMO;
+   - the vault oracle;
+   - the factory, which also creates the bvsDEMO-unit backing oracles;
+   - the exchange.
 
-### Replacing featured markets
+   The factory's `wrapper` is the canonical WC2FLR, so no wrapper is deployed.
+2. **Vault seeds.** The deployer claims 10,000 sDEMO and seeds each vault with 1,000 sDEMO through `depositBounded`. Each seed must mint exactly one sDEMO's worth of shares per sDEMO; a donation front-run makes the step fail instead of minting dust.
+3. **Markets.** The factory then creates the five featured markets. Each seeds 500 units of its backing and credits the creator's provider shares.
+4. **Exchange inventory.** The exchange receives 1,000 sDEMO, 10 WC2FLR, 100 vsDEMO and 10 C2FLR.
 
-Epochs cannot be extended, so matured featured markets are replaced by new ones with the recorded terms. Run the round within seven days of the earliest featured market's closing date. Each round spends five of the factory's 32 lifetime slots, so earlier runs are refused unless `--force` is passed:
+No holder positions are seeded. The creator and protocol fee recipients are the test signer.
 
-1. `npm run deploy:fuji -- --replace-featured` runs the read-only preflight: deployment verified, earliest closing date, free factory slots, Chainlink freshness and the signer's test AVAX for the measured 14.45M gas.
-2. `npm run deploy:fuji -- --replace-featured --broadcast` opens round `n` in `replacements` and signs its steps as `r<n>-…` intents, using the same binding and resume rules as the deployment. When the round opens, it decides whether the deployer needs a faucet claim or a bvaDEMO deposit to cover the 2,000 aDEMO and 500 bvaDEMO seeds. A rerun resumes the open round without `--force`.
-3. The manifest keeps naming the current markets until all five replacements exist, then switches the featured fields and records the superseded addresses in `replacements[n].retired`. Superseded markets stay registered and show as closed after maturity, and their open positions remain settleable.
-4. `npm run verify:fuji` checks the new markets against their `r<n>-` creation receipts. Then build and publish the website so the featured list uses the new addresses.
+**Factory limits:**
+- 32 markets, 10 of them reserved for the protocol account (featured markets and their replacements);
+- at most two community markets per wallet;
+- 100 concurrently open positions per market;
+- a 0.01 backing-unit minimum entry claim, which is about 1.6 C2FLR at FLR/USD 0.0064.
 
-The signer must be the deployer recorded in the manifest. Its protocol slots are the only ones replacements can use once community wallets fill theirs.
+### Monthly featured-market replacement
 
-## Website and wallet behavior
+Epochs last 30 days and cannot be extended, so each verified deployment needs a replacement round every month. Put a calendar entry about seven days before the earliest maturity that `verify:coston2` prints.
 
-`npm run build` produces `dist/`. Public identities live in `config/deployment.json`; no secret environment variable is needed. Vercel's local environment files remain excluded. Deep routes rewrite to the SPA entrypoint. The app verifies wallet chain/account, rejects unknown market selections, discards stale asynchronous reviews, uses exact approvals, binds price limits and transaction deadlines, and records transaction hashes before waiting for confirmation.
+1. `npm run deploy:coston2 -- --replace-featured` runs a read-only preflight. It checks that the deployment is verified, the closing date, free factory slots, feed freshness and the test C2FLR for 14.45M gas.
+2. `npm run deploy:coston2 -- --replace-featured --broadcast` opens round `n` and signs `r<n>-…` intents.
+3. `npm run verify:coston2`, then republish the website.
 
-Reference pricing uses Fuji Chainlink AVAX/USD `0x5498BB86BC934c8D34FDA08E81D444153d0D06aD`, 8 decimals, with a 1,200 second maximum age. No failed reference read becomes a synthetic price. Vault-backed quotes convert nominal aDEMO value into actual backing-vault share units. The six-decimal bvaDEMO collateral and eighteen-decimal vaDEMO exposure vault have different contract addresses and metadata.
+Each round spends five of the 32 lifetime slots, so earlier runs need `--force`. The chain-114 rehearsal ran one full round: 7 transactions, 14.06M gas, verified.
 
-## Expiry and provider liquidity
+## Oracle configuration
 
-Provider entry and redemption freeze while any protected position remains, which in a featured market can last up to its 30-day maturity. Any account may settle a matured position from its detail page; provider cards expose an outstanding settlement queue. Owners then claim their separately reserved backing credit. Provider notice can begin before exposure clears. Redemption returns a proportional basket of selected backing and surrendered protected assets; earned fees are independent claims.
+- Feed: FTSOv2 block-latency FLR/USD, `0x01464c522f55534400000000000000000000000000`.
+- Resolution: `FtsoV2` is looked up through `0xaD67FE66660Fb8dFE9d6b1b4240d8650e30F6019` on every read, so a Flare upgrade of FtsoV2 is followed automatically.
+- Maximum age: 300 s, about 160 blocks. On 19 October the feed's timestamp equalled the latest block's.
+- Read fee: required to be zero. If Flare ever charges for reads, prices fail closed: protection, asset exits, trades and reference-market creation revert, and backing exits continue.
+- Feed ID renames, which `getFeedIdChanges` reports, are not followed. A renamed feed would also fail closed and need a new adapter and new markets.
 
-At maturity the remaining protected asset and any upside are forfeited for the fixed entry claim. Partial exits before maturity retain the remainder's original opening time and proportional basis. Existing backing claims remain independent of oracle availability.
+The scenario oracle is synthetic and labeled as such everywhere. No failed reference read ever falls back to it.
 
-## Reproducible local evidence
+## Rehearsal and probe
 
-- Solidity suite: 41 tests, including three 256 case fuzz regressions and specific fairness, expiry, partial-exit, rewards, reward-index solvency, open-position slots, factory slot limits, events, transfer, vault-unit, funding and deadline cases.
-- Exact-unit math: 5 tests, including tiny minimum-output rounding.
-- Public browser suite: direct routes at390px, nested funding continuation, Back/Forward, invalid pool rejection, missing-wallet feedback, scenario interaction, storage denial, and account/network resets.
-- Local signed lifecycle: 48 confirmed transactions, source hashes in `docs/evidence/local-journey.json`, explicitly chain 31337. No Fuji broadcast.
-- Isolated browser transaction test: faucet → provider deposit → funded buy → protection → partial gain exit → reward claim → activity → disconnect. Delayed-RPC regression proves an old asset quote cannot revive after selection changes.
+Two read-only checks run without spending gas:
 
-Start local Anvil on 8547, run `node scripts/local-journey.mjs --browser-ready`, then `node scripts/local-web.mjs` on 5184. The browser-ready option resets the disposable chain after evidence capture and creates fresh markets. Local chain state and `.local` files are ignored. Private keys are never needed in browser source.
+- `npm run probe:coston2` simulates the entire plan in one `eth_call` against live Coston2. It places the test-only `Coston2PlanProbe` runtime at an unused address through a state override.
+- `npm run rehearse:coston2` needs `anvil --host 127.0.0.1 --port 8557 --chain-id 114`. It:
+  - installs the Flare stand-ins from `contracts/test/mocks` at the canonical registry, FtsoV2 and WC2FLR addresses;
+  - funds Anvil's publicly known development account 0 with exactly 100 C2FLR;
+  - runs `deploy-coston2 --local` and `verify-coston2 --local`, a stale-feed check and a replacement round.
+
+  The rehearsal keeps its manifest and intents in `.local/rehearsal/`, and Anvil's fees are not Coston2's. `npm run journey:coston2 -- --local` then runs the public journey against it.
+
+## Local evidence
+
+- **Solidity:** 57 tests, including four 256-run fuzz tests. 17 cover the FTSOv2 adapter, with mocks: normalization, zero and dust values, stale, future and zero timestamps, decimal bounds, read fees, unknown feeds, registry replacement, static-call enforcement, fail-closed markets and factory admission. The rest are the template's fairness, expiry, partial-exit, reward-solvency, slot-limit, vault, exchange and deadline cases.
+- **JavaScript:** 14 tests, including FTSOv2 normalization parity with the Solidity vectors.
+- **Browser:** 6 public tests, plus 3 local-chain tests (`SHIELD_LOCAL_E2E=1`): the signed lifecycle, the stale-quote race, and the status page judging fresh and stale feeds.
+- **Local journey:** 57 confirmed transactions plus 3 expected `STALE_PRICE` reverts on chain 31337 ([evidence](evidence/local-journey.json)).
+
+Start Anvil on 8557, run `node scripts/local-journey.mjs --browser-ready`, then `node scripts/local-web.mjs` (127.0.0.1:5194). Local state and `.local/` are ignored.

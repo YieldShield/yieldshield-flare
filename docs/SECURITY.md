@@ -2,33 +2,74 @@
 
 ## Reporting a vulnerability
 
-Please report suspected vulnerabilities privately, not in a public issue: use **Report a vulnerability** on this repository's Security tab (GitHub private vulnerability reporting), or email david@yieldshield.ai. Include the affected contract and function or page, steps to reproduce and the expected impact. Never send private keys or seed phrases. This is unaudited testnet software that holds no assets of monetary value; there is no bug bounty.
+Please report suspected vulnerabilities privately, never in a public issue or pull request.
+
+- **Now:** email david@yieldshield.ai with the subject "YieldShield Flare security". Include:
+  - the affected contract and function, or the page;
+  - steps to reproduce;
+  - the expected impact.
+- **Once the repository is public:** use **Report a vulnerability** on its Security tab. GitHub private vulnerability reporting only exists for public repositories, so the owner enables it when publishing.
+
+Never send private keys or seed phrases. This is unaudited testnet software that holds no assets of monetary value. There is no bug bounty.
 
 ## Scope
 
-This is unaudited testnet software. Asset-moving contracts accept only local chain 31337 or Fuji43113. No asset of monetary value belongs here.
+This is unaudited testnet software, written with substantial AI assistance. Every asset-moving contract and the oracle adapter accept only Flare Testnet Coston2 (chain 114) or local chain 31337. No asset of monetary value belongs here.
+
+## FTSOv2 price boundary
+
+`ShieldFtsoV2Oracle` is the only new contract compared with the template.
+
+- **Resolution.** It reads `FtsoV2` through the canonical `FlareContractRegistry` on every call, and trusts both. They are Flare governance contracts.
+- **Static reads.** `getFeedById` is called through a view interface: a zero-value `STATICCALL` to the production contract, as Flare's `getTestFtsoV2()` does. A non-compliant FtsoV2 that writes state on read reverts, which the tests cover.
+- **Fees.** `calculateFeeById` must be zero, so a future fee makes prices fail closed rather than misbehave.
+- **Validation.** The adapter rejects:
+  - a zero value, or a value that normalizes to zero;
+  - a zero or future timestamp;
+  - an age above `maxAge` (300 s, bounded to at most 1 hour at construction);
+  - decimals outside −18…18.
+
+  Normalization to six decimals uses checked arithmetic.
+- **Consequence of failure.** An invalid or stale feed blocks protection, asset exits, exchange quotes and reference-market creation. Backing exits and maturity settlement never read a price.
+- **What it does not defend against.** Block-latency feeds can move within a block and are not manipulation-proof for large positions. For mainnet, settlement against FTSOv2 Scaling (anchor) feeds verified by Merkle proof is planned. FLR/USD is a reference price for valueless C2FLR on testnet.
 
 ## Accounting properties
 
-- All protected assets use 18 decimals; both approved backing choices use 6 decimals. Addresses, oracle and term configuration are immutable.
-- Backing admission uses a ceil-rounded collateral requirement (default 150%, configurable 125–300%). Partial exits release only the corresponding proportional entry claim; rounding leaves the residual claim attached to the remaining asset.
-- Provider entry/redemption is frozen while any protected exposure remains. This closes an unrealized-shortfall NAV-arbitrage route. Epochs last 1–30 days, with at most 100 open positions (closed positions free their slot), a 0.01 backing-unit minimum entry claim so dust cannot occupy every slot, and a final-exit-delay admission cutoff.
-- Permissionless per-position expiry does not call the owner. It segregates a fixed backing credit outside provider NAV and reserves; the owner subsequently pulls that credit. Forced expiry forfeits remaining asset upside.
-- Protected principal, surrendered provider inventory, indexed provider fee inventory, creator/protocol fee inventory, and unclaimed backing are distinct liabilities. New provider deposits do not inherit old earned fees; provider redemption does not withdraw fee inventory.
-- Partial exits charge realized gains on the selected slice only. Ownership transfers preserve entry basis, opening time and maturity, and revoke the old owner's control.
-- Gain-fee recipients use pull payments. Failed fee-recipient calls cannot block holder exit. Callers may direct earned-fee payouts to another nonzero recipient.
-- Slippage minima/maxima and deadlines bind reviewed asset entries/exits, provider deposits/redemptions, exchange trades, vault conversions and factory creation. Native wrapping is exactly 1:1.
+The pool is unchanged from the template:
 
-## Funded assets and oracle units
+- **Decimals and immutability.** Protected assets use 18 decimals and backing uses 6. Addresses, oracle and terms are immutable.
+- **Admission.** Backing admission uses a ceil-rounded requirement: 150% by default, 125–300% allowed. Partial exits release only the proportional entry claim.
+- **Freeze while exposed.** Provider entry and redemption are frozen while any protected exposure remains, which closes the unrealized-shortfall arbitrage route.
+- **Bounded epochs.** Epochs last 1–30 days. A market holds at most 100 open positions, with a 0.01 backing-unit minimum entry claim and an admission cutoff at the final exit delay.
+- **Permissionless expiry.** Anyone can settle an expired position. A fixed backing credit is set aside outside provider NAV, and the owner pulls it later. Forced expiry forfeits the remaining upside.
+- **Separate liabilities.** Protected principal, surrendered inventory, provider fees, creator and protocol fees, and unclaimed backing are distinct.
+- **Fees.** Partial exits charge only the exited slice's realized gain, and fee payouts are pull-based.
+- **Transfers.** Ownership transfers keep the entry basis, opening time and maturity.
+- **Bounds.** Slippage limits and deadlines bind every reviewed write. WC2FLR wrapping is Flare's own 1:1 WNat.
 
-awAVAX mints only against deposited native Fuji AVAX. Both ERC-4626 vaults hold actual aDEMO; their receipt value can rise only through funded assets such as donations. The exchange transfers finite actual inventory and never invents balances or fills. A stale reference feed blocks trading; no fallback uses the separate synthetic scenario.
+## Demo assets
 
-The bvaDEMO oracle converts an aDEMO-denominated protected-asset quote into six-decimal vault-share units. A protected floor is therefore a fixed **number of backing receipts**, not a fixed number of underlying aDEMO or dollars. Oracle round validation rejects nonpositive, stale, future and incomplete Chainlink rounds.
-
-Factory creation validates approved combinations, bounds terms, atomically seeds the new market and credits the creator's provider ownership. Unsuccessful funding leaves no registered market. No arbitrary token can be admitted through this factory.
+- **sDEMO.** A YieldShield faucet token. It is not USDT0 or Flare's testUSDT0, and its on-chain name says so.
+- **Vaults.** Both vaults hold actual sDEMO.
+- **Exchange.** It moves only finite, funded inventory.
+- **bvsDEMO floors.** A bvsDEMO-backed floor is a fixed number of receipts, not a fixed amount of sDEMO or dollars.
+- **WC2FLR.** Flare's canonical contract, not ours.
 
 ## Remaining limitations
 
-There is no continuous provider liquidity, automatic rollover, bridge, leverage, insurance guarantee, token launch, external yield strategy or fixed APY. Providers can lose capital. Surrendered assets carry directional risk. Very small reward-index rounding dust can remain in reward inventory; it cannot be taken as protected principal or provider capital. Native transfers to a nonpayable holder can fail; that holder can transfer its still-live position to a compatible address before maturity or choose a backing exit.
+There is:
 
-Browser/RPC reliability, user signing and Fuji testnet availability remain external dependencies. Tests and local signed demonstrations do not substitute for an independent audit, real-world liquidity/oracle assessment, production governance or economic validation. Circle USDC and BENQI sAVAX are reference research only.
+- no continuous provider liquidity;
+- no automatic rollover;
+- no bridge, leverage or token launch;
+- no external yield strategy and no fixed or promised return.
+
+Providers can lose their capital, and surrendered assets carry directional risk. Native transfers to a holder contract that cannot receive C2FLR can fail. That holder can transfer the position or choose a backing exit.
+
+These are not done yet:
+
+- FXRP (6 decimals), testUSDT0 backing, sFLR, FDC attestations and anchor-feed settlement;
+- any real wallet-extension test;
+- the public Coston2 journey, which waits for testnet gas.
+
+Tests, local journeys, the rehearsal and the probe do not replace an independent audit, economic review or legal review. Any mainnet release depends on all three.

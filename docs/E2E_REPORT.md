@@ -1,81 +1,102 @@
 # End-to-end verification
 
-Date: 11 October 2026.
+Date: 19 October 2026.
 
-## Scope and environment
+This is functional verification, not a security audit. No Coston2 transaction has been sent. The deployment is waiting for testnet gas ([OPERATIONS](OPERATIONS.md)). Each check below names its environment, because local, rehearsal and simulated results are not Coston2 activity.
 
-The test follows funding, acquisition, protection, position management, capital provision, claims and market creation through the application, checking confirmed chain state rather than treating a signature as success.
-
-Signed Avalanche browser transactions use the real application with an explicitly enabled development-only wallet on isolated Anvil chain 31337. The adapter uses unlocked disposable local accounts, checks the exact localhost origin and chain, and is absent from the production build. It is separate from any installed wallet extension.
-
-Fuji deployment remains deferred. No Fuji contract deployment or public-chain transaction is claimed. Actual Core/MetaMask extension confirmation screens are outside this verification.
-
-## Signed browser results
-
-The completed CUA journey produced **44 browser-initiated transactions with successful receipts**, separately identified from 26 local setup transactions and the 48-transaction native scripted journey. [Receipt evidence](evidence/e2e/browser-receipts.json) records methods, accounts, hashes, source hashes and final contract assertions.
-
-| Path | Observed result |
+| Environment | What runs there |
 |---|---|
-| Funding and acquisition | Faucet funding; native, wrapped and vault-receipt buys/sells; wrapping/unwrapping; both protected-vault and backing-vault deposits/redemptions. |
-| Holder lifecycle | Protection, partial asset and backing exits, ownership transfer and the new owner's close. |
-| Provider lifecycle | Capital provision, notice, gain-fee claim and withdrawal. |
-| Factory and fees | Custom bvaDEMO-backed pool with 160% collateral, 12% provider fee, 2% creator fee and one-day term; native protection and gain exit; creator/provider claims. |
-| Maturity | Third-party settlement, full provider redemption, then the holder's separate 0.025 bvaDEMO credit claim; final provider shares, reserved backing and holder credit all zero. |
-| Clock skew | Chain advanced to maturity while the workstation remained about a day earlier; the UI exposed settlement from chain time. [Evidence](evidence/e2e/skewed-clock.json). |
-| Delayed approval | Leaving protection while allowance signing was paused allowed the allowance to finish but stopped the hidden protection transaction. The pool's position count and reserves confirm no extra deposit. |
-| Wallet/network change | Network-change event cleared wallet, balances and quote; reconnect required a fresh review before a successful wrap. |
-| Unknown receipt | Real 120-second confirmation timeout retained the hash and removed Confirm. Restoring mining confirmed that exact transaction. [Evidence](evidence/e2e/unknown-receipt.json). |
+| **Live Coston2, read-only** | Direct reads, a read-only preflight and one `eth_call` simulation. Nothing is signed |
+| **Chain-114 rehearsal** | A disposable Anvil with Coston2's chain ID and Flare stand-ins at the canonical addresses. The real scripts sign with Anvil's public development account |
+| **Local chain 31337** | A disposable Anvil with stand-ins deployed normally; the scripted journey and the browser tests |
 
-Historical Activity entries marked unknown require manually checking their transaction link; automatic reconciliation is not implemented or claimed. [Browser success screenshot](evidence/e2e/browser-conversion-success.jpg).
+## Live Coston2, read-only
 
-## Public application checks
+**Plan probe** ([evidence](evidence/coston2-plan-probe.json), block 36791398). `Coston2PlanProbe` was installed by state override and called once. Inside that call, on Coston2's EVM and state:
 
-- Missing-wallet connection reports an actionable message and can be dismissed.
-- Invalid market selection blocks the workflow and recovers to the market catalogue without retaining the invalid query.
-- Provider → acquisition → faucet → acquisition → provider preserves the selected backing-vault market and exact six-decimal amount. The conversion amount and original provider amount remain independent.
-- Public writes remain visibly disabled while Fuji contracts await deployment.
-- After publishing, the custom domain served the expected production bundle, four icon links and no test-wallet controls. Desktop and 390px phone views had no horizontal page overflow; screenshots and exact release identity are in [HOSTING.md](HOSTING.md).
+- every plan contract deployed from the artifacts' creation code and passed the chain-114 guard;
+- the adapter resolved the real FtsoV2 and priced FLR/USD 0.00640948 as 6409 sDEMO micro-units per C2FLR;
+- the factory accepted the canonical WC2FLR and registered five markets;
+- 5 C2FLR and 5 WC2FLR protections opened with 0.032045 sDEMO entry claims;
+- plan execution used 23.44M gas, and Coston2's WNat deposit and transfer used 188k and 133k gas.
 
-## Recovery fixes
+**Preflight** ([evidence](evidence/coston2-preflight.json)). Every check passed except the balance:
 
-Each fix is committed separately. The release prevents older background reads replacing confirmed balances, invalidates transaction reviews when a route or input context changes, consumes reviews before signing to prevent replay after an unknown receipt, uses chain timestamps for financial readiness and deadlines, and clears resolved errors on a fresh review.
+- canonical registry;
+- WNat = WC2FLR;
+- FtsoV2 resolved;
+- read fee 0;
+- feed 1 s old.
 
-| Commit | Fix |
+The required balance is 43.985 C2FLR.
+
+**Status page** ([screenshot](evidence/coston2-status-desktop.png)). It reads FLR/USD through the registry, shows the value, age and fee, judges the reading valid with the adapter's rules, and shows the deployer waiting for faucet gas. [Desktop](evidence/coston2-home-desktop.png) and [390 px](evidence/coston2-home-mobile.png) home views have writes disabled and no horizontal overflow.
+
+## Chain-114 rehearsal
+
+[Evidence](evidence/coston2-rehearsal.json). The deployer was funded with exactly one faucet claim of 100 C2FLR.
+
+| Step | Result |
 |---|---|
-| `44c7019` | Keep older background responses from replacing confirmed account data. |
-| `e2cad3b` | Invalidate reviews after route unmount or an input changes away and back. |
-| `07b5b10` | Consume a review before signing so an uncertain receipt cannot replay it. |
-| `fb9ae80` | Read financial readiness and quote deadlines from chain time. |
-| `99db444` | Clear resolved errors when reviewing another operation. |
-| `9be366c` | Recheck wallet and review context after simulation, immediately before signing. |
+| `deploy-coston2 --local` preflight | Ready. Required 20.06 C2FLR at Anvil's fees |
+| `--broadcast` | 25 transactions, 24,259,374 gas, all receipts successful |
+| `verify-coston2 --local` | Runtime code, FTSOv2 and WC2FLR wiring, terms, seeds and funding verified |
+| Stale feed | `price()` reverted `STALE_PRICE`; it priced 6399 again after the feed was restored |
+| Replacement round 1 (6 days before maturity) | 7 transactions, 14,060,790 gas; five new markets; old ones recorded as retired |
+| `verify-coston2 --local` again | Verified against the `r1-` creation receipts |
 
-Development-wallet setup and test evidence are separate commits from these application fixes.
+**Scripted public journey** ([evidence](evidence/coston2-rehearsal-journey.json)). `coston2-journey.mjs --local` used a fresh tester funded with 15 C2FLR by the deployer. It completed 19 confirmed transactions:
 
-## Final checks
+1. 10,000 sDEMO claimed and 500 sDEMO provided to the scenario market;
+2. 5 C2FLR protected; 3 C2FLR wrapped and protected as WC2FLR;
+3. after the exit delay, a 2.5 C2FLR partial asset exit, then a backing exit for the remainder;
+4. the WC2FLR position transferred, and the new owner's backing exit;
+5. 1 WC2FLR bought from exchange inventory;
+6. 10 sDEMO deposited into the vault;
+7. provider notice, then full share redemption;
+8. the remaining WC2FLR unwrapped.
 
-- 10 JavaScript tests pass, including delayed responses, route/input changes, review replay and final pre-sign scope checks.
-- 32 Solidity tests pass, including two 256-run fuzz tests.
-- TypeScript checking and the Vite production build pass.
-- The separate native scripted lifecycle completed 48 successful transactions.
-- Production output contains no local-wallet bridge or local RPC markers. The Fuji manifest is unchanged: `awaiting-testnet-gas`, no deployed project addresses, no transactions.
-- Browser evidence identifies application source commit `d7f468c9d22dfa0f363ff9855b918eba1e86a885`; evidence commit `25a57c33a15de43761d33fe12e65eb9f436897dc` adds only the capture script and records.
+The same script will run against Coston2 once the deployment is funded.
 
-Native lifecycle receipts remain in [local-journey.json](evidence/local-journey.json). The final application source and production deployment are recorded in [HOSTING.md](HOSTING.md).
+## Local chain 31337
 
-This is functional verification, not a security audit.
+**Scripted journey** ([evidence](evidence/local-journey.json)): 57 confirmed transactions plus 3 expected reverts. The real `ShieldFtsoV2Oracle` reads a mock FtsoV2 through a mock registry, starting at FLR/USD 639928 with 8 decimals.
 
-## Fuji E2E, 12 October 2026
-
-After `verify:fuji` marked deployment `fuji-2026-10-12T18-48-56Z-8bd0c9` as `deployed-and-verified`, a second disposable account (`0xe869786d91bc01b8A7cCb781a2229F6afe6aa088`) was funded with 0.25 test AVAX from the deployer. It completed **19 confirmed Fuji transactions** (17 from the tester, 2 from the deployer), recorded with public hashes, blocks, gas and decoded events in [fuji-e2e.json](evidence/fuji-e2e.json):
-
-| Path | Observed result |
+| Path | Result |
 |---|---|
-| Faucet and provider capital | 10,000 aDEMO claimed; 1,000 aDEMO provided to the scenario market; withdrawal notice requested and cancelled |
-| Exchange and wrapper | 0.001 awAVAX bought from funded exchange inventory; 0.002 AVAX wrapped |
-| Protection | 0.003 awAVAX protected in the wrapped (Chainlink) market; 0.1 AVAX protected in the scenario market at 25 aDEMO/AVAX |
-| Partial asset exit with gain fees | Half the scenario position exited at 35 aDEMO/AVAX; `GainFeesCharged` 0.001429 AVAX provider reward and 0.000143 AVAX each to creator and protocol, as predicted |
-| Backing exits | Remaining scenario half and the full wrapped position exited to their fixed aDEMO floors |
-| Claims | Tester claimed its 0.000952 AVAX reward share (two thirds of providers); the deployer pulled creator and protocol fees |
-| Notice and redemption | After the 120-second notice, half the tester's provider shares redeemed for 499.583333 aDEMO plus 0.016667 AVAX surrendered inventory |
+| Plan | Stand-ins, then the full plan, then five seeded markets |
+| Holder | 5 WC2FLR bought and protected. FLR/USD doubled in the mock, then a partial gain exit charged the 12% fee split. The remainder was transferred and the new owner took a backing exit |
+| Provider and fees | Earned-fee claim, notice, partial basket redemption, and the creator and protocol fee pull |
+| Exchange and vaults | WC2FLR sale; vault redemption; a vault-backed protection paid in bvsDEMO receipts, which were then redeemed |
+| Stale feed | Protection, asset exit and exchange buy each reverted `STALE_PRICE`; the backing exit on the same stale feed paid in full |
+| Maturity | Scenario-market protection, permissionless settlement, then the holder's segregated claim |
 
-All five featured markets ended with no open positions, so provider entry stays open. Not exercised on Fuji: maturity settlement and the segregated `claimBacking` credit, because featured epochs last 30 days (they are covered by the Solidity suite and the local journey). Ownership transfer and vault-receipt (vaDEMO/bvaDEMO) protection were also not exercised. A script signed these transactions with disposable keys; no browser wallet extension was involved. Before broadcasting, the same journey passed against a local fork of Fuji containing the real deployment.
+**Browser** ([receipts](evidence/e2e/browser-receipts.json)). These are Playwright tests through the real app, with an injected provider forwarding to Anvil accounts 2 and 3; no wallet extension was involved. The run produced 10 browser-signed transactions, and all succeeded:
+
+1. faucet, then 500 sDEMO provided to the wrapped market;
+2. 5 WC2FLR bought and protected;
+3. the mock feed doubled, then a 2.5 WC2FLR partial exit;
+4. earned-fee claim, the activity journal, then disconnect.
+
+The final state assertions held: one position, 2.5 WC2FLR and its claim still reserved, and no unclaimed fees.
+
+The same run also checked two regressions:
+
+- a delayed exchange quote cannot revive a previous asset review;
+- the status page labels a fresh feed valid and a 301 s old feed `Rejected (STALE_PRICE)`.
+
+[Local markets](evidence/local-markets-desktop.png) and [local status](evidence/local-status-desktop.png) screenshots are attached.
+
+## Checks run on 19 October 2026
+
+- `forge test --root contracts`: 57 passed, including four 256-run fuzz tests.
+- `npm test`: 14 passed.
+- `npm run build`: passed. The production bundle cannot enable local-chain mode.
+- `npm run test:browser`: 6 public tests passed. With `SHIELD_LOCAL_E2E=1`, 3 local-chain tests passed.
+
+## Not verified yet
+
+- **Coston2 broadcast.** Any Coston2 deployment, verification or public journey waits for faucet gas.
+- **Wallet extension.** No real extension (MetaMask or another EIP-1193 wallet) has signed. Every run used scripted keys or an injected test provider.
+- **Maturity on Coston2.** Featured epochs last 30 days. Settlement on Coston2 is covered only locally and by the Solidity suite.
+- **Gain fees on Coston2.** They depend on FLR/USD rising between entry and exit.

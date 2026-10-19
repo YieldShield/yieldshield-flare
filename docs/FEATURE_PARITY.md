@@ -1,35 +1,34 @@
-# Avalanche workflow parity
+# Flare feature parity
 
-Comparison date: 11 October 2026. Reference: the working Base, BNB and current Monad applications, including their market, trading, protection, provider and position journeys. Public release identity and screenshots are recorded in [HOSTING.md](HOSTING.md).
+Compared on 19 October 2026 with the `yieldshield-avalanche` template it derives from ([PROVENANCE](PROVENANCE.md)).
 
-## Implemented workflows
+## Workflows
 
-| Workflow | Avalanche implementation |
+Every template workflow is present with Flare assets:
+
+| Workflow | Flare implementation |
 |---|---|
-| Discover and inspect markets | `/markets`, `/pools/:key`; five prepared markets, approved asset/backing pairs, factory-created pool discovery and public terms |
-| Protect an asset | `/protect`; exact entry claim, collateral, maturity and fee review; wallet and quote guards; separate confirmed position link |
-| Provide capital | `/provide`; public provider shares, partial withdrawal, notice and cancellation, separate gain-fee claims and maturity settlement controls |
-| Manage positions | `/positions`, `/positions/:key`; partial/full asset or backing exits, transfer of remaining holder rights, segregated maturity claims |
-| Buy, sell and convert | `/trade`; funded exchange with 0.3% fee and signed limits/deadlines; AVAX wrapper plus funded protected and backing vault conversions |
-| Create a pool | `/create-pool`; bounded fees, collateral and timing; selectable approved asset/oracle/backing; atomic creation and initial provider funding |
-| Fund a journey | `/faucet`, `/assets`; test-token claim, official Fuji faucet and explicit token identities; acquisition links preserve role, market and amount |
-| Account and history | `/portfolio`, `/activity`; balances, disconnect and browser-local transaction journal with confirmation status and explorer links |
-| Understand readiness | `/status`, `/how-it-works`, `/learn/scenarios`, `/legal`; contract status, unknown-read handling, interactive outcomes and chain-specific terms |
+| Discover and inspect markets | `/markets`, `/pools/:key`: five featured markets, factory-created pools, public terms and price sources |
+| Protect an asset | `/protect`: C2FLR, WC2FLR or vsDEMO at the FTSOv2 or vault price, with the entry claim, collateral, maturity and fees reviewed before signing |
+| Provide capital | `/provide`: provider shares, notice, partial withdrawal, separate gain-fee claims and settlement controls |
+| Manage positions | `/positions`, `/positions/:key`: partial or full asset and backing exits, transfer, segregated maturity claims |
+| Buy, sell and convert | `/trade`: funded exchange with a 0.3% fee and signed limits; C2FLR ↔ WC2FLR through Flare's WNat; vault conversions |
+| Create a pool | `/create-pool`: approved asset, oracle and backing pairs, with an atomic 500-unit creator seed |
+| Fund a journey | `/faucet` (sDEMO faucet and Flare's C2FLR faucet), `/assets`: exact token identities |
+| Account and history | `/portfolio`, `/activity`: balances and the browser-local transaction journal |
+| Understand readiness | `/status` (now with a live FTSOv2 reading judged by the adapter's rules), `/how-it-works`, `/legal` |
 
-The asset set is native Fuji AVAX, the explicitly named Alpine test wrapper `awAVAX`, funded 18-decimal protected vault receipts `vaDEMO`, six-decimal `aDEMO` and six-decimal backing-vault receipts `bvaDEMO`. These are not canonical WAVAX, USDC or BENQI positions.
+## Deliberate differences
 
-## Deliberate native differences
+- **Price.** FTSOv2 block-latency FLR/USD, resolved through the FlareContractRegistry on every read, with a 300 s maximum age, replaces Chainlink AVAX/USD with 1,200 s. The read fee must be zero.
+- **Wrapper.** WC2FLR is Flare's canonical wrapper, not a YieldShield contract.
+- **Scale.** FLR trades near 0.0064 USD, so amounts are larger. The minimum entry claim of 0.01 sDEMO is about 1.6 C2FLR, and the app's quick amounts are 2, 5 and 10 C2FLR.
 
-- Pools use bounded fixed epochs. At maturity, remaining protected assets are surrendered for the fixed backing claim, including any remaining upside. Holders can choose an asset exit before maturity.
-- Provider entry and redemption freeze while holder liabilities remain. Permissionless maturity settlement releases those liabilities. Gain fees remain separate from acquired principal.
-- Holder rights can be transferred by contract method. Provider shares are address-bound balances, not transferable junior NFTs.
-- Partial exits realize fees on the exited slice and preserve the remaining position's original timing. This differs from whole-position fee crystallization and receipt reissue in other versions.
-- Pool creation requires 500 units of the selected backing as an initial provider deposit. This is credited to creator LP shares; it is not a listing fee or refundable factory bond.
-- A claim denominated in `bvaDEMO` fixes receipt units, not dollars. Vault redemption value can change. Activity is limited to transactions recorded in this browser, not a complete indexer.
-- The demo deliberately caps factory pools and concurrently open positions per pool (100, each with at least a 0.01 backing-unit entry claim). Those bounds are shown in the interface and keep ownership discovery complete: pools publish their open position ids.
+## Not yet on Flare
 
-## Release boundary
+These are researched and planned as grant milestones ([research](RESEARCH_AND_SCOPE.md)):
 
-When this comparison was made, Fuji contracts were not yet deployed and public writes were disabled. They were deployed and verified on 12 October 2026, and the website now enables writes against that deployment; see [OPERATIONS.md](OPERATIONS.md) and the [Fuji E2E](E2E_REPORT.md#fuji-e2e-12-october-2026). Local contract/lifecycle evidence is still not evidence of Fuji activity.
-
-Browser acceptance covered the separate protection/provider pages, direct routes, market selection, funding return context, invalid-pool rejection, wallet-unavailable recovery, and desktop/mobile layouts. The later end-to-end pass completed 44 confirmed transactions through the actual browser application with an isolated local wallet, plus 48 separately scripted local-chain transactions. [E2E_REPORT.md](E2E_REPORT.md) records lifecycle, race and recovery coverage. Actual wallet-extension approval screens remain unverified.
+- **FAssets FXRP.** It has 6 decimals; the pool accepts only 18-decimal protected assets.
+- **testUSDT0 as backing.** It is governance-minted and faucet-only behind reCAPTCHA.
+- **sFLR and its FTSO custom feed.** Both exist on Flare mainnet only.
+- **FDC attestations and FTSOv2 Scaling (anchor) feeds.**

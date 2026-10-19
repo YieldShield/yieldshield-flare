@@ -1,7 +1,7 @@
 {
   "network": "Local Anvil only (chain 31337) with Flare stand-ins; not Coston2",
   "chainId": 31337,
-  "createdAt": "2026-10-19T07:27:37.448Z",
+  "createdAt": "2026-10-19T07:36:02.819Z",
   "priceSource": "Real ShieldFtsoV2Oracle reading MockFtsoV2 through MockFlareContractRegistry (FLR/USD 639928, 8 decimals, as read on Coston2 on 19 October 2026)",
   "sourceHash": {
     "contracts/src/ShieldPool.sol": "0x365ec0b392374fe5c7f729a5fbe21095e059e484eec99bca29143ac3dd593449",
@@ -154,7 +154,7 @@
     },
     {
       "label": "vault-funded-deposit",
-      "hash": "0x45556d088b04b15bc3a9d135ba1fc41e8a684f28a9b46f949ebb3ab68a4c9c02",
+      "hash": "0x316bfc348f1e0b051bcfe6b02b56f28325d04ee737daaa10b38bb5364f133e17",
       "blockNumber": "17",
       "status": "success",
       "contractAddress": null
@@ -168,7 +168,7 @@
     },
     {
       "label": "backing-vault-funded-deposit",
-      "hash": "0x59c64d734837f4299b3db2ef46e66a3a52e76b830da6021b98a3d17c0a685bac",
+      "hash": "0x43c44e47d078c6ab26146557f106a19feab9f1de2af4429662382824ff1a9e5b",
       "blockNumber": "19",
       "status": "success",
       "contractAddress": null
@@ -196,35 +196,35 @@
     },
     {
       "label": "referencePool-factory-create",
-      "hash": "0xa8442f75a03b899edb9723c434c88f031729a6f5f9d79725d8d39778f71b7daa",
+      "hash": "0x9b18b3914515dcf432ae4576b286494ef99c00db2e078a7fce0a4d04153bda8b",
       "blockNumber": "23",
       "status": "success",
       "contractAddress": null
     },
     {
       "label": "scenarioPool-factory-create",
-      "hash": "0x21c683446399aefe8975af511b4d8987e2eaecf042cd1e4f14ec8042963305d0",
+      "hash": "0xe1f64a4a605fcf05c123a50509f81574ca97cf06c1fc8bcc52536b5de4c386a8",
       "blockNumber": "24",
       "status": "success",
       "contractAddress": null
     },
     {
       "label": "wrappedPool-factory-create",
-      "hash": "0x38537c7f75855adb8a49ef7f8a0a4df72dfe51bc9a1129b2acd88a03b5b63035",
+      "hash": "0x163a87a2657411d8528e9deb4d1ef24ec6ca2960bedb471314d92e756e9f2603",
       "blockNumber": "25",
       "status": "success",
       "contractAddress": null
     },
     {
       "label": "vaultPool-factory-create",
-      "hash": "0x680c804405215deafdda7d82dc9865607aa4786371694b46db167a8f829d5163",
+      "hash": "0xa029dceca161463231cc63e643a67396d22cedfaec0c7d12dcfbb53704d3fd8d",
       "blockNumber": "26",
       "status": "success",
       "contractAddress": null
     },
     {
       "label": "vaultBackingPool-factory-create",
-      "hash": "0x4d904cdf7c5195f9ddf8a83cc941c3584a39ae0f27c4e3126ea418565c39da65",
+      "hash": "0x0a7442246d0bcd897dace40a01c27918be94f3eb74ba6088b98a27cacc9ceada",
       "blockNumber": "27",
       "status": "success",
       "contractAddress": null
@@ -273,7 +273,7 @@
     },
     {
       "label": "holder-buy-wrapper",
-      "hash": "0x8088e095f1bf7321bb0ebcfab2d6565041b733dbfad85bb32374dabb8d4981e0",
+      "hash": "0x69e7e0cc6406c62502f4ff8fbfd320f59a9c98888b6435d0f06a9fc3aeefc55a",
       "blockNumber": "34",
       "status": "success",
       "contractAddress": null
@@ -287,7 +287,7 @@
     },
     {
       "label": "holder-protect-bought-wrapper",
-      "hash": "0xeaf7ff3db3153f83dea3f213b9c2dd537cd010b3a2f5e0e5fd6479f48c650d18",
+      "hash": "0x5f06ee85a54544990c96686a70d4b015eb338da17ded152878e9ed1b9bc855d7",
       "blockNumber": "36",
       "status": "success",
       "contractAddress": null
@@ -301,7 +301,7 @@
     },
     {
       "label": "holder-partial-asset-exit",
-      "hash": "0x499021d9feef5628bf63e3297787b82536a0c694247ca8257fc0ee6fb11a5bd7",
+      "hash": "0xd02e60f35e5415188b7c245133046dacd159d3bf6eee4ca977546d31f5bfa02d",
       "blockNumber": "39",
       "status": "success",
       "contractAddress": null
@@ -322,7 +322,7 @@
     },
     {
       "label": "new-owner-backing-exit",
-      "hash": "0x76b82f589f0827f1418aec6654e97b1eb713c78d6632341f9e6c4bd3492ec9e7",
+      "hash": "0xf9678b88d060f4bebfb5bddc80f5ff965f911569aa0ffb2f471096ff957329a1",
       "blockNumber": "42",
       "status": "success",
       "contractAddress": null
@@ -336,7 +336,7 @@
     },
     {
       "label": "provider-partial-redemption",
-      "hash": "0x734936a53ee0fc856f25424e67f478e77afbe4df97789f2045c29b1a7bc278eb",
+      "hash": "0x679c3a36a610805942c71ed54f358db4439c624d4af95d84fa2a9e199ae47609",
       "blockNumber": "45",
       "status": "success",
       "contractAddress": null
@@ -357,21 +357,21 @@
     },
     {
       "label": "holder-sell-wrapper",
-      "hash": "0xc3b3348577ce2410048968e69c5d00c84aa8e8d9a50918490f1c7b5e1bad080b",
+      "hash": "0x8aebbe131f9eb2ae40cecdc64b1a55189826786d536a27675219512cdb15f3ab",
       "blockNumber": "48",
       "status": "success",
       "contractAddress": null
     },
     {
       "label": "vault-bounded-redeem",
-      "hash": "0x1fde769d9575536f0a43a16104fd403116ae397dd1e05205132156f1e013fca4",
+      "hash": "0x7dd6e88fcd26fba80d5b0a9688310757c47b5330264826f92d6190ed9c720ef7",
       "blockNumber": "49",
       "status": "success",
       "contractAddress": null
     },
     {
       "label": "holder-vault-backing-protect",
-      "hash": "0x6cf636ffd43fd203450684d71f0ec6a69abac448903ec9f9c3334a788a9c9f35",
+      "hash": "0x14d87560903c37870838c386ec686a6fb8458a441121a8a2a07432e5b90a60db",
       "blockNumber": "50",
       "status": "success",
       "contractAddress": null
@@ -385,21 +385,21 @@
     },
     {
       "label": "holder-backing-vault-redeem",
-      "hash": "0x48546661e01b34e9b69f86de82f09f4a78cf609975b0e6ccd343c8b84a55f9d9",
+      "hash": "0x7094bd064986a4ec1c4fbe6acc3f5ae4ed6b9a021926dc4e5b818a943a224918",
       "blockNumber": "53",
       "status": "success",
       "contractAddress": null
     },
     {
       "label": "holder-reference-protect",
-      "hash": "0xf5a31d9c97d0c42e22e0dc16198a8b2015ba8c697c94c678a3e4fa0565cee2ba",
+      "hash": "0xa737252885388ab7832cb77e40bcdaff0b352d802ee74e47ccfbcf9d74b36674",
       "blockNumber": "54",
       "status": "success",
       "contractAddress": null
     },
     {
       "label": "local-ftso-feed-goes-stale",
-      "hash": "0x0bb4a01145a8006b20717a3a806b43ea365cec1096f0aa9d28fed21ad67b8926",
+      "hash": "0xa75106235fd264662ee60a3a63dbf964aa0b86da3789c6e07da49f11cfb27952",
       "blockNumber": "56",
       "status": "success",
       "contractAddress": null
@@ -420,7 +420,7 @@
     },
     {
       "label": "holder-scenario-protect",
-      "hash": "0xb0e1594ad0bdb37aec7305c19bcbc2646ea1738b5a188395d3b2459ae73f387a",
+      "hash": "0x0534c66d26eee155de21fc92b50c2737afbd7924265ab477a10a823a59845396",
       "blockNumber": "59",
       "status": "success",
       "contractAddress": null
