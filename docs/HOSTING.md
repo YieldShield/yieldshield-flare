@@ -18,7 +18,7 @@ The build reads the `deployed-and-verified` manifest of Coston2 deployment `cost
 - At 390 px the home page renders without horizontal overflow.
 - `/.secrets/…` paths return only the SPA shell; `.secrets` is excluded by `.vercelignore` and never tracked in git.
 
-The GitHub repository is still private. No real wallet-extension transaction has been recorded yet.
+The GitHub repository has been public since 19 October 2026. No real wallet-extension transaction has been recorded yet.
 
 ## Target
 

@@ -1,6 +1,6 @@
 # Flare Grants Program: YieldShield Flare
 
-**Status: draft, not submitted.** Prepared 19 October 2026. Nothing has been entered into the form, no terms have been accepted and nothing has been posted. The contracts are **deployed and verified on Coston2**: deployment `coston2-2026-10-19T07-50-55Z-34db01`, factory `0xd6488c73f25663f3ba252aab053932cb5fae1f3c`. A fresh test wallet completed a 19-transaction journey there. The code lives in [`YieldShield/yieldshield-flare`](https://github.com/YieldShield/yieldshield-flare), which is private. The website is live at https://flare.yieldshield.ai; no real wallet-extension transaction has been made yet. Proposed request: **$20,000 equivalent in FLR, paid per milestone.**
+**Status: draft, not submitted.** Prepared 19 October 2026. Nothing has been entered into the form, no terms have been accepted and nothing has been posted. The contracts are **deployed and verified on Coston2**: deployment `coston2-2026-10-19T07-50-55Z-34db01`, factory `0xd6488c73f25663f3ba252aab053932cb5fae1f3c`. A fresh test wallet completed a 19-transaction journey there. The code lives in [`YieldShield/yieldshield-flare`](https://github.com/YieldShield/yieldshield-flare), which has been public (MIT) since 19 October. The website is live at https://flare.yieldshield.ai; no real wallet-extension transaction has been made yet. Proposed request: **$20,000 equivalent in FLR, paid per milestone.**
 
 - **Program page:** https://flare.network/resources/grants
 - **Form (Airtable):** https://airtable.com/appyfl68ek3SOoCLh/shrqTkjFHruvr3dMk
@@ -34,7 +34,8 @@ This section compares the draft with the 17 October application plan and the 14 
 
 - [x] **Fund and deploy.** Done on 19 October: faucet gas, deployment, `verify:coston2` and the 19-transaction journey. On the day you submit, rerun `npm run verify:coston2`. It only reads the chain and updates `verifiedAt` in the manifest.
 - [x] **Publish the site.** Done on 19 October: https://flare.yieldshield.ai serves the deployed Coston2 markets ([HOSTING](../HOSTING.md)).
-- [ ] **Repository access.** It is private. Either make it public (MIT) and enable private vulnerability reporting, or share access with the committee. The Links answer currently assumes a public repo.
+- [x] **Repository access.** Public (MIT) since 19 October, as the Links answer assumes.
+- [ ] **Private vulnerability reporting.** Enable it in the repository's security settings so the reporting route in SECURITY.md works.
 - [ ] **Pitch deck.** The page asks for one. Add its link, or remove that line.
 - [ ] **Wallet-extension test.** Still open. Do one real MetaMask transaction on the deployed Coston2 markets, ideally on the published site. Every recorded run so far used scripted keys or an injected test provider. Then update the Project Description sentence that says so.
 - [ ] **1-year commitment.** Decide the checkbox (see David-only actions). The answer must not contradict the Taiko ("early launch chain"), Circle ("Arc central") or Arbitrum Security Program (possible exclusivity) answers.
@@ -304,5 +305,5 @@ These are owner steps; an agent must not do them.
 Related owner steps:
 - the featured-market replacement before 18 November 2026, 07:51 UTC (more faucet C2FLR after about two rounds);
 - publishing `flare.yieldshield.ai`;
-- deciding whether to make the repository public;
+- enabling private vulnerability reporting on the public repository;
 - updating the main repo's funding register.
