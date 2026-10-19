@@ -136,7 +136,7 @@ The same run also checked two regressions:
 ## Not verified yet
 
 - **Wallet extension.** No real extension (MetaMask or another EIP-1193 wallet) has signed. Every Coston2 and local run used scripted keys or an injected test provider.
-- **Website.** It is not published, so no public-site check exists yet ([HOSTING](HOSTING.md)).
+- **Website.** Published on 19 October 2026 at https://flare.yieldshield.ai. Only scripted checks of the custom domain exist so far ([HOSTING](HOSTING.md)); no person has used it with their own wallet.
 - **Maturity on Coston2.** Featured epochs run until 18 November 2026. Settlement on Coston2 is covered only locally and by the Solidity suite.
 - **Gain fees on Coston2.** They depend on FLR/USD rising between entry and exit.
 - **Explorer source verification.** The verify script compares runtime code with the build, but sources have not been submitted to the Coston2 explorer.

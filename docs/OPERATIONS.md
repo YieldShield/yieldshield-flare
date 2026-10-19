@@ -57,7 +57,6 @@ The deploy and replacement scripts sign intents through viem's `prepareTransacti
 
 Still open:
 - one real wallet-extension transaction;
-- publishing the website ([HOSTING](HOSTING.md));
 - optional source verification on the Coston2 explorer.
 
 The scripts have no mainnet mode. Every contract also rejects any chain other than 114 or the local 31337.

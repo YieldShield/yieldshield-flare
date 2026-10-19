@@ -4,7 +4,7 @@
 
 Split-risk markets on Flare Testnet Coston2. Holders protect C2FLR or WC2FLR exposure against a fixed backing claim, valued at entry by Flare's enshrined FTSOv2 oracle and reserved at 150% by separately funded capital providers. Every reserve, exit and fee is enforced and visible on-chain.
 
-**Planned site:** https://flare.yieldshield.ai (not published yet; see [HOSTING](docs/HOSTING.md)). **Network:** Flare Testnet Coston2, chain 114. **License:** [MIT](LICENSE).
+**Live site:** https://flare.yieldshield.ai (published 19 October 2026; see [HOSTING](docs/HOSTING.md)). **Network:** Flare Testnet Coston2, chain 114. **License:** [MIT](LICENSE).
 
 > Testnet only and unaudited. No asset here has monetary value. sDEMO is not USDT0 or Flare's testUSDT0. FTSOv2 FLR/USD is used as a reference price for C2FLR, which has no value. Do not use this code with real funds.
 
@@ -21,7 +21,7 @@ Split-risk markets on Flare Testnet Coston2. Holders protect C2FLR or WC2FLR exp
   - every deployment receipt.
 
   It was re-run read-only later the same day and passed again.
-- **Journey.** A second, fresh test wallet completed a **19-transaction journey on Coston2** ([evidence](docs/evidence/coston2-e2e.json)). The website is not published yet ([HOSTING](docs/HOSTING.md)).
+- **Journey.** A second, fresh test wallet completed a **19-transaction journey on Coston2** ([evidence](docs/evidence/coston2-e2e.json)). The website is published at https://flare.yieldshield.ai.
 - **Market dates.** The featured markets accept protection until **18 November 2026, 07:51 UTC**, and must be replaced before then ([OPERATIONS](docs/OPERATIONS.md#monthly-featured-market-replacement)).
 
 **Gas-margin fix.** The first journey attempt ([evidence](docs/evidence/coston2-e2e-attempt1.json)) stopped when its native protection ([`0x2cf5…a9ee`](https://coston2-explorer.flare.network/tx/0x2cf501cc27882a6e60f44e7e424ba66ec120a1ba55a67b7995f1ceb530f2a9ee)) ran out of gas:
@@ -58,7 +58,7 @@ The Coston2 journey covered:
 
 **Not done yet:**
 - No real wallet-extension transaction. Every run used scripted keys or an injected test provider.
-- The website is not published.
+- The website was only checked by script and browser automation; no person has used it with their own wallet yet.
 - Contract sources are not yet verified on the Coston2 explorer.
 
 Test activity is not traction. There are no users, no revenue and no TVL. The code was written with substantial AI assistance and has had no independent audit.

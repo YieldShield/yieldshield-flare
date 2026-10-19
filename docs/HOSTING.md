@@ -1,14 +1,24 @@
-# Hosting (prepared, not created)
+# Hosting
 
-**Nothing here has been created or published yet.** As of 19 October 2026:
+**Published on 19 October 2026** at https://flare.yieldshield.ai.
 
-- no Vercel project or domain exists for this repository;
-- no public deployment has been made;
-- the GitHub repository is private.
+| Item | Value |
+|---|---|
+| Vercel project | `yieldshield-flare` (`prj_jVo9qmQoGS7ArDkC4XHbzAQku8Z5`), Git-connected to `YieldShield/yieldshield-flare` |
+| Production deployment | `dpl_127haiBx8n2f6H7aaoqyhxPMMLZz`, built by Vercel from commit `25d21e6` on `main`, READY and aliased to `flare.yieldshield.ai` |
+| Protection | Vercel Authentication on every deployment URL except the custom domain, as on `yieldshield-avalanche` |
 
-The contracts, however, are deployed and verified on Coston2: deployment `coston2-2026-10-19T07-50-55Z-34db01`, factory `0xd6488c73f25663f3ba252aab053932cb5fae1f3c`. The manifest on `main` is `deployed-and-verified`, so a build from `main` enables writes against it.
+The build reads the `deployed-and-verified` manifest of Coston2 deployment `coston2-2026-10-19T07-50-55Z-34db01` (factory `0xd6488c73f25663f3ba252aab053932cb5fae1f3c`), so writes are enabled.
 
-This page is the plan for the owner to carry out.
+**Checks on the custom domain (19 October 2026):**
+- `/`, `/markets`, `/status`, `/protect` and `/how-it-works` return 200.
+- All five security headers below are present.
+- The entry bundle `/assets/index-BRzyXjXi.js` contains the factory address.
+- `/markets` lists the live markets with FTSOv2 prices (0.006329 sDEMO per C2FLR at the time) and their available entry claims, with no deployment gate.
+- At 390 px the home page renders without horizontal overflow.
+- `/.secrets/…` paths return only the SPA shell; `.secrets` is excluded by `.vercelignore` and never tracked in git.
+
+The GitHub repository is still private. No real wallet-extension transaction has been recorded yet.
 
 ## Target
 
@@ -42,8 +52,10 @@ This page is the plan for the owner to carry out.
 
 ## Owner steps
 
-1. Create the Vercel project from the GitHub repository with the settings above. Keep deployment protection on previews.
-2. Add the domain `flare.yieldshield.ai` and create the DNS record Vercel asks for.
+Steps 1–4 were done on 19 October 2026 (see the top of this page).
+
+1. ~~Create the Vercel project from the GitHub repository with the settings above. Keep deployment protection on previews.~~
+2. ~~Add the domain `flare.yieldshield.ai` and create the DNS record Vercel asks for.~~
 3. Check the production build:
    - the entry bundle contains the factory `0xd6488c73f25663f3ba252aab053932cb5fae1f3c`, `deployed-and-verified` and no `awaiting-testnet-gas`.
 4. Check the production URL:
