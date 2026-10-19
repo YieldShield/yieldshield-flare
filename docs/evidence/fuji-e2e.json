@@ -1,0 +1,412 @@
+{
+  "network": "Avalanche Fuji C-Chain (43113)",
+  "explorer": "https://testnet.snowtrace.io",
+  "createdAt": "2026-10-12T19:12:40.407Z",
+  "commit": "22050b28daebde173b35d047d834cad5fad2edb4",
+  "deploymentId": "fuji-2026-10-12T18-48-56Z-8bd0c9",
+  "deployer": "0x24b48b241bB2F8099e70EA664e196a1765845693",
+  "tester": "0xe869786d91bc01b8A7cCb781a2229F6afe6aa088",
+  "markets": {
+    "scenarioPool": "0xB9C1ad7d679c512721C3C001c4c8A69697AC2b2d",
+    "wrappedPool": "0xBc4fC5F631CC1E59375B4BC101f33DB402Fdd2Cd",
+    "exchange": "0x680e68bab322ca20ffd9d5a030596a052d8e598c",
+    "wrapper": "0x4d4d51e698c31c32e1a94155c9c71950dcce51f4",
+    "backingToken": "0xf5b40cf00980e23a6bf345907624dde104a5645d"
+  },
+  "steps": [
+    {
+      "label": "deployer-funds-tester",
+      "from": "0x24b48b241bB2F8099e70EA664e196a1765845693",
+      "to": "0xe869786d91bc01b8a7ccb781a2229f6afe6aa088",
+      "hash": "0x4fb7a1a3fcf8cb0bbd3d3384d4e3f8c78b224399a3f510ef0388e96aa73fa377",
+      "blockNumber": "59349530",
+      "timestamp": 1791831675,
+      "status": "success",
+      "gasUsed": "21000",
+      "events": []
+    },
+    {
+      "label": "tester-faucet-aDEMO",
+      "from": "0xe869786d91bc01b8A7cCb781a2229F6afe6aa088",
+      "to": "0xf5b40cf00980e23a6bf345907624dde104a5645d",
+      "hash": "0xe32f9590b1182efab66bff840d7c96d5764b65e09f03d779bf9635493cabf400",
+      "blockNumber": "59349534",
+      "timestamp": 1791831680,
+      "status": "success",
+      "gasUsed": "73021",
+      "events": []
+    },
+    {
+      "label": "tester-approve-scenario-pool",
+      "from": "0xe869786d91bc01b8A7cCb781a2229F6afe6aa088",
+      "to": "0xf5b40cf00980e23a6bf345907624dde104a5645d",
+      "hash": "0x7dc6eabc655717f252ff58eb664708d47e17cecb2aa508e08fd0365ec7cc2c62",
+      "blockNumber": "59349539",
+      "timestamp": 1791831685,
+      "status": "success",
+      "gasUsed": "46330",
+      "events": []
+    },
+    {
+      "label": "tester-provide-capital-scenario",
+      "from": "0xe869786d91bc01b8A7cCb781a2229F6afe6aa088",
+      "to": "0xb9c1ad7d679c512721c3c001c4c8a69697ac2b2d",
+      "hash": "0x7373afbde3a0d4fca85054615716fc3e5a94c37f6920b97f4a7119fc2603fd59",
+      "blockNumber": "59349542",
+      "timestamp": 1791831690,
+      "status": "success",
+      "gasUsed": "99957",
+      "events": [
+        {
+          "event": "JuniorDeposited",
+          "address": "0xb9c1ad7d679c512721c3c001c4c8a69697ac2b2d",
+          "args": {
+            "owner": "0xe869786d91bc01b8A7cCb781a2229F6afe6aa088",
+            "backingAmount": "1000000000",
+            "sharesMinted": "1000000000000000000000"
+          }
+        }
+      ]
+    },
+    {
+      "label": "tester-request-withdrawal-notice",
+      "from": "0xe869786d91bc01b8A7cCb781a2229F6afe6aa088",
+      "to": "0xb9c1ad7d679c512721c3c001c4c8a69697ac2b2d",
+      "hash": "0x729351220d19a029ab6a2541d3abac1fe7df0d37e1d611c603f4ff8cb176ad98",
+      "blockNumber": "59349543",
+      "timestamp": 1791831692,
+      "status": "success",
+      "gasUsed": "49364",
+      "events": [
+        {
+          "event": "JuniorWithdrawalRequested",
+          "address": "0xb9c1ad7d679c512721c3c001c4c8a69697ac2b2d",
+          "args": {
+            "owner": "0xe869786d91bc01b8A7cCb781a2229F6afe6aa088",
+            "readyAt": "1791831812"
+          }
+        }
+      ]
+    },
+    {
+      "label": "tester-cancel-withdrawal-notice",
+      "from": "0xe869786d91bc01b8A7cCb781a2229F6afe6aa088",
+      "to": "0xb9c1ad7d679c512721c3c001c4c8a69697ac2b2d",
+      "hash": "0x97e9d7e200820094e5254d7e266d4f8e76232cecad302430295f830ac3e3517e",
+      "blockNumber": "59349546",
+      "timestamp": 1791831697,
+      "status": "success",
+      "gasUsed": "27559",
+      "events": [
+        {
+          "event": "JuniorWithdrawalCancelled",
+          "address": "0xb9c1ad7d679c512721c3c001c4c8a69697ac2b2d",
+          "args": {
+            "owner": "0xe869786d91bc01b8A7cCb781a2229F6afe6aa088"
+          }
+        }
+      ]
+    },
+    {
+      "label": "tester-approve-exchange",
+      "from": "0xe869786d91bc01b8A7cCb781a2229F6afe6aa088",
+      "to": "0xf5b40cf00980e23a6bf345907624dde104a5645d",
+      "hash": "0xefc4daa81f4630d3bb4d6e0cb9bfd0a953845ad68f0d1052031d44d09a8a0185",
+      "blockNumber": "59349547",
+      "timestamp": 1791831702,
+      "status": "success",
+      "gasUsed": "46318",
+      "events": []
+    },
+    {
+      "label": "tester-buy-awAVAX-exchange",
+      "from": "0xe869786d91bc01b8A7cCb781a2229F6afe6aa088",
+      "to": "0x680e68bab322ca20ffd9d5a030596a052d8e598c",
+      "hash": "0x4f8b4c76a4bed31b2a850e37297f61a830b721635d025a5bc7f8b84f7eafa848",
+      "blockNumber": "59349550",
+      "timestamp": 1791831707,
+      "status": "success",
+      "gasUsed": "113181",
+      "events": [
+        {
+          "event": "Traded",
+          "address": "0x680e68bab322ca20ffd9d5a030596a052d8e598c",
+          "args": {
+            "owner": "0xe869786d91bc01b8A7cCb781a2229F6afe6aa088",
+            "asset": "0x4D4D51E698c31c32e1A94155c9c71950dCcE51F4",
+            "buy": true,
+            "amount": "1000000000000000",
+            "backingAmount": "10357",
+            "fee": "31"
+          }
+        }
+      ]
+    },
+    {
+      "label": "tester-wrap-AVAX",
+      "from": "0xe869786d91bc01b8A7cCb781a2229F6afe6aa088",
+      "to": "0x4d4d51e698c31c32e1a94155c9c71950dcce51f4",
+      "hash": "0x297170f5fc9e86b4866b2c46263701ff8b6ace11b164d6bf9becd734a94e6a07",
+      "blockNumber": "59349552",
+      "timestamp": 1791831709,
+      "status": "success",
+      "gasUsed": "33549",
+      "events": []
+    },
+    {
+      "label": "tester-approve-wrapped-pool",
+      "from": "0xe869786d91bc01b8A7cCb781a2229F6afe6aa088",
+      "to": "0x4d4d51e698c31c32e1a94155c9c71950dcce51f4",
+      "hash": "0x7cd7250a48a08bc4a81458320d001c365ccd9c52245a9c6f90bf76690494458a",
+      "blockNumber": "59349555",
+      "timestamp": 1791831714,
+      "status": "success",
+      "gasUsed": "46366",
+      "events": []
+    },
+    {
+      "label": "tester-protect-awAVAX",
+      "from": "0xe869786d91bc01b8A7cCb781a2229F6afe6aa088",
+      "to": "0xbc4fc5f631cc1e59375b4bc101f33db402fdd2cd",
+      "hash": "0x68592a6bd270ee3fdf12c3dfcc342eae5d788b3b7bff4fcb715f23e10ece2e28",
+      "blockNumber": "59349558",
+      "timestamp": 1791831717,
+      "status": "success",
+      "gasUsed": "303529",
+      "events": [
+        {
+          "event": "Protected",
+          "address": "0xbc4fc5f631cc1e59375b4bc101f33db402fdd2cd",
+          "args": {
+            "id": "1",
+            "owner": "0xe869786d91bc01b8A7cCb781a2229F6afe6aa088",
+            "amount": "3000000000000000",
+            "floor": "30975"
+          }
+        }
+      ]
+    },
+    {
+      "label": "tester-protect-AVAX-scenario",
+      "from": "0xe869786d91bc01b8A7cCb781a2229F6afe6aa088",
+      "to": "0xb9c1ad7d679c512721c3c001c4c8a69697ac2b2d",
+      "hash": "0x67858ef579443a4529d8fb41cba841d6a7ec037895c514e6a830a921b7a00064",
+      "blockNumber": "59349754",
+      "timestamp": 1791832046,
+      "status": "success",
+      "gasUsed": "243184",
+      "events": [
+        {
+          "event": "Protected",
+          "address": "0xb9c1ad7d679c512721c3c001c4c8a69697ac2b2d",
+          "args": {
+            "id": "1",
+            "owner": "0xe869786d91bc01b8A7cCb781a2229F6afe6aa088",
+            "amount": "100000000000000000",
+            "floor": "2500000"
+          }
+        }
+      ]
+    },
+    {
+      "label": "tester-partial-asset-exit-gain",
+      "from": "0xe869786d91bc01b8A7cCb781a2229F6afe6aa088",
+      "to": "0xb9c1ad7d679c512721c3c001c4c8a69697ac2b2d",
+      "hash": "0x0fdbd5d5f4b76b8b563eb2fe7a83d63cb95327f71d61e2b20684875c838c611c",
+      "blockNumber": "59349846",
+      "timestamp": 1791832196,
+      "status": "success",
+      "gasUsed": "166777",
+      "events": [
+        {
+          "event": "GainFeesCharged",
+          "address": "0xb9c1ad7d679c512721c3c001c4c8a69697ac2b2d",
+          "args": {
+            "id": "1",
+            "providerReward": "1428571428571428",
+            "creatorFee": "142857142857142",
+            "protocolFee": "142857142857142"
+          }
+        },
+        {
+          "event": "Exited",
+          "address": "0xb9c1ad7d679c512721c3c001c4c8a69697ac2b2d",
+          "args": {
+            "id": "1",
+            "owner": "0xe869786d91bc01b8A7cCb781a2229F6afe6aa088",
+            "backingExit": false,
+            "amount": "50000000000000000",
+            "received": "48285714285714288"
+          }
+        }
+      ]
+    },
+    {
+      "label": "tester-backing-exit-scenario-remainder",
+      "from": "0xe869786d91bc01b8A7cCb781a2229F6afe6aa088",
+      "to": "0xb9c1ad7d679c512721c3c001c4c8a69697ac2b2d",
+      "hash": "0x22cbd8070000cc9eda0d8e66c069f62830fe1184cd82dfdc36dacb19196a695c",
+      "blockNumber": "59349848",
+      "timestamp": 1791832202,
+      "status": "success",
+      "gasUsed": "121895",
+      "events": [
+        {
+          "event": "Exited",
+          "address": "0xb9c1ad7d679c512721c3c001c4c8a69697ac2b2d",
+          "args": {
+            "id": "1",
+            "owner": "0xe869786d91bc01b8A7cCb781a2229F6afe6aa088",
+            "backingExit": true,
+            "amount": "50000000000000000",
+            "received": "1250000"
+          }
+        }
+      ]
+    },
+    {
+      "label": "tester-backing-exit-wrapped",
+      "from": "0xe869786d91bc01b8A7cCb781a2229F6afe6aa088",
+      "to": "0xbc4fc5f631cc1e59375b4bc101f33db402fdd2cd",
+      "hash": "0x63b5bf8b130c68d05bdad506e83c738c832e34cc46fa14a93243a2591d71b6f7",
+      "blockNumber": "59349850",
+      "timestamp": 1791832208,
+      "status": "success",
+      "gasUsed": "121524",
+      "events": [
+        {
+          "event": "Exited",
+          "address": "0xbc4fc5f631cc1e59375b4bc101f33db402fdd2cd",
+          "args": {
+            "id": "1",
+            "owner": "0xe869786d91bc01b8A7cCb781a2229F6afe6aa088",
+            "backingExit": true,
+            "amount": "3000000000000000",
+            "received": "30975"
+          }
+        }
+      ]
+    },
+    {
+      "label": "tester-claim-rewards",
+      "from": "0xe869786d91bc01b8A7cCb781a2229F6afe6aa088",
+      "to": "0xb9c1ad7d679c512721c3c001c4c8a69697ac2b2d",
+      "hash": "0x88c99f9cdd655df7ee4c8e633b23024263c1aff491d0a728ca7fc3929d111dfb",
+      "blockNumber": "59349853",
+      "timestamp": 1791832213,
+      "status": "success",
+      "gasUsed": "90730",
+      "events": [
+        {
+          "event": "RewardsClaimed",
+          "address": "0xb9c1ad7d679c512721c3c001c4c8a69697ac2b2d",
+          "args": {
+            "owner": "0xe869786d91bc01b8A7cCb781a2229F6afe6aa088",
+            "recipient": "0xe869786d91bc01b8A7cCb781a2229F6afe6aa088",
+            "amount": "952380952380952"
+          }
+        }
+      ]
+    },
+    {
+      "label": "deployer-claim-creator-protocol-fees",
+      "from": "0x24b48b241bB2F8099e70EA664e196a1765845693",
+      "to": "0xb9c1ad7d679c512721c3c001c4c8a69697ac2b2d",
+      "hash": "0x484068fbe684cb0accfdbcaae9e8c0d24e3b9ba4f9410a6a5c3b867242d54ff5",
+      "blockNumber": "59349855",
+      "timestamp": 1791832217,
+      "status": "success",
+      "gasUsed": "46172",
+      "events": [
+        {
+          "event": "FeesClaimed",
+          "address": "0xb9c1ad7d679c512721c3c001c4c8a69697ac2b2d",
+          "args": {
+            "owner": "0x24b48b241bB2F8099e70EA664e196a1765845693",
+            "recipient": "0x24b48b241bB2F8099e70EA664e196a1765845693",
+            "amount": "285714285714284"
+          }
+        }
+      ]
+    },
+    {
+      "label": "tester-request-withdrawal-notice-again",
+      "from": "0xe869786d91bc01b8A7cCb781a2229F6afe6aa088",
+      "to": "0xb9c1ad7d679c512721c3c001c4c8a69697ac2b2d",
+      "hash": "0x379ebdc83b26a13101549d02b45809de20b60a8f5819de21dadd09fedf1608e6",
+      "blockNumber": "59349859",
+      "timestamp": 1791832222,
+      "status": "success",
+      "gasUsed": "49364",
+      "events": [
+        {
+          "event": "JuniorWithdrawalRequested",
+          "address": "0xb9c1ad7d679c512721c3c001c4c8a69697ac2b2d",
+          "args": {
+            "owner": "0xe869786d91bc01b8A7cCb781a2229F6afe6aa088",
+            "readyAt": "1791832342"
+          }
+        }
+      ]
+    },
+    {
+      "label": "tester-provider-partial-withdrawal",
+      "from": "0xe869786d91bc01b8A7cCb781a2229F6afe6aa088",
+      "to": "0xb9c1ad7d679c512721c3c001c4c8a69697ac2b2d",
+      "hash": "0xfe2d2209667c74025bb951e84e42eef5b05807742888c39cc06a65b71fd92daf",
+      "blockNumber": "59349943",
+      "timestamp": 1791832356,
+      "status": "success",
+      "gasUsed": "92063",
+      "events": [
+        {
+          "event": "JuniorWithdrawn",
+          "address": "0xb9c1ad7d679c512721c3c001c4c8a69697ac2b2d",
+          "args": {
+            "owner": "0xe869786d91bc01b8A7cCb781a2229F6afe6aa088",
+            "sharesBurned": "500000000000000000000",
+            "backingAmount": "499583333",
+            "assetAmount": "16666666666666666"
+          }
+        }
+      ]
+    }
+  ],
+  "observations": {
+    "testerBalances:start": {
+      "avax": "0.25",
+      "aDEMO": "0",
+      "awAVAX": "0"
+    },
+    "scenarioProtectPrice": "25 aDEMO/AVAX",
+    "gainFees": {
+      "id": "1",
+      "providerReward": "1428571428571428",
+      "creatorFee": "142857142857142",
+      "protocolFee": "142857142857142"
+    },
+    "expectedGainFeeAt35": "0.001714285714285712",
+    "testerEarnedBeforeClaim": "0.000952380952380952",
+    "providerWithdrawal": {
+      "sharesBurned": "500000000000000000000",
+      "aDEMO": "499.583333",
+      "avaxInventory": "0.016666666666666666"
+    },
+    "openPositionsAfter": {
+      "referencePool": 0,
+      "scenarioPool": 0,
+      "wrappedPool": 0,
+      "vaultPool": 0,
+      "vaultBackingPool": 0
+    },
+    "testerBalances:end": {
+      "avax": "0.213904761628808146",
+      "aDEMO": "9500.853951",
+      "awAVAX": "0"
+    }
+  },
+  "notExercised": [
+    "Maturity: featured epochs are 30 days, so permissionless settleExpired and the segregated claimBacking credit were not reached on Fuji (covered by the Solidity suite and the local journey).",
+    "Browser wallet signing: these transactions were signed by a script with a disposable test key, not through a browser wallet extension."
+  ]
+}

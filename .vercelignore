@@ -1,0 +1,11 @@
+.git
+.secrets
+.env
+.env.*
+node_modules
+contracts/out
+contracts/cache
+test-results
+playwright-report
+
+.local

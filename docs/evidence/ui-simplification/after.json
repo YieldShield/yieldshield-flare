@@ -1,0 +1,27 @@
+{
+  "method": "Same desktop whole-body innerText whitespace count as baseline, no wallet, default pool; optional details and menus closed",
+  "protect": {
+    "notices": 1,
+    "primaryLinks": [
+      "Markets",
+      "Trade",
+      "Protect",
+      "Provide",
+      "Portfolio"
+    ],
+    "url": "http://127.0.0.1:5185/protect?pool=reference",
+    "words": 190
+  },
+  "trade": {
+    "details": [
+      "How trade pricing works",
+      "How vault receipts work"
+    ],
+    "url": "http://127.0.0.1:5185/trade?pool=reference",
+    "words": 219
+  },
+  "provide": {
+    "url": "http://127.0.0.1:5185/provide?pool=reference",
+    "words": 193
+  }
+}

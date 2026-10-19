@@ -1,0 +1,14 @@
+node_modules/
+dist/
+contracts/out/
+contracts/cache/
+.env*
+!.env.example
+.secrets/
+*.key
+.DS_Store
+playwright-report/
+test-results/
+.vercel
+
+.local/

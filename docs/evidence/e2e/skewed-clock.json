@@ -1,0 +1,9 @@
+{
+  "network": "Local Anvil only",
+  "pool": "0x74f28Bba2A8ef311D15a8A816Bb42B750cDd635F",
+  "maturity": "1791832728",
+  "chainTimestamp": "1791832728",
+  "workstationTimestamp": 1791746336,
+  "chainMatured": true,
+  "workstationBeforeMaturity": true
+}

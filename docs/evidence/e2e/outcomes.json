@@ -1,0 +1,99 @@
+{
+  "scope": "CUA browser to disposable Anvil chain 31337, receipt, refreshed balances/positions; no public-chain writes",
+  "testedSourceCommit": "d7f468c",
+  "counts": {
+    "cuaInitiatedConfirmedTransactions": 44,
+    "fixtureTransactions": 26,
+    "separateNativeJourneyTransactions": 48,
+    "contractTests": 32,
+    "javascriptTests": 10,
+    "contractFuzzRunsPerFuzzTest": 256
+  },
+  "flows": [
+    {
+      "flow": "Acquire / funded exchange",
+      "result": "passed",
+      "details": "Faucet; native AVAX, awAVAX and vaDEMO buy and sell; exact reviewed bounds; buy-to-protect continuity. Excess inventory request blocked before signing."
+    },
+    {
+      "flow": "Direct conversions",
+      "result": "passed",
+      "details": "AVAX wrap and unwrap; protected vaDEMO and collateral bvaDEMO deposit and redeem. Confirmed balances refreshed."
+    },
+    {
+      "flow": "Protection lifecycle",
+      "result": "passed",
+      "details": "awAVAX protection; partial asset and backing exits; remaining position transfer to a second disposable account; recipient exits remainder and previous owner loses control."
+    },
+    {
+      "flow": "Capital provider lifecycle",
+      "result": "passed",
+      "details": "Deposit 500 aDEMO; claim earned awAVAX fees; request notice; partial withdrawal of 100 shares leaves 400; paid asset/backing basket and cleared notice."
+    },
+    {
+      "flow": "Factory and cross-backed market",
+      "result": "passed",
+      "details": "Invalid 124% collateral blocked. Created native AVAX / bvaDEMO pool with 160% collateral, 12% provider fee, 2% creator fee, 1-day epoch and 500 bvaDEMO seed. Custom terms displayed correctly."
+    },
+    {
+      "flow": "Independent fee claims",
+      "result": "passed",
+      "details": "Native partial gain exit in custom pool; creator claimed 0.000005 AVAX and provider claimed 0.00003 AVAX, separately from redeemable principal."
+    },
+    {
+      "flow": "Maturity and segregated credit",
+      "result": "passed",
+      "details": "With chain mature while workstation was still a day earlier, a third party settled the position. Provider then withdrew all shares before holder claimed 0.025 bvaDEMO; holder credit remained intact. Final shares, holder credit and protection reserve zero."
+    },
+    {
+      "flow": "Rejected signature",
+      "result": "passed",
+      "details": "Local wallet rejected a wrap signature; consumed review removed Confirm. Fresh review and successful wrap cleared prior error."
+    },
+    {
+      "flow": "Account / network identity change",
+      "result": "passed",
+      "details": "Switching disposable accounts cleared account state and required reconnect. Simulated local network-change event cleared wallet, balances and review; fresh reconnect/review/wrap succeeded."
+    },
+    {
+      "flow": "Delayed approval and leaving route",
+      "result": "passed",
+      "details": "Paused allowance signature, navigated away, resumed signature. Only allowance was broadcast; hidden protection blocked. Final wrapped nextPositionId=2 and reservedBacking=0."
+    },
+    {
+      "flow": "Submitted unknown receipt",
+      "result": "passed with stated recovery limitation",
+      "details": "Paused local automining; browser broadcast unwrap; after actual 120-second timeout Activity retained the hash with unknown status and no reusable confirmation. Restoring mining confirmed that exact hash. Historical Activity status does not automatically reconcile; local RPC lookup provided final confirmation."
+    }
+  ],
+  "automatedRegressions": [
+    "Late pre-transaction read cannot replace newer post-receipt balances/positions.",
+    "Unmounted review cannot continue after delayed approval.",
+    "Changing input away and back does not resurrect the old review.",
+    "Submitted-but-unknown reviewed intent cannot be replayed.",
+    "Route change during final chain-time or simulation await stops the write.",
+    "Tiny-unit output rounding preserves the minimum output bound."
+  ],
+  "productionBoundary": {
+    "buildPassed": true,
+    "localBridgeAbsentFromProductionBundle": true,
+    "manifestChainId": 43113,
+    "manifestStatus": "awaiting-testnet-gas",
+    "publicContractAddresses": null,
+    "publicTransactions": []
+  },
+  "evidence": {
+    "receipts": "browser-receipts.json",
+    "clockSkew": "skewed-clock.json",
+    "unknownReceipt": "unknown-receipt.json",
+    "screenshot": "browser-conversion-success.jpg",
+    "nativeJourney": "../local-journey.json"
+  },
+  "limits": [
+    "Actual installed-wallet popup approval and public Fuji RPC transactions remain unverified; Fuji deployment is explicitly deferred.",
+    "Anvil fixture controls changed oracle prices and chain time; those controls are not production user functions.",
+    "Transaction Activity preserves unknown status after a receipt timeout; users must check the linked transaction before retrying. The final receipt was verified independently.",
+    "Browser console contained third-party extension warnings and one Vite hot-module createRoot warning during source edits; no new application error was observed in the completed fixed-source flows.",
+    "Contract fuzzing and local journeys are verification, not a security audit."
+  ]
+}

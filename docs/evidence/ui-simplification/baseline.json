@@ -1,0 +1,30 @@
+{
+  "method": "Desktop document.body.innerText whitespace word count, no wallet, default market, full page including navigation and footer; baseline live release before simplification",
+  "protect": {
+    "navLinks": [
+      "◇\nMarkets",
+      "↗\nProtect",
+      "◈\nProvide capital",
+      "⇄\nTrade & convert",
+      "▱\nMy positions",
+      "◷\nPortfolio",
+      "≋\nActivity",
+      "+\nCreate a pool",
+      "↓\nGet test tokens",
+      "⌁\nField guide",
+      "•\nNetwork status"
+    ],
+    "url": "https://avalanche.yieldshield.ai/protect",
+    "words": 264
+  },
+  "trade": {
+    "heading": "Trade. Then protect.",
+    "url": "https://avalanche.yieldshield.ai/trade",
+    "words": 351
+  },
+  "provide": {
+    "heading": "Put your capital to work.",
+    "url": "https://avalanche.yieldshield.ai/provide",
+    "words": 255
+  }
+}

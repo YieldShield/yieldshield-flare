@@ -1,0 +1,360 @@
+{
+  "network": "Local Anvil only; not Fuji",
+  "chainId": 31337,
+  "createdAt": "2026-10-12T13:02:50.621Z",
+  "sourceHash": {
+    "contracts/src/AlpinePool.sol": "0xa90a8fadfa4d7d6fc34697e61b124cd9f66445b536010d999c1b68ac5c25eff1",
+    "contracts/src/AlpineMarket.sol": "0x4f0e3b5107171e5891c3da8d946881d399eb625fc4d095bce85e90dddcd9e94d",
+    "contracts/src/DemoAssets.sol": "0xf89966f7a9b615189d7ce4ba50ec0f252a100005e1b44dd63e945a700c5422de"
+  },
+  "tests": [
+    "factory atomic seeded markets",
+    "funded wrapper buy then protect",
+    "partial gain exit and independent reward claim",
+    "ownership transfer preserves entry basis",
+    "partial provider basket redemption",
+    "creator and protocol pull fee claim",
+    "funded sell",
+    "bounded vault redeem",
+    "vault-backed native claim and receipt redemption",
+    "permissionless expiry and segregated credit claim"
+  ],
+  "transactions": [
+    {
+      "label": "backingToken",
+      "hash": "0xb10f683355b9e078cee20da122130bf559acc3f552b2d37590d34c9306d98a4f",
+      "blockNumber": "1",
+      "status": "success",
+      "contractAddress": "0x5fbdb2315678afecb367f032d93f642f64180aa3"
+    },
+    {
+      "label": "scenarioOracle",
+      "hash": "0x0cf3bc32c13d7da483bd9afabdeacb43c19850bd5109c6e791b24256542f112e",
+      "blockNumber": "2",
+      "status": "success",
+      "contractAddress": "0xe7f1725e7734ce288f8367e1bb143e90bb3f0512"
+    },
+    {
+      "label": "referenceOracle",
+      "hash": "0x9ac5f0b769f086a41af52e9cc4d439a16bcb18179f5fc999e988c9ae913b169e",
+      "blockNumber": "3",
+      "status": "success",
+      "contractAddress": "0x9fe46736679d2d9a65f0992f2272de9f3c7fa6e0"
+    },
+    {
+      "label": "wrapper",
+      "hash": "0x3910f5b8e9d16c61dc69059528b26e9aa50490b37ea3ddb270f0ef68e171421a",
+      "blockNumber": "4",
+      "status": "success",
+      "contractAddress": "0xcf7ed3acca5a467e9e704c703e8d87f634fb0fc9"
+    },
+    {
+      "label": "vault",
+      "hash": "0x6b14886c32974e4f9dd2144922a45f41335ffd52d557f0b94989a4a67a1a0eb9",
+      "blockNumber": "5",
+      "status": "success",
+      "contractAddress": "0xdc64a140aa3e981100a9beca4e685f962f0cf6c9"
+    },
+    {
+      "label": "backingVault",
+      "hash": "0x1559c27ce9b2d67145634279b9a0c5b6e3de66540c5288711bc6e90e1a5799a4",
+      "blockNumber": "6",
+      "status": "success",
+      "contractAddress": "0x5fc8d32690cc91d4c39d9d3abcbd16989f875707"
+    },
+    {
+      "label": "vaultOracle",
+      "hash": "0xbd1a05fd979c1751231e183a77a7705fec47139ec0a337afc291d5a0b5e51030",
+      "blockNumber": "7",
+      "status": "success",
+      "contractAddress": "0x0165878a594ca255338adfa4d48449f69242eb8f"
+    },
+    {
+      "label": "factory",
+      "hash": "0x0c336edb58877ae209e2c4b0cf4d3749e5005b9b1037e481c91896e2d552ebd0",
+      "blockNumber": "8",
+      "status": "success",
+      "contractAddress": "0xa513e6e4b8f2a923d98304ec87f64353c4d5c853"
+    },
+    {
+      "label": "exchange",
+      "hash": "0xc06925e7f3d4fcc88ebe74a0376a1276691490e1171b9d152d0c39b08bdc85f0",
+      "blockNumber": "9",
+      "status": "success",
+      "contractAddress": "0x2279b7a0a67db372996a5fab50d91eaa73d2ebe6"
+    },
+    {
+      "label": "seed-faucet",
+      "hash": "0x85c6f2af99764efb584f288d85ae8ae1efe8d9e952ae157ec0a4d51c31f69fa6",
+      "blockNumber": "10",
+      "status": "success",
+      "contractAddress": null
+    },
+    {
+      "label": "vault-approve",
+      "hash": "0xb9cc4aa95dd8301b1dcd71ebe17ca400c4d89d24d32caceb11d2377ee1751f1d",
+      "blockNumber": "11",
+      "status": "success",
+      "contractAddress": null
+    },
+    {
+      "label": "vault-funded-deposit",
+      "hash": "0x7bc103c7f92bf68bc3aeaac0f8770bf8d85c2256322919860d8bbce0fe818975",
+      "blockNumber": "12",
+      "status": "success",
+      "contractAddress": null
+    },
+    {
+      "label": "backing-vault-approve",
+      "hash": "0xa378dd4db56b047cc7bb907aa7f7d17fd13f5cb1f21d99e34041def902c092e7",
+      "blockNumber": "13",
+      "status": "success",
+      "contractAddress": null
+    },
+    {
+      "label": "backing-vault-funded-deposit",
+      "hash": "0xbf0aec77ad13a674f8132125d95a29b58b9813e9fe547864b0c9b9753cfa2664",
+      "blockNumber": "14",
+      "status": "success",
+      "contractAddress": null
+    },
+    {
+      "label": "wrapper-funded-deposit",
+      "hash": "0xa67f99f8a47e1711b6e9f89dadba3ac9a968b02bb1e873ed6af4ed82ef70ed39",
+      "blockNumber": "15",
+      "status": "success",
+      "contractAddress": null
+    },
+    {
+      "label": "factory-cash-approve",
+      "hash": "0x893f5d3c49b175355cb41cb518f5576545fc32308e3706a9c91cff79924c70a0",
+      "blockNumber": "16",
+      "status": "success",
+      "contractAddress": null
+    },
+    {
+      "label": "factory-vault-approve",
+      "hash": "0x772a6dcc7876248bdb02f6cb8adb15115f547c05d0acd006931c11284d3f8825",
+      "blockNumber": "17",
+      "status": "success",
+      "contractAddress": null
+    },
+    {
+      "label": "referencePool-factory-create",
+      "hash": "0x4a685b3e5f7f701754a43efc785af9090ba4eb8fa6eaea718161912f0a2d6a36",
+      "blockNumber": "18",
+      "status": "success",
+      "contractAddress": null
+    },
+    {
+      "label": "scenarioPool-factory-create",
+      "hash": "0x6062ce3ea5a654c72154520c1195c38defb71b411c3ccea8fd01b61803c79b90",
+      "blockNumber": "19",
+      "status": "success",
+      "contractAddress": null
+    },
+    {
+      "label": "wrappedPool-factory-create",
+      "hash": "0x9bbe97a8cc3e6670b27f73a0d67b13032f7dc3868f87c65f30cadb412bfda16a",
+      "blockNumber": "20",
+      "status": "success",
+      "contractAddress": null
+    },
+    {
+      "label": "vaultPool-factory-create",
+      "hash": "0xa30dfc86f24a3b6c8e9f374c25ca6dda29b23d75fad30c8d1ca25a11d3772792",
+      "blockNumber": "21",
+      "status": "success",
+      "contractAddress": null
+    },
+    {
+      "label": "vaultBackingPool-factory-create",
+      "hash": "0x5f47ebcf6ecd51bdb90f15e2be6e6461c8b4c660eb2f4822618f1aef633491ec",
+      "blockNumber": "22",
+      "status": "success",
+      "contractAddress": null
+    },
+    {
+      "label": "exchange-cash-inventory",
+      "hash": "0xa30dc4ced6ec898ed11c107c58c5f8f40b3f5598fe3f54a3d900761cbf51c511",
+      "blockNumber": "23",
+      "status": "success",
+      "contractAddress": null
+    },
+    {
+      "label": "exchange-wrapper-inventory",
+      "hash": "0x40cbfb795e3a648cece7f1348aaee0232e1f126c75b410d44f7204102bacd803",
+      "blockNumber": "24",
+      "status": "success",
+      "contractAddress": null
+    },
+    {
+      "label": "exchange-vault-inventory",
+      "hash": "0xfe05d06404f6738e452e2467db1647a25de10c54836386626fb7133f07a2cd80",
+      "blockNumber": "25",
+      "status": "success",
+      "contractAddress": null
+    },
+    {
+      "label": "exchange-native-inventory",
+      "hash": "0xd61e9dbeb1378b52799eeafb492a9e0d7f25cc3a95d386fc0417224e733e4f5e",
+      "blockNumber": "26",
+      "status": "success",
+      "contractAddress": null
+    },
+    {
+      "label": "holder-faucet",
+      "hash": "0xec1fd814ca0a183fdba662c92ce05a78701fa6babe5fda656b8b83e5e6fb2058",
+      "blockNumber": "27",
+      "status": "success",
+      "contractAddress": null
+    },
+    {
+      "label": "holder-exchange-approve",
+      "hash": "0x2aeb8a908de8283a8634a01ce07425e2ba03da51617834d2983f4d36b7b3e3e8",
+      "blockNumber": "28",
+      "status": "success",
+      "contractAddress": null
+    },
+    {
+      "label": "holder-buy-wrapper",
+      "hash": "0x86cbdd9c3358191b505c41dba6ba8247f64c855f22afb561243605b97d1a63cd",
+      "blockNumber": "29",
+      "status": "success",
+      "contractAddress": null
+    },
+    {
+      "label": "holder-protection-approve",
+      "hash": "0xb94998b918cf6bc819e750d14925dcf96119af2d6382914185f829d9be1df73d",
+      "blockNumber": "30",
+      "status": "success",
+      "contractAddress": null
+    },
+    {
+      "label": "holder-protect-bought-wrapper",
+      "hash": "0x25abb63b7c777444f282190ee9d23f9a0b3f9680362b1f11db4d96e2cc790617",
+      "blockNumber": "31",
+      "status": "success",
+      "contractAddress": null
+    },
+    {
+      "label": "local-reference-gain",
+      "hash": "0x4d3eb446b5cf206e95244912c3261fa0a46faae1ae0136ab810f1d13e32f6c4e",
+      "blockNumber": "33",
+      "status": "success",
+      "contractAddress": null
+    },
+    {
+      "label": "holder-partial-asset-exit",
+      "hash": "0x92f1f10da5452b875ec1327d9b8641ebf54958a5268a1eccf39e9c310b29420a",
+      "blockNumber": "34",
+      "status": "success",
+      "contractAddress": null
+    },
+    {
+      "label": "provider-claim-earned-fees",
+      "hash": "0x14237a23ac37593d7465fae7cf8576a2d0f48e8b55bed16dec12b49d9e1c93dc",
+      "blockNumber": "35",
+      "status": "success",
+      "contractAddress": null
+    },
+    {
+      "label": "holder-transfer-remainder",
+      "hash": "0x1fc54ff1aa0f8cfae8af1573fef06d9304931c6c247170effa08f23ba19cb18b",
+      "blockNumber": "36",
+      "status": "success",
+      "contractAddress": null
+    },
+    {
+      "label": "new-owner-backing-exit",
+      "hash": "0x485312b8933e95f08d0d23a7036a8c768b65b120e5943dd8084f5b489094f7cb",
+      "blockNumber": "37",
+      "status": "success",
+      "contractAddress": null
+    },
+    {
+      "label": "provider-notice",
+      "hash": "0x57fa528294515a6b213aad196c599831dcdd7097aeddeebb0a2946d88d46dc2d",
+      "blockNumber": "38",
+      "status": "success",
+      "contractAddress": null
+    },
+    {
+      "label": "provider-partial-redemption",
+      "hash": "0xb54dbf563159ae076291b176d1cd3ef005f9628df8ec1f127509f13f08aa0b6f",
+      "blockNumber": "40",
+      "status": "success",
+      "contractAddress": null
+    },
+    {
+      "label": "creator-protocol-pull-fees",
+      "hash": "0x621b0a77f715944f3869678d56bb7d9d259be7b1469e2ab2a9e8dbb0124db56d",
+      "blockNumber": "41",
+      "status": "success",
+      "contractAddress": null
+    },
+    {
+      "label": "holder-wrapper-sale-approval",
+      "hash": "0x007e37aa0392ddae9280aa172b20b9905b0118001e040ee3fb9e4f4fa9305a36",
+      "blockNumber": "42",
+      "status": "success",
+      "contractAddress": null
+    },
+    {
+      "label": "holder-sell-wrapper",
+      "hash": "0x3e1f54980c3555a60c700efe5a6e20b58a0c263d4c114693f0f40bba53746cfc",
+      "blockNumber": "43",
+      "status": "success",
+      "contractAddress": null
+    },
+    {
+      "label": "vault-bounded-redeem",
+      "hash": "0x39806e3c435ba5b2b89b1689acc65ae0a4c6c06cff0d95ba970806515ab84f41",
+      "blockNumber": "44",
+      "status": "success",
+      "contractAddress": null
+    },
+    {
+      "label": "holder-vault-backing-protect",
+      "hash": "0x8da94274fabf4f6cc67fd551bd4d487e541e8cf19cfbc2025b20d5b7ae9f34e2",
+      "blockNumber": "45",
+      "status": "success",
+      "contractAddress": null
+    },
+    {
+      "label": "holder-vault-receipt-claim",
+      "hash": "0x1a0f0d255be8c31ba1beb0b82dad580eb5d7e7193c64bd3a8c1feacbb5d4ae1b",
+      "blockNumber": "47",
+      "status": "success",
+      "contractAddress": null
+    },
+    {
+      "label": "holder-backing-vault-redeem",
+      "hash": "0xadd2eac83ea6ff1ec8c3e6904495c87c3b8740e493c3c65d7082bbe2d9181123",
+      "blockNumber": "48",
+      "status": "success",
+      "contractAddress": null
+    },
+    {
+      "label": "holder-scenario-protect",
+      "hash": "0x6f44f2c3f23a32634761f3cb022b02531d797cf55d8b274bfe5d0be7465535fe",
+      "blockNumber": "49",
+      "status": "success",
+      "contractAddress": null
+    },
+    {
+      "label": "permissionless-expiry",
+      "hash": "0x5257c735884f8ff5bfe3c04932fa3a6de65b2dc0d3f166b3cb79bb70511068b0",
+      "blockNumber": "51",
+      "status": "success",
+      "contractAddress": null
+    },
+    {
+      "label": "holder-matured-backing-claim",
+      "hash": "0xd24f49f82641f495ddcb3d62eff4634721a660af4cc74e82b189a3cdc54dd4a6",
+      "blockNumber": "52",
+      "status": "success",
+      "contractAddress": null
+    }
+  ]
+}
