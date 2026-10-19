@@ -12,6 +12,7 @@ The form was read on 19 October 2026 without entering anything; see [RESEARCH_AN
 This section compares the draft with the 17 October application plan and the 14 October grants research. Both live in the main repository under `docs/` and are not published.
 
 **Since the first version of this draft (also 19 October):**
+- **Request reduced to $20,000 (200 hours, about 12 weeks)** on David's instruction; it was $40,000 (400 hours, about 16 weeks). The scope shrank with it: FTSOv2 Scaling anchor cross-checks with Merkle proofs and the sFLR assessment are no longer in this request, and the hardening milestone is now monitoring plus a threat model.
 - **Deployed and verified.** The owner funded the test signer from the faucet. Deployment `coston2-2026-10-19T07-50-55Z-34db01` broadcast 25 transactions from source `2fcea40` (25.11M gas). `verify:coston2` passed, and passed again on a read-only rerun.
 - **Public journey done.** Fresh tester `0x9E90…4113` completed 19 confirmed transactions on Coston2: faucet, provider capital, C2FLR and WC2FLR protection, a partial asset exit and a backing exit, a position transfer, a trade, a vault deposit, provider redemption and an unwrap.
 - **Gas finding fixed.** A first attempt stopped when a protection sent with an exact gas estimate ran out of gas (341,025 used of 341,025). The app and the journey script now add a 30% margin to transactions that read FTSOv2 (commit `b74576a`). The contracts are unchanged.
@@ -25,7 +26,7 @@ This section compares the draft with the 17 October application plan and the 14 
 - **Confirmed unchanged:** rolling intake, token grants without a published size, Google Cloud credits (up to $200k, $350k for AI), and FTSO/FDC use as a selection criterion.
 
 **Assets:**
-- **sFLR is out of the testnet scope.** The plan said "FXRP/FAssets and sFLR markets". Coston2 has no sFLR, and the sFLR/USD FTSO custom feed exists only on Flare mainnet, so sFLR moves to mainnet readiness.
+- **sFLR is out of the testnet scope.** The plan said "FXRP/FAssets and sFLR markets". Coston2 has no sFLR, and the sFLR/USD FTSO custom feed exists only on Flare mainnet, so sFLR is left out of this request and kept as later mainnet research.
 - **FXRP becomes the first funded milestone.** Coston2's FTestXRP has 6 decimals, but the shared pool accepts only 18-decimal protected assets, so FXRP needs a core accounting change. The built testnet scope is native C2FLR and Flare's canonical WC2FLR, priced by live FTSOv2 FLR/USD, plus a deterministic scenario market.
 - **An official test stablecoin exists.** Test USDT0 (`testUSDT0`, 6 decimals) is minted only by governance and handed out by the reCAPTCHA faucet at 10 per day. Seeding the markets needs about 5,500, so the build uses a labeled demo dollar (sDEMO, "not USDT0, no value"). testUSDT0 backing is part of milestone 1.
 
@@ -37,7 +38,7 @@ This section compares the draft with the 17 October application plan and the 14 
 - [ ] **Pitch deck.** The page asks for one. Add its link, or remove that line.
 - [ ] **Wallet-extension test.** Still open. Do one real MetaMask transaction on the deployed Coston2 markets, ideally on the published site. Every recorded run so far used scripted keys or an injected test provider. Then update the Project Description sentence that says so.
 - [ ] **1-year commitment.** Decide the checkbox (see David-only actions). The answer must not contradict the Taiko ("early launch chain"), Circle ("Arc central") or Arbitrum Security Program (possible exclusivity) answers.
-- [ ] **Funding register.** The disclosure must still be true on the day. Add this application ($40,000, milestones M1–M5) to `docs/grants/FUNDING_REGISTER.md` in the main repo, and make sure no milestone below is billed elsewhere.
+- [ ] **Funding register.** This application ($20,000, milestones M1–M5) is listed in `docs/grants/FUNDING_REGISTER.md` in the main repo. On the day, confirm the disclosure is still true and that no milestone below is billed elsewhere.
 - [ ] **Monthly markets.** The featured markets close for new protection on **18 November 2026, 07:51 UTC**. Run `npm run deploy:coston2 -- --replace-featured --broadcast` from 11 November, verify, then republish the site. If you submit after 18 November, replace them first. The deployer has about 33.6 C2FLR, enough for about two rounds.
 - [ ] **Cookie banner.** The form shows one; choose "Reject All, Except Strictly Necessary".
 
@@ -166,7 +167,7 @@ There is no paid acquisition, airdrop, points programme or token incentive. Ever
 
 ```
 - FTSOv2 block-latency feeds. Built and tested: FLR/USD prices native C2FLR and WC2FLR markets. Milestone 1 adds XRP/USD for FXRP. The adapter resolves FtsoV2 through the FlareContractRegistry on every read, requires a zero read fee, and checks freshness (300 s), zero values, timestamps and decimals.
-- FTSOv2 Scaling (anchor) feeds. Milestone 2: exits and settlement are cross-checked against the 90-second anchor values, verified on-chain with Merkle proofs (verifyFeedData), with a bounded deviation from the block-latency price.
+- FTSOv2 Scaling (anchor) feeds. Not in this request. A later step could cross-check exits against the 90-second anchor values, verified on-chain with Merkle proofs (verifyFeedData).
 - FAssets. Milestone 1: FXRP becomes a protected asset. FXRP minting and redemption rely on the FDC.
 - FlareContractRegistry and WNat. Built: canonical WC2FLR on Coston2, WFLR on mainnet.
 - FDC. Not used directly in this plan. We would welcome guidance on whether an FDC attestation adds real value here (for example, proofs for cross-chain positions) rather than adding one for its own sake.
@@ -176,40 +177,37 @@ There is no paid acquisition, airdrop, points programme or token incentive. Ever
 **Milestones**
 
 ```
-Five milestones over about 16 weeks after acceptance. Total $40,000 (400 hours at a blended $100/hour), paid in FLR at the payment-date rate, one installment per completed milestone. The deployed and verified Coston2 prototype is prior work and is not billed.
+Five milestones over about 12 weeks after acceptance. Total $20,000 (200 hours at a blended $100/hour), paid in FLR at the payment-date rate, one installment per completed milestone. The deployed and verified Coston2 prototype is prior work and is not billed.
 
-M1. Real Flare assets on Coston2: FXRP and testUSDT0. Weeks 1–4, 120 h, $12,000.
+M1. Real Flare assets on Coston2: FXRP and testUSDT0. Weeks 1–4, 70 h, $7,000.
 - Generalize the pool to 6-decimal protected assets (FXRP), with new fuzz and invariant tests.
 - Add an FXRP market priced by FTSOv2 XRP/USD.
 - Add Flare's testUSDT0 as an approved backing option.
 - Link FAssets mint and redeem steps in the app.
 Evidence: verified Coston2 addresses, passing tests, and an FXRP journey from a fresh wallet.
 
-M2. FTSOv2 hardening and monitoring. Weeks 5–7, 100 h, $10,000.
-- Cross-check exits and settlement against FTSOv2 Scaling anchor values verified by Merkle proof.
-- Bound the deviation between anchor and block-latency prices.
-- Publish a threat model.
-- Run a public monitoring page for reserves, feed age and market maturity.
-Evidence: tests, the published threat model, and the live monitoring page.
+M2. Monitoring and threat model. Weeks 5–6, 40 h, $4,000.
+- Publish a threat model covering FTSOv2 feed failure, stale prices, market maturity and exits.
+- Run a public monitoring page for reserves, feed age and market maturity, with alerts when a feed goes stale.
+Evidence: the published threat model and the live monitoring page.
 
-M3. Independent testnet pilot. Weeks 8–10, 80 h, $8,000.
+M3. Independent testnet pilot. Weeks 7–9, 40 h, $4,000.
 - 10 external testers using their own wallets complete 30 journeys across both exits, provider claims and maturity settlement.
 - Fix the usability and recovery issues found.
 These are targets, not current traction.
 Evidence: a pilot report with public transaction links, and the fix commits.
 
-M4. Mainnet readiness. Weeks 11–13, 50 h, $5,000.
+M4. Mainnet readiness. Weeks 10–11, 25 h, $2,500.
 - Freeze an audit revision and write its audit scope.
 - Write the Flare mainnet runbook with verified WFLR, FXRP and USD₮0 identities and caps.
 - Write the incident procedures.
-- Assess sFLR through its FTSO custom feed.
 Evidence: the tagged revision and the published documents.
 
-M5. Capped Flare mainnet release. Weeks 14–16, 50 h, $5,000.
+M5. Capped Flare mainnet release. Week 12, 25 h, $2,500.
 - Deploy the audited revision to Flare mainnet with low caps, verified contracts, monitoring and published evidence.
 This milestone depends on a separately funded independent audit and legal review. If either is missing, it is a blocker or an agreed scope change, not a completed milestone.
 
-Excluded: the audit itself, liquidity incentives, any token, and Songbird. No deliverable is billed to another program.
+Not in this request: the audit itself, FTSOv2 Scaling anchor cross-checks, sFLR, liquidity incentives, any token, and Songbird. No deliverable is billed to another program.
 ```
 
 **Other Integrations**
@@ -217,7 +215,7 @@ Excluded: the audit itself, liquidity incentives, any token, and Songbird. No de
 ```
 - Wallets: MetaMask and other EIP-1193 wallets. Testing with a Flare-native wallet such as Bifrost is part of the M3 pilot; not yet tested.
 - Stablecoin: USD₮0 on Flare mainnet. Its contract identity will be verified against an official listing before M5.
-- Liquid staking: Sceptre sFLR and its FTSO custom feed. Mainnet research only, in M4.
+- Liquid staking: Sceptre sFLR and its FTSO custom feed. Mainnet research only; not in this request.
 - Explorer: Flare's Blockscout explorers, for contract verification and transaction links.
 - Hosting: a static Vercel site. No backend, database or server-side signer.
 ```
@@ -239,7 +237,7 @@ Our own research into ecosystem grant programs, through the Flare grants page (f
 **Other Requirements**
 
 ```
-- Technical review. We would value a review of our FTSOv2 integration: view-typed reads with a zero-fee check, and the planned Scaling proof verification.
+- Technical review. We would value a review of our FTSOv2 integration: view-typed reads with a zero-fee check, and whether Scaling anchor values with proof verification would be worth adding later.
 - Testnet assets for the pilot. Seeding markets and the pilot needs about 5,000 testUSDT0 and some FXRP, beyond the faucet's 10 per day.
 - Grant terms. Please clarify KYC/KYB, the grant token and any vesting, so we can plan the milestones.
 - Auditors. Introductions to auditors familiar with Flare. The audit is not part of this request.
@@ -255,16 +253,17 @@ Our own research into ecosystem grant programs, through the Flare grants page (f
 
 ## Development plan
 
-**Request.** $40,000 equivalent in FLR for 400 hours at a blended $100/hour, over about 16 weeks after acceptance. It is paid per milestone, following Flare's milestone check-ins. The FLR amount is fixed at each payment date.
+**Request.** $20,000 equivalent in FLR for 200 hours at a blended $100/hour, over about 12 weeks after acceptance. It is paid per milestone, following Flare's milestone check-ins. The FLR amount is fixed at each payment date.
 
 **Rationale:**
 - **Not billed.** The protocol core and the Coston2 port already exist and are not billed. The request pays only for Flare-specific work that does not exist yet:
   - FXRP, which needs a core change for 6-decimal assets;
   - testUSDT0 backing;
-  - anchor-feed hardening;
+  - monitoring and a threat model;
   - an independent pilot;
   - a capped mainnet.
 - **No double billing.** No deliverable overlaps the Avalanche or Stellar applications: each chain's assets, oracles and deployments are separate.
+- **Sized to $20,000.** Scaling anchor cross-checks and sFLR are left out, so the request covers only FXRP and testUSDT0, monitoring, a pilot and a capped mainnet.
 - **Audit not included.** It is excluded and funded separately, so the grant does not pay for an audit it cannot control.
 
 **Already built, not billed:**
@@ -281,11 +280,11 @@ Our own research into ecosystem grant programs, through the Flare grants page (f
 
 | Milestone | Additional work | Acceptance evidence | Effort, budget |
 |---|---|---|---|
-| M1. FXRP and testUSDT0 on Coston2 (weeks 1–4) | 6-decimal protected assets in the pool with fuzz and invariant tests; FXRP market on FTSOv2 XRP/USD; testUSDT0 approved backing; FAssets mint and redeem links | Verified Coston2 addresses and passing `verify:coston2`; FXRP journey from a fresh wallet with public hashes; test counts | 120 h, $12,000 |
-| M2. FTSOv2 hardening (weeks 5–7) | Scaling anchor-value cross-check with Merkle proof (`verifyFeedData`); deviation bound; threat model; public monitoring of reserves, feed age and maturities | Tests including proof verification against Coston2 roots; published threat model; live monitoring page | 100 h, $10,000 |
-| M3. Independent pilot (weeks 8–10) | 10 external testers, 30 complete journeys including maturity settlement; fixes | Pilot report with explorer links; fix commits; redeployed markets | 80 h, $8,000 |
-| M4. Mainnet readiness (weeks 11–13) | Frozen audit revision and scope; mainnet runbook with verified WFLR, FXRP and USD₮0 identities and caps; incident procedures; sFLR custom-feed assessment | Tagged revision; published scope, runbook and assessment | 50 h, $5,000 |
-| M5. Capped Flare mainnet (weeks 14–16) | Deploy the audited revision with low caps, verified contracts, monitoring and evidence | Verified mainnet addresses, monitoring page, deployment evidence. **Conditional on a separately funded independent audit and legal review**; without them this is a blocker or an agreed scope change, not a completed milestone | 50 h, $5,000 |
+| M1. FXRP and testUSDT0 on Coston2 (weeks 1–4) | 6-decimal protected assets in the pool with fuzz and invariant tests; FXRP market on FTSOv2 XRP/USD; testUSDT0 approved backing; FAssets mint and redeem links | Verified Coston2 addresses and passing `verify:coston2`; FXRP journey from a fresh wallet with public hashes; test counts | 70 h, $7,000 |
+| M2. Monitoring and threat model (weeks 5–6) | Threat model for feed failure, stale prices, maturity and exits; public monitoring of reserves, feed age and maturities with stale-feed alerts | Published threat model; live monitoring page | 40 h, $4,000 |
+| M3. Independent pilot (weeks 7–9) | 10 external testers, 30 complete journeys including maturity settlement; fixes | Pilot report with explorer links; fix commits; redeployed markets | 40 h, $4,000 |
+| M4. Mainnet readiness (weeks 10–11) | Frozen audit revision and scope; mainnet runbook with verified WFLR, FXRP and USD₮0 identities and caps; incident procedures | Tagged revision; published scope and runbook | 25 h, $2,500 |
+| M5. Capped Flare mainnet (week 12) | Deploy the audited revision with low caps, verified contracts, monitoring and evidence | Verified mainnet addresses, monitoring page, deployment evidence. **Conditional on a separately funded independent audit and legal review**; without them this is a blocker or an agreed scope change, not a completed milestone | 25 h, $2,500 |
 
 No paid acquisition, giveaways or incentives are included. Test activity is never reported as TVL or adoption.
 
