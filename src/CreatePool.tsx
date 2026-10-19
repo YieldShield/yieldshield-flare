@@ -14,11 +14,11 @@ import {
   chainDeadline,
   chainTimestamp,
 } from "./chain";
-import { useAlpine } from "./state";
+import { useShield } from "./state";
 import { PageTitle, ActionButton, Facts, RouteLink, Risk } from "./ui";
 import { safeError } from "./math.mjs";
 export function CreatePool() {
-  const { account, identity, approve, transact } = useAlpine();
+  const { account, identity, approve, transact } = useShield();
   const [asset, setAsset] = useState("native"),
     [backing, setBacking] = useState("cash"),
     [source, setSource] = useState("reference"),

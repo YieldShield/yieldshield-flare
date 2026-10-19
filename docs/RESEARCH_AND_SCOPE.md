@@ -101,6 +101,12 @@ The prices are reference prices only. C2FLR has no value. Borrowing the FLR/USD 
 3. The Chainlink adapter is replaced by `ShieldFtsoV2Oracle`.
 4. Scenario prices are rescaled to FLR's price level.
 
+Changes that are not forced by the chain:
+
+- the `Alpine*` contract prefix becomes `Shield*`;
+- the pool's `exitAvax` is renamed `exitAsset`, with the same logic;
+- demo token names carry their labels on-chain, for example "Shield Demo Dollar - not USDT0, no value".
+
 The pool's economic logic, limits and fees are unchanged.
 
 **Out of scope for this build:**

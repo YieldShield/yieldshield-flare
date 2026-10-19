@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
-import {AlpinePool} from "../src/AlpinePool.sol";
-import {AlpineDemoDollar} from "../src/DemoAssets.sol";
-import {Vm, MutableOracle} from "./AlpinePool.t.sol";
+import {ShieldPool} from "../src/ShieldPool.sol";
+import {ShieldDemoDollar} from "../src/DemoAssets.sol";
+import {Vm, MutableOracle} from "./ShieldPool.t.sol";
 
 /// @notice Position-slot regressions: slots bound open exposure, not lifetime activity.
-contract AlpinePositionsTest {
+contract ShieldPositionsTest {
     Vm constant vm = Vm(address(uint160(uint256(keccak256("hevm cheat code")))));
-    AlpinePool pool;
-    AlpineDemoDollar token;
+    ShieldPool pool;
+    ShieldDemoDollar token;
     MutableOracle oracle;
     address constant ALICE = address(0xA11CE);
     address constant BOB = address(0xB0B);
@@ -17,11 +17,11 @@ contract AlpinePositionsTest {
     function setUp() public {
         vm.chainId(31337);
         vm.warp(10000);
-        token = new AlpineDemoDollar();
+        token = new ShieldDemoDollar();
         oracle = new MutableOracle();
-        pool = new AlpinePool(
+        pool = new ShieldPool(
             address(token), address(oracle), address(0xC), address(0xD), address(0),
-            AlpinePool.Terms(15000, 1000, 100, 7 days, 60, 120)
+            ShieldPool.Terms(15000, 1000, 100, 7 days, 60, 120)
         );
         vm.deal(ALICE, 100 ether);
         vm.deal(MALLORY, 100 ether);
@@ -38,11 +38,11 @@ contract AlpinePositionsTest {
     }
 
     function testDustBelowMinimumFloorIsRejected() public {
-        // 4e10 wei at 25 aDEMO/AVAX is a 1-micro-unit floor.
+        // 4e10 wei at 25 sDEMO per native unit is a 1-micro-unit floor.
         vm.prank(MALLORY);
-        vm.expectRevert(AlpinePool.InvalidAmount.selector);
+        vm.expectRevert(ShieldPool.InvalidAmount.selector);
         pool.protect{value: 4e10}(1, block.timestamp);
-        // 0.001 AVAX (the smallest documented journey amount) remains allowed.
+        // 0.001 native units at this test price (a 0.025 sDEMO floor) remain allowed.
         _open(ALICE, 1e15);
     }
 
@@ -62,7 +62,7 @@ contract AlpinePositionsTest {
         uint256 first = _open(MALLORY, 1e15);
         for (uint256 i = 1; i < 100; i++) _open(MALLORY, 1e15);
         vm.prank(ALICE);
-        vm.expectRevert(AlpinePool.PositionLimit.selector);
+        vm.expectRevert(ShieldPool.PositionLimit.selector);
         pool.protect{value: 1 ether}(1, block.timestamp);
         vm.warp(block.timestamp + 61);
         vm.prank(MALLORY);

@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
-import {AlpinePool} from "../src/AlpinePool.sol";
-import {AlpineDemoDollar} from "../src/DemoAssets.sol";
+import {MockWNat} from "./mocks/FlareMocks.sol";
+import {ShieldPool} from "../src/ShieldPool.sol";
+import {ShieldDemoDollar} from "../src/DemoAssets.sol";
 import {
-    AlpineBackingVault,
-    AlpineWrappedAVAX,
-    AlpineDemoVault,
-    AlpineVaultOracle,
-    AlpineFactory
-} from "../src/AlpineMarket.sol";
-import {MutableOracle} from "./AlpinePool.t.sol";
+    ShieldBackingVault,
+    ShieldDemoVault,
+    ShieldVaultOracle,
+    ShieldFactory
+} from "../src/ShieldMarket.sol";
+import {MutableOracle} from "./ShieldPool.t.sol";
 
 interface VmLimits {
     function prank(address) external;
@@ -21,34 +21,34 @@ interface VmLimits {
 }
 
 /// @notice Registry regressions: community creations cannot exhaust the slots featured markets need.
-contract AlpineFactoryLimitsTest {
+contract ShieldFactoryLimitsTest {
     VmLimits constant vm = VmLimits(address(uint160(uint256(keccak256("hevm cheat code")))));
     address constant PROTOCOL = address(0xD);
-    AlpineDemoDollar backing;
-    AlpineWrappedAVAX wrapper;
-    AlpineFactory factory;
+    ShieldDemoDollar backing;
+    MockWNat wrapper;
+    ShieldFactory factory;
     address refOracle;
 
-    function terms() private pure returns (AlpinePool.Terms memory) {
-        return AlpinePool.Terms(15000, 1000, 100, 7 days, 60, 120);
+    function terms() private pure returns (ShieldPool.Terms memory) {
+        return ShieldPool.Terms(15000, 1000, 100, 7 days, 60, 120);
     }
 
     function setUp() public {
         vm.chainId(31337);
         vm.warp(10000);
-        backing = new AlpineDemoDollar();
+        backing = new ShieldDemoDollar();
         MutableOracle oracle = new MutableOracle();
-        wrapper = new AlpineWrappedAVAX();
-        AlpineDemoVault vault = new AlpineDemoVault(backing);
-        factory = new AlpineFactory(
+        wrapper = new MockWNat();
+        ShieldDemoVault vault = new ShieldDemoVault(backing);
+        factory = new ShieldFactory(
             backing,
             PROTOCOL,
             address(wrapper),
             address(vault),
             address(oracle),
             address(oracle),
-            address(new AlpineVaultOracle(vault)),
-            new AlpineBackingVault(backing)
+            address(new ShieldVaultOracle(vault)),
+            new ShieldBackingVault(backing)
         );
         refOracle = factory.referenceOracle();
     }

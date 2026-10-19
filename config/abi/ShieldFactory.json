@@ -40,7 +40,7 @@
       {
         "name": "backingVault_",
         "type": "address",
-        "internalType": "contract AlpineBackingVault"
+        "internalType": "contract ShieldBackingVault"
       }
     ],
     "stateMutability": "nonpayable"
@@ -174,7 +174,7 @@
       {
         "name": "",
         "type": "address",
-        "internalType": "contract AlpineBackingVault"
+        "internalType": "contract ShieldBackingVault"
       }
     ],
     "stateMutability": "view"
@@ -209,7 +209,7 @@
       {
         "name": "terms",
         "type": "tuple",
-        "internalType": "struct AlpinePool.Terms",
+        "internalType": "struct ShieldPool.Terms",
         "components": [
           {
             "name": "collateralBps",
@@ -280,7 +280,7 @@
       {
         "name": "terms",
         "type": "tuple",
-        "internalType": "struct AlpinePool.Terms",
+        "internalType": "struct ShieldPool.Terms",
         "components": [
           {
             "name": "collateralBps",

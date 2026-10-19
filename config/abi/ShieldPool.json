@@ -30,7 +30,7 @@
       {
         "name": "terms_",
         "type": "tuple",
-        "internalType": "struct AlpinePool.Terms",
+        "internalType": "struct ShieldPool.Terms",
         "components": [
           {
             "name": "collateralBps",
@@ -297,7 +297,7 @@
   },
   {
     "type": "function",
-    "name": "exitAvax",
+    "name": "exitAsset",
     "inputs": [
       {
         "name": "id",
@@ -399,7 +399,7 @@
       {
         "name": "",
         "type": "address",
-        "internalType": "contract IAlpineOracle"
+        "internalType": "contract IShieldOracle"
       }
     ],
     "stateMutability": "view"

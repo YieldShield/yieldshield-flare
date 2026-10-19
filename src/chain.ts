@@ -13,12 +13,12 @@ import {
 } from "viem";
 import { avalancheFuji, foundry } from "viem/chains";
 import deployment from "../config/deployment.json";
-import pool from "../config/abi/AlpinePool.json";
-import factory from "../config/abi/AlpineFactory.json";
-import exchange from "../config/abi/AlpineExchange.json";
-import vault from "../config/abi/AlpineDemoVault.json";
-import wrapper from "../config/abi/AlpineWrappedAVAX.json";
-import token from "../config/abi/AlpineDemoDollar.json";
+import pool from "../config/abi/ShieldPool.json";
+import factory from "../config/abi/ShieldFactory.json";
+import exchange from "../config/abi/ShieldExchange.json";
+import vault from "../config/abi/ShieldDemoVault.json";
+import wrapper from "../config/abi/WNat.json";
+import token from "../config/abi/ShieldDemoDollar.json";
 export const localMode =
   import.meta.env.DEV && import.meta.env.VITE_LOCAL_DEMO === "true";
 export const config: Record<string, any> = localMode

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
-import {AlpinePool, IAlpineOracle} from "../src/AlpinePool.sol";
-import {AlpineDemoDollar, AlpineChainlinkOracle} from "../src/DemoAssets.sol";
+import {ShieldPool, IShieldOracle} from "../src/ShieldPool.sol";
+import {ShieldDemoDollar} from "../src/DemoAssets.sol";
 
 interface Vm {
     function deal(address, uint256) external;
@@ -14,7 +14,7 @@ interface Vm {
     function chainId(uint256) external;
 }
 
-contract MutableOracle is IAlpineOracle {
+contract MutableOracle is IShieldOracle {
     uint256 public price = 25e6;
 
     function set(uint256 x) external {
@@ -22,31 +22,10 @@ contract MutableOracle is IAlpineOracle {
     }
 }
 
-contract MockFeed {
-    uint8 public decimals = 8;
-    int256 public answer = 25e8;
-    uint256 public updated;
-    uint80 public answered = 2;
-
-    constructor() {
-        updated = block.timestamp;
-    }
-
-    function set(int256 a, uint256 t, uint80 r) external {
-        answer = a;
-        updated = t;
-        answered = r;
-    }
-
-    function latestRoundData() external view returns (uint80, int256, uint256, uint256, uint80) {
-        return (2, answer, updated, updated, answered);
-    }
-}
-
-contract AlpinePoolTest {
+contract ShieldPoolTest {
     Vm constant vm = Vm(address(uint160(uint256(keccak256("hevm cheat code")))));
-    AlpinePool pool;
-    AlpineDemoDollar token;
+    ShieldPool pool;
+    ShieldDemoDollar token;
     MutableOracle oracle;
     address constant ALICE = address(0xA11CE);
     address constant BOB = address(0xB0B);
@@ -56,15 +35,15 @@ contract AlpinePoolTest {
     function setUp() public {
         vm.chainId(31337);
         vm.warp(10000);
-        token = new AlpineDemoDollar();
+        token = new ShieldDemoDollar();
         oracle = new MutableOracle();
-        pool = new AlpinePool(
+        pool = new ShieldPool(
             address(token),
             address(oracle),
             CREATOR,
             PROTOCOL,
             address(0),
-            AlpinePool.Terms(15000, 1000, 100, 7 days, 60, 120)
+            ShieldPool.Terms(15000, 1000, 100, 7 days, 60, 120)
         );
         vm.deal(ALICE, 100 ether);
         vm.deal(BOB, 100 ether);
@@ -81,7 +60,7 @@ contract AlpinePoolTest {
         vm.warp(block.timestamp + 61);
     }
 
-    function testBackingExitPaysEntryFloorAndSurrendersAllAvax() public {
+    function testBackingExitPaysEntryFloorAndSurrendersAllNative() public {
         uint256 id = _open(1 ether);
         oracle.set(15e6);
         vm.prank(ALICE);
@@ -90,7 +69,7 @@ contract AlpinePoolTest {
         require(pool.juniorInventory() == 1 ether && pool.totalBacking() == 975e6, "inventory");
         require(pool.reservedBacking() == 0 && pool.protectedBalance() == 0, "release");
         vm.prank(ALICE);
-        vm.expectRevert(AlpinePool.NotOwner.selector);
+        vm.expectRevert(ShieldPool.NotOwner.selector);
         pool.exitBacking(id);
     }
 
@@ -101,7 +80,7 @@ contract AlpinePoolTest {
         require(out == 0.94 ether && fee == 0.06 ether, "12 percent of positive gain");
         uint256 before = ALICE.balance;
         vm.prank(ALICE);
-        pool.exitAvax(id, out);
+        pool.exitAsset(id, out);
         require(ALICE.balance - before == out, "recipient");
         require(
             pool.claimableFees(CREATOR) == 0.005 ether && pool.claimableFees(PROTOCOL) == 0.005 ether, "fee recipients"
@@ -113,7 +92,7 @@ contract AlpinePoolTest {
         uint256 id = _open(1 ether);
         oracle.set(15e6);
         vm.prank(ALICE);
-        pool.exitAvax(id, 1 ether);
+        pool.exitAsset(id, 1 ether);
         require(pool.juniorInventory() == 0 && CREATOR.balance == 0, "no loss fee");
     }
 
@@ -132,7 +111,7 @@ contract AlpinePoolTest {
         vm.warp(block.timestamp + 121);
         uint256 amount = pool.shares(BOB);
         vm.prank(BOB);
-        vm.expectRevert(AlpinePool.ActiveExposure.selector);
+        vm.expectRevert(ShieldPool.ActiveExposure.selector);
         pool.withdrawJunior(amount, 0, 0);
     }
 
@@ -169,17 +148,17 @@ contract AlpinePoolTest {
         vm.prank(ALICE);
         uint256 id = pool.protect{value: 1 ether}(25e6, block.timestamp);
         vm.prank(ALICE);
-        vm.expectRevert(AlpinePool.NotReady.selector);
+        vm.expectRevert(ShieldPool.NotReady.selector);
         pool.exitBacking(id);
         vm.warp(block.timestamp + 61);
         vm.prank(BOB);
-        vm.expectRevert(AlpinePool.NotOwner.selector);
+        vm.expectRevert(ShieldPool.NotOwner.selector);
         pool.exitBacking(id);
         vm.prank(ALICE);
-        vm.expectRevert(AlpinePool.Slippage.selector);
-        pool.exitAvax(id, 2 ether);
+        vm.expectRevert(ShieldPool.Slippage.selector);
+        pool.exitAsset(id, 2 ether);
         vm.prank(BOB);
-        vm.expectRevert(AlpinePool.ActiveExposure.selector);
+        vm.expectRevert(ShieldPool.ActiveExposure.selector);
         pool.withdrawJunior(1e18, 0, 0);
     }
 
@@ -189,7 +168,7 @@ contract AlpinePoolTest {
         uint256 id = _open(amount);
         oracle.set(price);
         vm.prank(ALICE);
-        pool.exitAvax(id, 0);
+        pool.exitAsset(id, 0);
         require(
             address(pool).balance
                 == pool.protectedBalance() + pool.juniorInventory() + pool.rewardInventory() + pool.otherFeeInventory(),
@@ -199,36 +178,15 @@ contract AlpinePoolTest {
         require(pool.totalBacking() >= pool.requiredBacking(pool.reservedBacking()), "reserve ratio");
     }
 
-    function testOracleRejectsStaleFutureNonPositiveAndIncomplete() public {
-        MockFeed feed = new MockFeed();
-        AlpineChainlinkOracle adapter = new AlpineChainlinkOracle(address(feed), 3600);
-        require(adapter.price() == 25e6, "normalizes");
-        feed.set(25e8, block.timestamp - 3601, 2);
-        vm.expectRevert();
-        adapter.price();
-        feed.set(25e8, block.timestamp + 1, 2);
-        vm.expectRevert();
-        adapter.price();
-        feed.set(0, block.timestamp, 2);
-        vm.expectRevert();
-        adapter.price();
-        feed.set(-1, block.timestamp, 2);
-        vm.expectRevert();
-        adapter.price();
-        feed.set(25e8, block.timestamp, 1);
-        vm.expectRevert();
-        adapter.price();
-    }
-
     function testJuniorFairnessCannotEscapeUnrealizedShortfall() public {
         _open(10 ether);
         oracle.set(15e6);
         vm.startPrank(BOB);
         pool.requestJuniorWithdrawal();
         vm.warp(block.timestamp + 121);
-        vm.expectRevert(AlpinePool.ActiveExposure.selector);
+        vm.expectRevert(ShieldPool.ActiveExposure.selector);
         pool.withdrawJunior(500e18, 0, 0);
-        vm.expectRevert(AlpinePool.ActiveExposure.selector);
+        vm.expectRevert(ShieldPool.ActiveExposure.selector);
         pool.depositJunior(100e6, 1);
         vm.stopPrank();
     }
@@ -253,7 +211,7 @@ contract AlpinePoolTest {
         require(token.balanceOf(ALICE) == 250e6, "claim");
         require(pool.totalClaimableBacking() == 0, "claim liability released");
         vm.prank(ALICE);
-        vm.expectRevert(AlpinePool.InvalidAmount.selector);
+        vm.expectRevert(ShieldPool.InvalidAmount.selector);
         pool.claimBacking();
     }
 
@@ -261,27 +219,28 @@ contract AlpinePoolTest {
         uint256 id = _open(1 ether);
         vm.warp(pool.maturity() - 60);
         vm.prank(ALICE);
-        vm.expectRevert(AlpinePool.EpochClosed.selector);
+        vm.expectRevert(ShieldPool.EpochClosed.selector);
         pool.protect{value: 1 ether}(1, block.timestamp);
         vm.warp(pool.maturity());
         oracle.set(50e6);
         vm.prank(ALICE);
-        vm.expectRevert(AlpinePool.EpochClosed.selector);
-        pool.exitAvax(id, 0);
+        vm.expectRevert(ShieldPool.EpochClosed.selector);
+        pool.exitAsset(id, 0);
         pool.settleExpired(id);
         require(pool.claimableBacking(ALICE) == 25e6, "expiry floor only");
     }
 
     function testMainnetDeploymentRejected() public {
-        vm.chainId(43114);
+        // Flare mainnet (14); Songbird (19) and other chains are rejected the same way.
+        vm.chainId(14);
         vm.expectRevert();
-        new AlpinePool(
+        new ShieldPool(
             address(token),
             address(oracle),
             CREATOR,
             PROTOCOL,
             address(0),
-            AlpinePool.Terms(15000, 1000, 100, 7 days, 60, 120)
+            ShieldPool.Terms(15000, 1000, 100, 7 days, 60, 120)
         );
     }
 }

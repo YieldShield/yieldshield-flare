@@ -197,7 +197,7 @@ if (legacyIntents.length)
   console.log(
     `Ignoring ${legacyIntents.length} unbound intent file(s) written by an older script directly in ${intentsRoot}/. They are never reused; check on the explorer that none is pending before archiving them.`,
   );
-/** Mirrors AlpineChainlinkOracle.price(): reference markets cannot be created on a stale feed. */
+/** Mirrors ShieldChainlinkOracle.price(): reference markets cannot be created on a stale feed. */
 async function checkFeed() {
   const feed = manifest.chainlinkFeed;
   const [code, block] = await Promise.all([

@@ -12,11 +12,11 @@ import {
   poolAbi,
   localMode,
 } from "./chain";
-import { useAlpine } from "./state";
+import { useShield } from "./state";
 import { PageTitle, Facts, RouteLink, ActionButton, Empty } from "./ui";
 import { safeError } from "./math.mjs";
 export function Portfolio() {
-  const { account, balances, markets, snapshots, disconnect } = useAlpine();
+  const { account, balances, markets, snapshots, disconnect } = useShield();
   return (
     <>
       <PageTitle
@@ -107,7 +107,7 @@ export function Portfolio() {
   );
 }
 export function Activity() {
-  const { activity, account, refresh } = useAlpine();
+  const { activity, account, refresh } = useShield();
   const rows = activity.filter(
     (a) =>
       a.chainId === config.chainId &&
@@ -156,7 +156,7 @@ export function Activity() {
 }
 export function Faucet() {
   const [params] = useSearchParams();
-  const { account, identity, transact, balances, chainTime } = useAlpine();
+  const { account, identity, transact, balances, chainTime } = useShield();
   const [next, setNext] = useState<bigint | null>(null),
     [error, setError] = useState("");
   useEffect(() => {
@@ -251,7 +251,7 @@ export function Faucet() {
   );
 }
 export function Status() {
-  const { ready, markets, snapshots, errors, loading, refresh } = useAlpine();
+  const { ready, markets, snapshots, errors, loading, refresh } = useShield();
   return (
     <>
       <PageTitle

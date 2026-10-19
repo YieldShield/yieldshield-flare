@@ -80,7 +80,7 @@ For local transactions only:
 anvil --host 127.0.0.1 --port 8547 --silent
 node scripts/local-journey.mjs --browser-ready
 node scripts/local-web.mjs   # isolated local-chain preview at 127.0.0.1:5184
-ALPINE_LOCAL_E2E=1 npm run test:browser -- tests/browser/local-lifecycle.spec.ts
+SHIELD_LOCAL_E2E=1 npm run test:browser -- tests/browser/local-lifecycle.spec.ts
 ```
 
 The local journey confirms 48 transactions and writes source-hash-bound [evidence](docs/evidence/local-journey.json). Its optional browser-ready mode resets the disposable chain after recording evidence and prepares fresh markets. Browser tests use Anvil's publicly known local development accounts through an injected test provider; no private keys are embedded in the app or committed. Production builds cannot enable the local-chain configuration.

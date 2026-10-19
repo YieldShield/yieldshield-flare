@@ -6,19 +6,19 @@ export const artifact = (source, name = source) => ({
 });
 /** Artifacts the plan deploys; the factory itself creates pools and backing oracles. */
 export const planArtifacts = (local = false) => ({
-  token: artifact("DemoAssets", "AlpineDemoDollar"),
-  scenario: artifact("DemoAssets", "AlpineScenarioOracle"),
+  token: artifact("DemoAssets", "ShieldDemoDollar"),
+  scenario: artifact("DemoAssets", "ShieldScenarioOracle"),
   reference: local
-    ? artifact("AlpinePool.t", "MutableOracle")
-    : artifact("DemoAssets", "AlpineChainlinkOracle"),
-  wrapper: artifact("AlpineMarket", "AlpineWrappedAVAX"),
-  vault: artifact("AlpineMarket", "AlpineDemoVault"),
-  backingVault: artifact("AlpineMarket", "AlpineBackingVault"),
-  vaultOracle: artifact("AlpineMarket", "AlpineVaultOracle"),
-  factory: artifact("AlpineMarket", "AlpineFactory"),
-  exchange: artifact("AlpineMarket", "AlpineExchange"),
-  pool: artifact("AlpinePool"),
-  backingOracle: artifact("AlpineMarket", "AlpineBackingOracle"),
+    ? artifact("ShieldPool.t", "MutableOracle")
+    : artifact("DemoAssets", "ShieldChainlinkOracle"),
+  wrapper: artifact("ShieldMarket", "ShieldWrappedAVAX"),
+  vault: artifact("ShieldMarket", "ShieldDemoVault"),
+  backingVault: artifact("ShieldMarket", "ShieldBackingVault"),
+  vaultOracle: artifact("ShieldMarket", "ShieldVaultOracle"),
+  factory: artifact("ShieldMarket", "ShieldFactory"),
+  exchange: artifact("ShieldMarket", "ShieldExchange"),
+  pool: artifact("ShieldPool"),
+  backingOracle: artifact("ShieldMarket", "ShieldBackingOracle"),
 });
 /** Bytecode hashes, plus source files that differ from what the artifacts were compiled from. */
 export function artifactProvenance(artifacts) {
@@ -39,7 +39,7 @@ export function artifactProvenance(artifacts) {
 }
 /**
  * Featured market terms. Epochs are fixed and never renewed, so featured markets use the
- * 30-day contract maximum (AlpinePool EPOCH_LIMIT) to stay open as long as possible.
+ * 30-day contract maximum (ShieldPool EPOCH_LIMIT) to stay open as long as possible.
  */
 export const terms = {
   collateralBps: 15000,
@@ -49,7 +49,7 @@ export const terms = {
   exitDelay: 60,
   juniorNotice: 120,
 };
-/** Backing units the factory takes from the creator as each market's seed (AlpineFactory CREATION_SEED). */
+/** Backing units the factory takes from the creator as each market's seed (ShieldFactory CREATION_SEED). */
 export const creationSeed = 500_000000n;
 /** Featured markets: manifest field, protected asset (zero address = native AVAX), oracle, backing. */
 export const featuredMarkets = (m) => [

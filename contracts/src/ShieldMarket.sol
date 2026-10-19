@@ -7,30 +7,16 @@ import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
-import {AlpinePool, IAlpineOracle} from "./AlpinePool.sol";
+import {ShieldPool, IShieldOracle} from "./ShieldPool.sol";
 
-contract AlpineWrappedAVAX is ERC20, ReentrancyGuard {
-    constructor() ERC20("Alpine Test Wrapped AVAX", "awAVAX") {
-        require(block.chainid == 43113 || block.chainid == 31337, "TESTNET_ONLY");
-    }
+// The wrapped native asset is Flare's canonical WC2FLR (registry name "WNat"), passed to the
+// factory as `wrapper`. The template's own test wrapper is not deployed on Flare.
 
-    function deposit() external payable {
-        require(msg.value > 0, "ZERO_AMOUNT");
-        _mint(msg.sender, msg.value);
-    }
-
-    function withdraw(uint256 amount) external nonReentrant {
-        _burn(msg.sender, amount);
-        (bool ok,) = msg.sender.call{value: amount}("");
-        require(ok, "TRANSFER_FAILED");
-    }
-}
-
-contract AlpineDemoVault is ERC4626 {
+contract ShieldDemoVault is ERC4626 {
     using SafeERC20 for IERC20;
 
-    constructor(IERC20 asset_) ERC20("Alpine Demo Vault Receipts", "vaDEMO") ERC4626(asset_) {
-        require(block.chainid == 43113 || block.chainid == 31337, "TESTNET_ONLY");
+    constructor(IERC20 asset_) ERC20("Shield Demo Vault Receipts - no value", "vsDEMO") ERC4626(asset_) {
+        require(block.chainid == 114 || block.chainid == 31337, "TESTNET_ONLY");
     }
 
     function _decimalsOffset() internal pure virtual override returns (uint8) {
@@ -61,26 +47,26 @@ contract AlpineDemoVault is ERC4626 {
     }
 }
 
-contract AlpineBackingVault is AlpineDemoVault {
+contract ShieldBackingVault is ShieldDemoVault {
     function name() public pure override(ERC20, IERC20Metadata) returns (string memory) {
-        return "Alpine Backing Vault";
+        return "Shield Backing Vault - no value";
     }
 
     function symbol() public pure override(ERC20, IERC20Metadata) returns (string memory) {
-        return "bvaDEMO";
+        return "bvsDEMO";
     }
-    constructor(IERC20 asset_) AlpineDemoVault(asset_) {}
+    constructor(IERC20 asset_) ShieldDemoVault(asset_) {}
 
     function _decimalsOffset() internal pure override returns (uint8) {
         return 0;
     }
 }
 
-contract AlpineBackingOracle {
-    IAlpineOracle public immutable base;
-    AlpineBackingVault public immutable vault;
+contract ShieldBackingOracle {
+    IShieldOracle public immutable base;
+    ShieldBackingVault public immutable vault;
 
-    constructor(IAlpineOracle base_, AlpineBackingVault vault_) {
+    constructor(IShieldOracle base_, ShieldBackingVault vault_) {
         base = base_;
         vault = vault_;
     }
@@ -90,10 +76,10 @@ contract AlpineBackingOracle {
     }
 }
 
-contract AlpineVaultOracle {
-    AlpineDemoVault public immutable vault;
+contract ShieldVaultOracle {
+    ShieldDemoVault public immutable vault;
 
-    constructor(AlpineDemoVault vault_) {
+    constructor(ShieldDemoVault vault_) {
         vault = vault_;
     }
 
@@ -102,7 +88,7 @@ contract AlpineVaultOracle {
     }
 }
 
-contract AlpineFactory is ReentrancyGuard {
+contract ShieldFactory is ReentrancyGuard {
     using SafeERC20 for IERC20;
     IERC20 public immutable backing;
     address public immutable protocol;
@@ -111,7 +97,7 @@ contract AlpineFactory is ReentrancyGuard {
     address public immutable referenceOracle;
     address public immutable scenarioOracle;
     address public immutable vaultOracle;
-    AlpineBackingVault public immutable backingVault;
+    ShieldBackingVault public immutable backingVault;
     mapping(address => address) public backingOracles;
     uint256 public constant CREATION_SEED = 500e6;
     uint256 public constant MAX_POOLS = 32;
@@ -136,9 +122,9 @@ contract AlpineFactory is ReentrancyGuard {
         address reference_,
         address scenario_,
         address vaultOracle_,
-        AlpineBackingVault backingVault_
+        ShieldBackingVault backingVault_
     ) {
-        require(block.chainid == 43113 || block.chainid == 31337, "TESTNET_ONLY");
+        require(block.chainid == 114 || block.chainid == 31337, "TESTNET_ONLY");
         backing = backing_;
         protocol = protocol_;
         wrapper = wrapper_;
@@ -148,9 +134,9 @@ contract AlpineFactory is ReentrancyGuard {
         vaultOracle = vaultOracle_;
         backingVault = backingVault_;
         require(backingVault_.asset() == address(backing_), "BACKING_ASSET");
-        backingOracles[reference_] = address(new AlpineBackingOracle(IAlpineOracle(reference_), backingVault_));
-        backingOracles[scenario_] = address(new AlpineBackingOracle(IAlpineOracle(scenario_), backingVault_));
-        backingOracles[vaultOracle_] = address(new AlpineBackingOracle(IAlpineOracle(vaultOracle_), backingVault_));
+        backingOracles[reference_] = address(new ShieldBackingOracle(IShieldOracle(reference_), backingVault_));
+        backingOracles[scenario_] = address(new ShieldBackingOracle(IShieldOracle(scenario_), backingVault_));
+        backingOracles[vaultOracle_] = address(new ShieldBackingOracle(IShieldOracle(vaultOracle_), backingVault_));
     }
 
     function allowed(address asset, address oracle_) public view returns (bool) {
@@ -162,7 +148,7 @@ contract AlpineFactory is ReentrancyGuard {
         return pools;
     }
 
-    function createPool(address asset, address oracle_, AlpinePool.Terms calldata terms, uint256 deadline)
+    function createPool(address asset, address oracle_, ShieldPool.Terms calldata terms, uint256 deadline)
         external
         nonReentrant
         returns (address)
@@ -174,7 +160,7 @@ contract AlpineFactory is ReentrancyGuard {
         address asset,
         address oracle_,
         address backing_,
-        AlpinePool.Terms calldata terms,
+        ShieldPool.Terms calldata terms,
         uint256 deadline
     ) external nonReentrant returns (address) {
         return _create(asset, oracle_, backing_, terms, deadline);
@@ -184,7 +170,7 @@ contract AlpineFactory is ReentrancyGuard {
         address asset,
         address oracle_,
         address backing_,
-        AlpinePool.Terms calldata terms,
+        ShieldPool.Terms calldata terms,
         uint256 deadline
     ) private returns (address pool) {
         require(block.timestamp <= deadline, "DEADLINE");
@@ -198,8 +184,8 @@ contract AlpineFactory is ReentrancyGuard {
         require(allowed(asset, oracle_), "UNAPPROVED_PAIR");
         require(backing_ == address(backing) || backing_ == address(backingVault), "UNAPPROVED_BACKING");
         address priced = backing_ == address(backing) ? oracle_ : backingOracles[oracle_];
-        require(IAlpineOracle(priced).price() > 0, "INVALID_PRICE");
-        AlpinePool market = new AlpinePool(backing_, priced, msg.sender, protocol, asset, terms);
+        require(IShieldOracle(priced).price() > 0, "INVALID_PRICE");
+        ShieldPool market = new ShieldPool(backing_, priced, msg.sender, protocol, asset, terms);
         pool = address(market);
         IERC20 seed = IERC20(backing_);
         uint256 beforeBalance = seed.balanceOf(address(this));
@@ -214,19 +200,19 @@ contract AlpineFactory is ReentrancyGuard {
 }
 
 /// @notice Funded valueless test exchange. No virtual inventory and no unlimited asset minting.
-contract AlpineExchange is ReentrancyGuard {
+contract ShieldExchange is ReentrancyGuard {
     using SafeERC20 for IERC20;
     IERC20 public immutable backing;
-    AlpineFactory public immutable registry;
+    ShieldFactory public immutable registry;
     uint256 public constant FEE_BPS = 30;
     event Traded(
         address indexed owner, address indexed asset, bool buy, uint256 amount, uint256 backingAmount, uint256 fee
     );
-    /// @notice Inventory added to the exchange (asset zero is native AVAX).
+    /// @notice Inventory added to the exchange (asset zero is native C2FLR).
     event InventoryFunded(address indexed asset, address indexed from, uint256 amount);
 
-    constructor(IERC20 backing_, AlpineFactory registry_) {
-        require(block.chainid == 43113 || block.chainid == 31337, "TESTNET_ONLY");
+    constructor(IERC20 backing_, ShieldFactory registry_) {
+        require(block.chainid == 114 || block.chainid == 31337, "TESTNET_ONLY");
         backing = backing_;
         registry = registry_;
     }
@@ -247,7 +233,7 @@ contract AlpineExchange is ReentrancyGuard {
 
     function quote(address asset, uint256 amount, bool isBuy) public view returns (uint256 amountBacking, uint256 fee) {
         require(amount > 0 && amount <= 100_000 ether, "AMOUNT_LIMIT");
-        uint256 price = IAlpineOracle(oracle(asset)).price();
+        uint256 price = IShieldOracle(oracle(asset)).price();
         require(price > 0, "INVALID_PRICE");
         uint256 base = Math.mulDiv(amount, price, 1 ether, isBuy ? Math.Rounding.Ceil : Math.Rounding.Floor);
         require(base > 0, "DUST_QUOTE");

@@ -7,12 +7,14 @@ import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol
 import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
 import {EnumerableSet} from "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 
-interface IAlpineOracle {
+interface IShieldOracle {
     function price() external view returns (uint256);
 }
 
-/// @notice Bounded testnet split-risk market. Protected assets have18 decimals; backing has6.
-contract AlpinePool is ReentrancyGuard {
+/// @notice Bounded testnet split-risk market on Flare Coston2. Protected assets have 18 decimals; backing has 6.
+/// @dev Economic logic is identical to the yieldshield-avalanche template; only the chain guard,
+/// comments and the asset-exit function name (`exitAvax` -> `exitAsset`) differ.
+contract ShieldPool is ReentrancyGuard {
     using SafeERC20 for IERC20;
     using EnumerableSet for EnumerableSet.UintSet;
 
@@ -32,8 +34,8 @@ contract AlpinePool is ReentrancyGuard {
         uint256 openedAt;
     }
     IERC20 public immutable backing;
-    address public immutable protectedToken; // zero means native test AVAX
-    IAlpineOracle public immutable oracle;
+    address public immutable protectedToken; // zero means native test C2FLR
+    IShieldOracle public immutable oracle;
     address public immutable creator;
     address public immutable protocol;
     address private immutable initializer;
@@ -93,7 +95,7 @@ contract AlpinePool is ReentrancyGuard {
         address protectedToken_,
         Terms memory terms_
     ) {
-        require(block.chainid == 43113 || block.chainid == 31337, "TESTNET_ONLY");
+        require(block.chainid == 114 || block.chainid == 31337, "TESTNET_ONLY");
         require(creator_ != address(0) && protocol_ != address(0), "ZERO_RECIPIENT");
         require(IERC20Metadata(backing_).decimals() == 6, "BACKING_DECIMALS");
         require(protectedToken_ == address(0) || IERC20Metadata(protectedToken_).decimals() == 18, "ASSET_DECIMALS");
@@ -110,7 +112,7 @@ contract AlpinePool is ReentrancyGuard {
             "DELAY_LIMIT"
         );
         backing = IERC20(backing_);
-        oracle = IAlpineOracle(oracle_);
+        oracle = IShieldOracle(oracle_);
         creator = creator_;
         protocol = protocol_;
         protectedToken = protectedToken_;
@@ -317,7 +319,7 @@ contract AlpinePool is ReentrancyGuard {
         (out, fee,) = previewPartialExit(id, positions[id].amount);
     }
 
-    function exitAvax(uint256 id, uint256 minAsset) external nonReentrant {
+    function exitAsset(uint256 id, uint256 minAsset) external nonReentrant {
         _exitAsset(id, positions[id].amount, minAsset);
     }
 

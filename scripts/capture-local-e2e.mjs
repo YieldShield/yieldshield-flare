@@ -14,12 +14,11 @@ if (manifest.chainId !== 31337 || manifest.rpcUrl !== rpc)
 const accounts = await client.request({ method: "eth_accounts" });
 const browserSigners = accounts.slice(2, 4).map((a) => a.toLowerCase());
 const abi = [
-  "AlpinePool",
-  "AlpineFactory",
-  "AlpineExchange",
-  "AlpineDemoVault",
-  "AlpineWrappedAVAX",
-  "AlpineDemoDollar",
+  "ShieldPool",
+  "ShieldFactory",
+  "ShieldExchange",
+  "ShieldDemoVault",
+    "ShieldDemoDollar",
 ].flatMap((name) => JSON.parse(readFileSync(`config/abi/${name}.json`)));
 const last = await client.getBlockNumber();
 const transactions = [];
@@ -50,7 +49,7 @@ for (let blockNumber = 1n; blockNumber <= last; blockNumber++) {
 const sourceHashes = {};
 for (const file of [
   ...readdirSync("src").map((name) => `src/${name}`),
-  ...["AlpinePool.sol", "AlpineMarket.sol", "DemoAssets.sol"].map(
+  ...["ShieldPool.sol", "ShieldMarket.sol", "DemoAssets.sol"].map(
     (name) => `contracts/src/${name}`,
   ),
 ])
@@ -58,7 +57,7 @@ for (const file of [
     .update(readFileSync(file))
     .digest("hex");
 const native = JSON.parse(readFileSync("docs/evidence/local-journey.json"));
-const poolAbi = JSON.parse(readFileSync("config/abi/AlpinePool.json"));
+const poolAbi = JSON.parse(readFileSync("config/abi/ShieldPool.json"));
 const customPool = "0x74f28Bba2A8ef311D15a8A816Bb42B750cDd635F";
 const readPool = (address, functionName, args = []) =>
   client.readContract({ address, abi: poolAbi, functionName, args });

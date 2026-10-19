@@ -1,7 +1,7 @@
 import React, { lazy, Suspense } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
-import { AlpineProvider, useAlpine } from "./state";
+import { ShieldProvider, useShield } from "./state";
 import { localMode, short } from "./chain";
 import { RoleFlow, Positions, PositionDetail } from "./Workflows";
 import { Markets, PoolDetail } from "./Markets";
@@ -17,7 +17,7 @@ import { Guide, Legal } from "./Guide";
 import { RouteOrientation, routeName, decodeRoutePart } from "./navigation";
 function App() {
   const { account, connect, message, setMessage, markets, loading } =
-    useAlpine();
+    useShield();
   const location = useLocation();
   const selected = new URLSearchParams(location.search).get("pool");
   const invalidPool =
@@ -136,9 +136,9 @@ async function bootstrap() {
   createRoot(document.getElementById("root")!).render(
     <React.StrictMode>
       <BrowserRouter>
-        <AlpineProvider>
+        <ShieldProvider>
           <App />
-        </AlpineProvider>
+        </ShieldProvider>
       </BrowserRouter>
     </React.StrictMode>,
   );

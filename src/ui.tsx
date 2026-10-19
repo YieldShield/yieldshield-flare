@@ -1,9 +1,9 @@
 import { type ReactNode, useId } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { assets, config, fmt, localMode, type Market } from "./chain";
-import { useAlpine } from "./state";
+import { useShield } from "./state";
 export function useMarket() {
-  const a = useAlpine();
+  const a = useShield();
   const [params, setParams] = useSearchParams();
   const key =
     params.get("pool") ||
@@ -36,7 +36,7 @@ export function RouteLink({
   className?: string;
 }) {
   const [params] = useSearchParams();
-  const url = new URL(to, "https://alpine.local");
+  const url = new URL(to, "https://shield.local");
   if (!url.searchParams.has("pool") && params.has("pool"))
     url.searchParams.set("pool", params.get("pool")!);
   return (
@@ -97,7 +97,7 @@ export function Facts({ items }: { items: [string, ReactNode][] }) {
   );
 }
 export function Notice() {
-  const { ready } = useAlpine();
+  const { ready } = useShield();
   return !ready ? (
     <div className="notice deployment-notice">
       <strong>Valueless test assets.</strong>{" "}
@@ -124,7 +124,7 @@ export function ActionButton({
   onClick: () => void;
   disabled?: boolean;
 }) {
-  const { ready, account, busy, connect } = useAlpine();
+  const { ready, account, busy, connect } = useShield();
   return (
     <button
       className="primary-button"
@@ -228,7 +228,7 @@ export function MarketCard({
   headingLevel?: 2 | 3;
 }) {
   const Heading = headingLevel === 2 ? "h2" : "h3";
-  const { snapshots, ready, loading, errors } = useAlpine();
+  const { snapshots, ready, loading, errors } = useShield();
   const s = snapshots[market.key],
     asset = assets.find((a) => a.key === market.asset)!;
   return (

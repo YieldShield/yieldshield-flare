@@ -1,35 +1,35 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
-import {AlpinePool, IAlpineOracle} from "../src/AlpinePool.sol";
-import {AlpineDemoDollar} from "../src/DemoAssets.sol";
+import {MockWNat} from "./mocks/FlareMocks.sol";
+import {ShieldPool, IShieldOracle} from "../src/ShieldPool.sol";
+import {ShieldDemoDollar} from "../src/DemoAssets.sol";
 import {
-    AlpineBackingVault,
-    AlpineWrappedAVAX,
-    AlpineDemoVault,
-    AlpineVaultOracle,
-    AlpineFactory,
-    AlpineExchange
-} from "../src/AlpineMarket.sol";
-import {Vm, MutableOracle} from "./AlpinePool.t.sol";
+    ShieldBackingVault,
+    ShieldDemoVault,
+    ShieldVaultOracle,
+    ShieldFactory,
+    ShieldExchange
+} from "../src/ShieldMarket.sol";
+import {Vm, MutableOracle} from "./ShieldPool.t.sol";
 
-contract AlpineParityTest {
+contract ShieldParityTest {
     Vm constant vm = Vm(address(uint160(uint256(keccak256("hevm cheat code")))));
     address constant HOLDER = address(0xA11CE);
     address constant PROVIDER = address(0xB0B);
     address constant CREATOR = address(0xC);
     address constant PROTOCOL = address(0xD);
-    AlpineDemoDollar backing;
+    ShieldDemoDollar backing;
     MutableOracle oracle;
-    AlpinePool pool;
-    AlpineWrappedAVAX wrapper;
-    AlpineDemoVault vault;
-    AlpineVaultOracle vaultOracle;
-    AlpineFactory factory;
-    AlpineExchange exchange;
-    AlpineBackingVault backingVault;
+    ShieldPool pool;
+    MockWNat wrapper;
+    ShieldDemoVault vault;
+    ShieldVaultOracle vaultOracle;
+    ShieldFactory factory;
+    ShieldExchange exchange;
+    ShieldBackingVault backingVault;
 
-    function terms() private pure returns (AlpinePool.Terms memory) {
-        return AlpinePool.Terms(15000, 1000, 100, 7 days, 60, 120);
+    function terms() private pure returns (ShieldPool.Terms memory) {
+        return ShieldPool.Terms(15000, 1000, 100, 7 days, 60, 120);
     }
 
     function setUp() public {
@@ -38,13 +38,13 @@ contract AlpineParityTest {
         vm.deal(HOLDER, 100 ether);
         vm.deal(PROVIDER, 100 ether);
         vm.deal(address(this), 100 ether);
-        backing = new AlpineDemoDollar();
+        backing = new ShieldDemoDollar();
         oracle = new MutableOracle();
-        wrapper = new AlpineWrappedAVAX();
-        vault = new AlpineDemoVault(backing);
-        vaultOracle = new AlpineVaultOracle(vault);
-        backingVault = new AlpineBackingVault(backing);
-        factory = new AlpineFactory(
+        wrapper = new MockWNat();
+        vault = new ShieldDemoVault(backing);
+        vaultOracle = new ShieldVaultOracle(vault);
+        backingVault = new ShieldBackingVault(backing);
+        factory = new ShieldFactory(
             backing,
             PROTOCOL,
             address(wrapper),
@@ -54,8 +54,8 @@ contract AlpineParityTest {
             address(vaultOracle),
             backingVault
         );
-        exchange = new AlpineExchange(backing, factory);
-        pool = new AlpinePool(address(backing), address(oracle), CREATOR, PROTOCOL, address(0), terms());
+        exchange = new ShieldExchange(backing, factory);
+        pool = new ShieldPool(address(backing), address(oracle), CREATOR, PROTOCOL, address(0), terms());
         vm.startPrank(PROVIDER);
         backing.faucet();
         backing.approve(address(pool), type(uint256).max);
@@ -112,7 +112,7 @@ contract AlpineParityTest {
         uint256 id = open();
         oracle.set(50e6);
         vm.prank(HOLDER);
-        pool.exitAvax(id, 0);
+        pool.exitAsset(id, 0);
         vm.startPrank(HOLDER);
         backing.approve(address(pool), 1000e6);
         pool.depositJunior(1000e6, 1);
@@ -121,7 +121,7 @@ contract AlpineParityTest {
         vm.prank(PROVIDER);
         pool.claimRewards(PROVIDER);
         vm.prank(PROVIDER);
-        vm.expectRevert(AlpinePool.InvalidAmount.selector);
+        vm.expectRevert(ShieldPool.InvalidAmount.selector);
         pool.claimRewards(PROVIDER);
     }
 
@@ -129,7 +129,7 @@ contract AlpineParityTest {
         uint256 id = open();
         oracle.set(50e6);
         vm.prank(HOLDER);
-        pool.exitAvax(id, 0);
+        pool.exitAsset(id, 0);
         vm.prank(PROVIDER);
         pool.requestJuniorWithdrawal();
         vm.warp(block.timestamp + 121);
@@ -152,14 +152,14 @@ contract AlpineParityTest {
         require(pool.withdrawalReadyAt(PROVIDER) == 0, "cancelled");
         vm.warp(block.timestamp + 121);
         vm.prank(PROVIDER);
-        vm.expectRevert(AlpinePool.NotReady.selector);
+        vm.expectRevert(ShieldPool.NotReady.selector);
         pool.withdrawJunior(1e18, 0, 0);
     }
 
     function testPartialBoundAndDeadlineCannotBeBypassed() public {
         uint256 id = open();
         vm.prank(HOLDER);
-        vm.expectRevert(AlpinePool.Slippage.selector);
+        vm.expectRevert(ShieldPool.Slippage.selector);
         pool.partialExitAsset(id, 0.5 ether, 0.51 ether, block.timestamp);
         vm.prank(HOLDER);
         vm.expectRevert();
@@ -170,7 +170,7 @@ contract AlpineParityTest {
     function testFactoryCreatesAndSeedsAtomically() public {
         vm.prank(HOLDER);
         address created = factory.createPool(address(wrapper), address(oracle), terms(), block.timestamp);
-        AlpinePool market = AlpinePool(created);
+        ShieldPool market = ShieldPool(created);
         require(factory.isPool(created) && factory.allPools().length == 1, "registered");
         require(market.creator() == HOLDER && market.protectedToken() == address(wrapper), "identities");
         require(market.shares(HOLDER) == 500e18 && market.totalBacking() == 500e6, "creation seed belongs to creator");
@@ -181,7 +181,7 @@ contract AlpineParityTest {
         vm.prank(HOLDER);
         vm.expectRevert();
         factory.createPool(address(vault), address(oracle), terms(), block.timestamp);
-        AlpinePool.Terms memory t = terms();
+        ShieldPool.Terms memory t = terms();
         t.collateralBps = 10000;
         vm.prank(HOLDER);
         vm.expectRevert();
@@ -191,7 +191,7 @@ contract AlpineParityTest {
 
     function testERC20ProtectionAndPartialExitAreRealTokenTransfers() public {
         vm.prank(HOLDER);
-        AlpinePool market = AlpinePool(factory.createPool(address(wrapper), address(oracle), terms(), block.timestamp));
+        ShieldPool market = ShieldPool(factory.createPool(address(wrapper), address(oracle), terms(), block.timestamp));
         vm.startPrank(HOLDER);
         wrapper.deposit{value: 1 ether}();
         wrapper.approve(address(market), 1 ether);
@@ -244,7 +244,7 @@ contract AlpineParityTest {
         wrapper.approve(address(exchange), 2 ether);
         exchange.fundToken(address(wrapper), 2 ether);
         vm.prank(HOLDER);
-        AlpinePool market = AlpinePool(factory.createPool(address(wrapper), address(oracle), terms(), block.timestamp));
+        ShieldPool market = ShieldPool(factory.createPool(address(wrapper), address(oracle), terms(), block.timestamp));
         (uint256 cost,) = exchange.quote(address(wrapper), 1 ether, true);
         vm.startPrank(HOLDER);
         exchange.buy(address(wrapper), 1 ether, cost, block.timestamp);
@@ -275,7 +275,7 @@ contract AlpineParityTest {
         backingVault.approve(address(factory), 500e6);
         address market =
             factory.createPoolWithBacking(address(0), address(oracle), address(backingVault), terms(), block.timestamp);
-        AlpinePool p = AlpinePool(market);
+        ShieldPool p = ShieldPool(market);
         require(address(p.backing()) == address(backingVault) && p.totalBacking() == 500e6, "vault collateral units");
         uint256 id = p.protect{value: 1 ether}(25e6, block.timestamp);
         vm.warp(block.timestamp + 61);
@@ -290,7 +290,7 @@ contract AlpineParityTest {
         backing.approve(address(backingVault), 1000e6);
         backingVault.deposit(500e6, HOLDER);
         backingVault.donate(500e6);
-        uint256 quoted = IAlpineOracle(factory.backingOracles(address(oracle))).price();
+        uint256 quoted = IShieldOracle(factory.backingOracles(address(oracle))).price();
         require(quoted >= 12500000 && quoted <= 12500001, "price denominated in receipt units");
         vm.stopPrank();
     }
@@ -302,7 +302,7 @@ contract AlpineParityTest {
         (address owner, uint256 amount, uint256 floor, uint256 opened) = pool.positions(id);
         require(owner == PROVIDER && amount == 1 ether && floor == 25e6 && opened == 10000, "basis preserved");
         vm.prank(HOLDER);
-        vm.expectRevert(AlpinePool.NotOwner.selector);
+        vm.expectRevert(ShieldPool.NotOwner.selector);
         pool.exitBacking(id);
         vm.prank(PROVIDER);
         pool.exitBacking(id);

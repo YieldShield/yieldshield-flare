@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
-import {AlpinePool} from "../src/AlpinePool.sol";
-import {AlpineDemoDollar} from "../src/DemoAssets.sol";
-import {Vm, MutableOracle} from "./AlpinePool.t.sol";
+import {ShieldPool} from "../src/ShieldPool.sol";
+import {ShieldDemoDollar} from "../src/DemoAssets.sol";
+import {Vm, MutableOracle} from "./ShieldPool.t.sol";
 
 /// @notice Reward-index solvency regressions: total earnings must never exceed the reward inventory.
-contract AlpineRewardsTest {
+contract ShieldRewardsTest {
     Vm constant vm = Vm(address(uint160(uint256(keccak256("hevm cheat code")))));
-    AlpinePool pool;
-    AlpineDemoDollar token;
+    ShieldPool pool;
+    ShieldDemoDollar token;
     MutableOracle oracle;
     address constant ALICE = address(0xA11CE);
     address constant BOB = address(0xB0B);
@@ -18,11 +18,11 @@ contract AlpineRewardsTest {
     function setUp() public {
         vm.chainId(31337);
         vm.warp(10000);
-        token = new AlpineDemoDollar();
+        token = new ShieldDemoDollar();
         oracle = new MutableOracle();
-        pool = new AlpinePool(
+        pool = new ShieldPool(
             address(token), address(oracle), address(0xC), address(0xD), address(0),
-            AlpinePool.Terms(15000, 1000, 100, 7 days, 60, 120)
+            ShieldPool.Terms(15000, 1000, 100, 7 days, 60, 120)
         );
         vm.deal(ALICE, 1000 ether);
         _fund(BOB);
@@ -46,11 +46,11 @@ contract AlpineRewardsTest {
         uint256 p0 = oracle.price();
         oracle.set(p0 * 2);
         vm.prank(ALICE);
-        pool.exitAvax(id, 0);
+        pool.exitAsset(id, 0);
         oracle.set(p0);
     }
 
-    /// Leaves AVAX inventory so later deposits mint shares at a non-round NAV.
+    /// Leaves native inventory so later deposits mint shares at a non-round NAV.
     function _unevenNav() private {
         vm.prank(ALICE);
         uint256 id = pool.protect{value: 1 ether}(1, block.timestamp);

@@ -303,8 +303,8 @@ await run(
 );
 const sourceHash = {};
 for (const file of [
-  "contracts/src/AlpinePool.sol",
-  "contracts/src/AlpineMarket.sol",
+  "contracts/src/ShieldPool.sol",
+  "contracts/src/ShieldMarket.sol",
   "contracts/src/DemoAssets.sol",
 ])
   sourceHash[file] = keccak256(toHex(readFileSync(file)));

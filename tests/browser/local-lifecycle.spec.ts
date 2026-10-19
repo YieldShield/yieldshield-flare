@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 import { readFileSync } from "node:fs";
 import { createPublicClient, http, encodeFunctionData, parseAbi } from "viem";
-const enabled = process.env.ALPINE_LOCAL_E2E === "1";
+const enabled = process.env.SHIELD_LOCAL_E2E === "1";
 test("local signed browser journey: faucet → provider → funded buy → protect → partial exit → claim", async ({
   page,
 }) => {

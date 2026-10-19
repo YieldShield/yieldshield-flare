@@ -18,7 +18,7 @@ import {
   chainTimestamp,
   chainDeadline,
 } from "./chain";
-import { useAlpine, type Snapshot, type Position } from "./state";
+import { useShield, type Snapshot, type Position } from "./state";
 import {
   useMarket,
   PageTitle,
@@ -396,7 +396,7 @@ export function RoleFlow({ role }: { role: "protect" | "provide" }) {
   );
 }
 export function Positions() {
-  const { markets, snapshots, account, ready, errors, loading } = useAlpine();
+  const { markets, snapshots, account, ready, errors, loading } = useShield();
   const incomplete = ready && (loading || Object.keys(errors).length > 0);
   const own = markets.flatMap((m) =>
     (snapshots[m.key]?.positions || [])
@@ -477,7 +477,7 @@ export function PositionDetail() {
       split < 0 ? routeParams.get("pool") || "reference" : key.slice(0, split),
     id = key.slice(split + 1);
   const { markets, snapshots, account, identity, transact, chainTime } =
-    useAlpine();
+    useShield();
   const m = markets.find(
       (m) => m.key.toLowerCase() === marketKey.toLowerCase(),
     ),
@@ -735,7 +735,7 @@ export function PositionDetail() {
 }
 export function ProviderPosition({ marketKey }: { marketKey: string }) {
   const { markets, snapshots, account, identity, transact, chainTime } =
-    useAlpine();
+    useShield();
   const m = markets.find((m) => m.key === marketKey)!,
     s = snapshots[marketKey];
   const [amount, setAmount] = useState(""),

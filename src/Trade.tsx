@@ -17,7 +17,7 @@ import {
   chainDeadline,
   chainTimestamp,
 } from "./chain";
-import { useAlpine } from "./state";
+import { useShield } from "./state";
 import { PageTitle, Amount, Facts, ActionButton, RouteLink } from "./ui";
 import { minimumOutput, safeError } from "./math.mjs";
 type Quote = {
@@ -33,7 +33,7 @@ type Quote = {
 export function Trade() {
   const [params, setParams] = useSearchParams();
   const { account, identity, balances, approve, transact, markets } =
-    useAlpine();
+    useShield();
   // Only known assets are honoured; an unknown query value must not trade a different asset than shown.
   const requestedAsset = params.get("asset");
   const assetKey = assets.some((a) => a.key === requestedAsset)
@@ -391,7 +391,7 @@ const conversionKinds = [
 ];
 export function Conversions() {
   const [params, setParams] = useSearchParams();
-  const { account, identity, balances, approve, transact } = useAlpine();
+  const { account, identity, balances, approve, transact } = useShield();
   const requestedKind = params.get("convert") || "";
   const kind = conversionKinds.includes(requestedKind) ? requestedKind : "wrap";
   const amount =

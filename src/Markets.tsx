@@ -1,9 +1,9 @@
 import { useParams } from "react-router-dom";
-import { useAlpine } from "./state";
+import { useShield } from "./state";
 import { assets, fmt, explorer } from "./chain";
 import { PageTitle, RouteLink, MarketCard, Facts, Risk, Empty } from "./ui";
 export function Markets({ home = false }: { home?: boolean }) {
-  const { markets } = useAlpine();
+  const { markets } = useShield();
   return (
     <>
       {home ? (
@@ -81,7 +81,7 @@ export function Markets({ home = false }: { home?: boolean }) {
 }
 export function PoolDetail() {
   const { key } = useParams();
-  const { markets, snapshots, errors, ready } = useAlpine();
+  const { markets, snapshots, errors, ready } = useShield();
   const market = markets.find(
     (m) => m.key.toLowerCase() === key?.toLowerCase(),
   );
