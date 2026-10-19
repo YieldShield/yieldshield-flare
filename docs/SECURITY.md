@@ -70,6 +70,8 @@ These are not done yet:
 
 - FXRP (6 decimals), testUSDT0 backing, sFLR, FDC attestations and anchor-feed settlement;
 - any real wallet-extension test;
-- the public Coston2 journey, which waits for testnet gas.
+- maturity settlement on Coston2, which is covered locally and by the Solidity suite.
+
+The Coston2 deployment and a scripted public journey are done ([E2E_REPORT](E2E_REPORT.md)).
 
 Tests, local journeys, the rehearsal and the probe do not replace an independent audit, economic review or legal review. Any mainnet release depends on all three.

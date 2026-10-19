@@ -6,6 +6,8 @@
 - no public deployment has been made;
 - the GitHub repository is private.
 
+The contracts, however, are deployed and verified on Coston2: deployment `coston2-2026-10-19T07-50-55Z-34db01`, factory `0xd6488c73f25663f3ba252aab053932cb5fae1f3c`. The manifest on `main` is `deployed-and-verified`, so a build from `main` enables writes against it.
+
 This page is the plan for the owner to carry out.
 
 ## Target
@@ -42,15 +44,16 @@ This page is the plan for the owner to carry out.
 
 1. Create the Vercel project from the GitHub repository with the settings above. Keep deployment protection on previews.
 2. Add the domain `flare.yieldshield.ai` and create the DNS record Vercel asks for.
-3. Check the production URL:
+3. Check the production build:
+   - the entry bundle contains the factory `0xd6488c73f25663f3ba252aab053932cb5fae1f3c`, `deployed-and-verified` and no `awaiting-testnet-gas`.
+4. Check the production URL:
    - the headers above are present;
-   - `/status` shows FTSOv2 FLR/USD as valid;
-   - `/markets` shows the deployment gate while the manifest is `awaiting-testnet-gas`;
+   - `/status` shows FTSOv2 FLR/USD as valid and the deployed adapter price;
+   - `/markets` lists the five live markets with their price and available entry claims, and no deployment gate;
    - deep routes such as `/protect?pool=reference` load;
    - at 390 px there is no horizontal overflow.
-4. After the Coston2 deployment is verified, rebuild from the commit that records the `deployed-and-verified` manifest. Confirm the bundle contains the factory address and no `awaiting-testnet-gas`. Then record the deployment ID and commit here.
-
-Publishing the site before the contracts are deployed is safe. Every write stays disabled and is labeled "Awaiting Coston2 deployment", while the status page already shows the live FTSOv2 reading. Decide whether to publish before or after funding.
+5. Do the first real wallet-extension transaction on the published site. MetaMask on Coston2 is enough: for example, the sDEMO faucet claim and one protection. Record its hash in [E2E_REPORT](E2E_REPORT.md). Then record the Vercel deployment ID and commit here.
+6. Republish after every featured-market replacement. The first is due before 18 November 2026, 07:51 UTC. The site must list the new market addresses.
 
 ## What the site must say
 

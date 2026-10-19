@@ -2,15 +2,54 @@
 
 Date: 19 October 2026.
 
-This is functional verification, not a security audit. No Coston2 transaction has been sent. The deployment is waiting for testnet gas ([OPERATIONS](OPERATIONS.md)). Each check below names its environment, because local, rehearsal and simulated results are not Coston2 activity.
+This is functional verification, not a security audit. Each check below names its environment, because local, rehearsal and simulated results are not Coston2 activity, and scripted test activity is not traction.
 
 | Environment | What runs there |
 |---|---|
-| **Live Coston2, read-only** | Direct reads, a read-only preflight and one `eth_call` simulation. Nothing is signed |
-| **Chain-114 rehearsal** | A disposable Anvil with Coston2's chain ID and Flare stand-ins at the canonical addresses. The real scripts sign with Anvil's public development account |
-| **Local chain 31337** | A disposable Anvil with stand-ins deployed normally; the scripted journey and the browser tests |
+| **Coston2** | The verified deployment `coston2-2026-10-19T07-50-55Z-34db01` and a scripted journey from a fresh wallet |
+| **Live Coston2, read-only** | Direct reads, the preflight and one `eth_call` simulation, run before the broadcast |
+| **Chain-114 rehearsal** | A disposable Anvil with Coston2's chain ID and Flare stand-ins at the canonical addresses |
+| **Local chain 31337** | A disposable Anvil with stand-ins; the scripted journey and the browser tests |
 
-## Live Coston2, read-only
+## Coston2 deployment and journey, 19 October 2026
+
+**Deployment.** The faucet-funded test signer `0x2b7E…5226` broadcast the 25-step plan from source commit `2fcea40`:
+
+- blocks 36792295–36792333;
+- 25,107,922 gas;
+- no reverted steps.
+
+`npm run verify:coston2` then marked it `deployed-and-verified`. A read-only re-run the same day passed again. It reported FTSOv2 FLR/USD at 6397 sDEMO micro-units per C2FLR, all five featured markets open until 18 November 2026, 07:51 UTC, and live exchange inventory of 10 C2FLR, 9 WC2FLR, 100 vsDEMO and 1,000.006414 sDEMO after the journey's trade. Addresses are in the [README](../README.md#addresses) and [config/deployment.json](../config/deployment.json).
+
+**Journey** ([evidence](evidence/coston2-e2e.json)). `npm run journey:coston2` created a fresh tester, `0x9E90302037a8fE591dFd3ffAa704Ea893b164113`. The deployer funded it with 15 C2FLR. It completed **19 confirmed transactions** in blocks 36792442–36792579, at a reference price of 0.006394 sDEMO per C2FLR:
+
+| Path | Result |
+|---|---|
+| Faucet and provider capital | 10,000 sDEMO claimed; 500 sDEMO provided to the scenario market |
+| Protection | 5 C2FLR protected in the FLR reference market (334,550 gas); 3 C2FLR wrapped into WC2FLR and protected in the wrapped market (565,653 gas) |
+| Exits | After the 60 s delay: a 2.5 C2FLR partial asset exit, then a backing exit for the remainder |
+| Transfer | The WC2FLR position was transferred to the deployer, who took the backing exit |
+| Exchange and vault | 1 WC2FLR bought from funded inventory; 10 sDEMO deposited for vsDEMO receipts |
+| Provider | Notice, then full redemption of the tester's shares after the 120 s notice |
+| Unwrap | The remaining WC2FLR unwrapped to C2FLR |
+
+The tester ended with 8.86 C2FLR, 9,990.009571 sDEMO and 10 vsDEMO. All five featured markets ended with no open positions, so provider entry stays open.
+
+FLR/USD barely moved during the journey, so no gain fee was charged on Coston2. Gain fees are covered by the Solidity suite, the local journey and the local browser test.
+
+**First attempt and the gas-margin fix** ([evidence](evidence/coston2-e2e-attempt1.json)). A first tester, `0x996b617D5de97B05ECB6683C928931b8FeB10f9b`, sent 4 successful transactions. The fifth, `tester-protects-5-c2flr` ([`0x2cf5…a9ee`](https://coston2-explorer.flare.network/tx/0x2cf501cc27882a6e60f44e7e424ba66ec120a1ba55a67b7995f1ceb530f2a9ee)), reverted:
+
+- it was sent with viem's exact gas estimate;
+- it used all 341,025 gas;
+- `cast run` shows `ReentrancySentryOOG` after `Protected` was emitted, so it ran out at the reentrancy guard's final storage write.
+
+An exact estimate leaves no margin. A transaction that reads FTSOv2 can need more gas when mined than when estimated, most likely because the feed's state changes every block. Commit `b74576a` therefore sends 1.3× the estimate, both in the app's transaction path and in `coston2-journey.mjs`. The contracts did not change. After the fix:
+
+- 14 JavaScript tests, the build, the local journey and all 9 browser tests (including the signed local lifecycle) passed;
+- the retry with a fresh wallet completed;
+- the transaction that had failed used 334,550 gas.
+
+## Live Coston2, read-only (before the broadcast)
 
 **Plan probe** ([evidence](evidence/coston2-plan-probe.json), block 36791398). `Coston2PlanProbe` was installed by state override and called once. Inside that call, on Coston2's EVM and state:
 
@@ -96,7 +135,8 @@ The same run also checked two regressions:
 
 ## Not verified yet
 
-- **Coston2 broadcast.** Any Coston2 deployment, verification or public journey waits for faucet gas.
-- **Wallet extension.** No real extension (MetaMask or another EIP-1193 wallet) has signed. Every run used scripted keys or an injected test provider.
-- **Maturity on Coston2.** Featured epochs last 30 days. Settlement on Coston2 is covered only locally and by the Solidity suite.
+- **Wallet extension.** No real extension (MetaMask or another EIP-1193 wallet) has signed. Every Coston2 and local run used scripted keys or an injected test provider.
+- **Website.** It is not published, so no public-site check exists yet ([HOSTING](HOSTING.md)).
+- **Maturity on Coston2.** Featured epochs run until 18 November 2026. Settlement on Coston2 is covered only locally and by the Solidity suite.
 - **Gain fees on Coston2.** They depend on FLR/USD rising between entry and exit.
+- **Explorer source verification.** The verify script compares runtime code with the build, but sources have not been submitted to the Coston2 explorer.

@@ -4,30 +4,62 @@
 
 Split-risk markets on Flare Testnet Coston2. Holders protect C2FLR or WC2FLR exposure against a fixed backing claim, valued at entry by Flare's enshrined FTSOv2 oracle and reserved at 150% by separately funded capital providers. Every reserve, exit and fee is enforced and visible on-chain.
 
-**Planned site:** https://flare.yieldshield.ai (not yet published; see [HOSTING](docs/HOSTING.md)). **License:** [MIT](LICENSE).
+**Planned site:** https://flare.yieldshield.ai (not published yet; see [HOSTING](docs/HOSTING.md)). **Network:** Flare Testnet Coston2, chain 114. **License:** [MIT](LICENSE).
 
 > Testnet only and unaudited. No asset here has monetary value. sDEMO is not USDT0 or Flare's testUSDT0. FTSOv2 FLR/USD is used as a reference price for C2FLR, which has no value. Do not use this code with real funds.
 
 ## Status: 19 October 2026
 
-**The code is ready for Coston2, but nothing is deployed there yet. The deployment is waiting for testnet gas.**
+**Deployed and verified on Coston2.**
 
-- **Deployer.** The dedicated test signer is `0x2b7EEEAEc982E59F18621650FedFf8C3723B5226`. It holds no C2FLR.
-- **Funding.** Flare's only official faucet, https://faucet.flare.network/coston2, is protected by Google reCAPTCHA, so funding is an owner step. One claim of 100 C2FLR covers the 43.985 C2FLR the [preflight](docs/evidence/coston2-preflight.json) requires.
-- **Preflight.** It already passes every other check against live Coston2: the canonical registry, WNat = WC2FLR, FtsoV2 resolution, a zero read fee and a fresh FLR/USD feed.
+- **Deployment.** `coston2-2026-10-19T07-50-55Z-34db01`: 25 transactions from source commit `2fcea40`, blocks 36792295–36792333, 25.11M gas.
+- **Verification.** `npm run verify:coston2` passed. It checked:
+  - runtime code against the build, with immutables masked;
+  - FTSOv2 and WC2FLR wiring;
+  - asset identities and terms;
+  - open 30-day epochs, vault and creation seeds, and exchange funding;
+  - every deployment receipt.
+
+  It was re-run read-only later the same day and passed again.
+- **Journey.** A second, fresh test wallet completed a **19-transaction journey on Coston2** ([evidence](docs/evidence/coston2-e2e.json)). The website is not published yet ([HOSTING](docs/HOSTING.md)).
+- **Market dates.** The featured markets accept protection until **18 November 2026, 07:51 UTC**, and must be replaced before then ([OPERATIONS](docs/OPERATIONS.md#monthly-featured-market-replacement)).
+
+**Gas-margin fix.** The first journey attempt ([evidence](docs/evidence/coston2-e2e-attempt1.json)) stopped when its native protection ([`0x2cf5…a9ee`](https://coston2-explorer.flare.network/tx/0x2cf501cc27882a6e60f44e7e424ba66ec120a1ba55a67b7995f1ceb530f2a9ee)) ran out of gas:
+
+- it was sent with an exact gas estimate;
+- it used all 341,025 gas;
+- the trace ends in `ReentrancySentryOOG` after `Protected` was emitted.
+
+Exact estimates are not safe for transactions that read FTSOv2. The app and the journey script now send 1.3× the estimate (commit `b74576a`). The contracts are unchanged, and the retry with a fresh wallet succeeded.
 
 | Evidence | Where | What it shows |
 |---|---|---|
-| Live Coston2 plan probe | [coston2-plan-probe.json](docs/evidence/coston2-plan-probe.json) | A read-only `eth_call` with a state override deploys every contract on Coston2's EVM. Against the **real** FtsoV2 and WC2FLR, it creates all five markets and opens native and WC2FLR protection at FLR/USD 0.00641. Nothing was broadcast. |
-| Chain-114 rehearsal | [coston2-rehearsal.json](docs/evidence/coston2-rehearsal.json) | On a disposable Anvil with Coston2's chain ID and Flare stand-ins at the canonical addresses: `deploy-coston2` (25 transactions, 24.26M gas), `verify-coston2`, a stale feed failing closed, a 7-transaction featured-market replacement, and verification again. |
-| Rehearsed public journey | [coston2-rehearsal-journey.json](docs/evidence/coston2-rehearsal-journey.json) | `coston2-journey.mjs` from a second fresh wallet: 19 confirmed transactions on the rehearsal chain. |
-| Local journey | [local-journey.json](docs/evidence/local-journey.json) | 57 transactions and 3 expected `STALE_PRICE` reverts on chain 31337, using the real FTSOv2 adapter with a mock FtsoV2. |
-| Local browser journey | [browser-receipts.json](docs/evidence/e2e/browser-receipts.json) | 10 browser-signed transactions through the real app (Playwright with an injected test provider). |
+| Coston2 journey | [coston2-e2e.json](docs/evidence/coston2-e2e.json) | Tester `0x9E90…4113`, funded with 15 C2FLR by the deployer, completed 19 confirmed transactions. See the list below |
+| First attempt | [coston2-e2e-attempt1.json](docs/evidence/coston2-e2e-attempt1.json) | 4 transactions, then the out-of-gas protection described above |
+| Deployment manifest | [config/deployment.json](config/deployment.json) | Every address, transaction, artifact hash and the source commit |
+| Live Coston2 plan probe | [coston2-plan-probe.json](docs/evidence/coston2-plan-probe.json) | A read-only `eth_call` simulation of the whole plan against the real FtsoV2 and WC2FLR, made before the broadcast |
+| Chain-114 rehearsal | [coston2-rehearsal.json](docs/evidence/coston2-rehearsal.json) | Deploy, verify, a stale feed failing closed, a featured-market replacement and verification again, on a disposable Anvil |
+| Local journey and browser | [local-journey.json](docs/evidence/local-journey.json), [browser-receipts.json](docs/evidence/e2e/browser-receipts.json) | 57 local transactions plus 3 expected `STALE_PRICE` reverts; 10 browser-signed local transactions |
+
+The Coston2 journey covered:
+
+1. sDEMO faucet, then 500 sDEMO provided;
+2. 5 C2FLR and 3 WC2FLR protected;
+3. a partial asset exit, then a backing exit of the remainder;
+4. a position transfer and the new owner's backing exit;
+5. an exchange buy and a vault deposit;
+6. provider notice and redemption;
+7. an unwrap.
 
 **Tests:**
 - 57 Solidity tests, including four 256-run fuzz tests;
 - 14 JavaScript tests;
 - 9 browser tests (6 public, 3 local-chain).
+
+**Not done yet:**
+- No real wallet-extension transaction. Every run used scripted keys or an injected test provider.
+- The website is not published.
+- Contract sources are not yet verified on the Coston2 explorer.
 
 Test activity is not traction. There are no users, no revenue and no TVL. The code was written with substantial AI assistance and has had no independent audit.
 
@@ -83,7 +115,26 @@ There is no promised yield. A bvsDEMO-backed claim is a fixed number of receipts
 
 ## Addresses
 
-The Flare system contracts used here are canonical. They were read on 19 October 2026:
+**YieldShield on Coston2 (chain 114).** Deployment `coston2-2026-10-19T07-50-55Z-34db01`, verified:
+
+| Contract | Address |
+|---|---|
+| Factory | [`0xd6488c73f25663f3ba252aab053932cb5fae1f3c`](https://coston2-explorer.flare.network/address/0xd6488c73f25663f3ba252aab053932cb5fae1f3c) |
+| Exchange | [`0xc453cd991c48c920e6191219939e0a1bc61a4694`](https://coston2-explorer.flare.network/address/0xc453cd991c48c920e6191219939e0a1bc61a4694) |
+| FLR reference market (C2FLR / sDEMO) | [`0xb92Ba82B221Efc73e5CE9936939aD47c7F800cC6`](https://coston2-explorer.flare.network/address/0xb92Ba82B221Efc73e5CE9936939aD47c7F800cC6) |
+| Wrapped FLR market (WC2FLR / sDEMO) | [`0x33A133B04743986581Da486557F42135812A3823`](https://coston2-explorer.flare.network/address/0x33A133B04743986581Da486557F42135812A3823) |
+| Funded vault market (vsDEMO / sDEMO) | [`0x0AC5a9865D21589BD8ecf7764a08989822993cA6`](https://coston2-explorer.flare.network/address/0x0AC5a9865D21589BD8ecf7764a08989822993cA6) |
+| FLR · vault collateral market (C2FLR / bvsDEMO) | [`0x5FfD8fF08604Fb27FFd20Bc988Ce387fe7F1c94f`](https://coston2-explorer.flare.network/address/0x5FfD8fF08604Fb27FFd20Bc988Ce387fe7F1c94f) |
+| FLR scenario lab market (C2FLR / sDEMO) | [`0xFacA576fEA1e10Ef2823066ba498220ABd3c8a73`](https://coston2-explorer.flare.network/address/0xFacA576fEA1e10Ef2823066ba498220ABd3c8a73) |
+| FTSOv2 reference oracle (`ShieldFtsoV2Oracle`) | [`0xe2e3fde725dc0f6b1646e7d3b0d750e7a7a9690b`](https://coston2-explorer.flare.network/address/0xe2e3fde725dc0f6b1646e7d3b0d750e7a7a9690b) |
+| Scenario oracle | [`0x9be0ee303fc95969d3f0ac331dd3ccd6d0b19606`](https://coston2-explorer.flare.network/address/0x9be0ee303fc95969d3f0ac331dd3ccd6d0b19606) |
+| sDEMO (demo backing, not USDT0) | [`0x57f808d4f176278ce5e8bbe49db6745aff5b13b0`](https://coston2-explorer.flare.network/address/0x57f808d4f176278ce5e8bbe49db6745aff5b13b0) |
+| vsDEMO vault | [`0xedcf7be107a9e4fbe147a1b54aa62744659388b2`](https://coston2-explorer.flare.network/address/0xedcf7be107a9e4fbe147a1b54aa62744659388b2) |
+| bvsDEMO backing vault | [`0x6b6da602f1cec85a0973d83ba34a283382e128e6`](https://coston2-explorer.flare.network/address/0x6b6da602f1cec85a0973d83ba34a283382e128e6) |
+| Vault oracle | [`0xc86e147efe8ac68e9a0d8f504cc320534eb39b7a`](https://coston2-explorer.flare.network/address/0xc86e147efe8ac68e9a0d8f504cc320534eb39b7a) |
+| Deployer (dedicated test signer) | [`0x2b7EEEAEc982E59F18621650FedFf8C3723B5226`](https://coston2-explorer.flare.network/address/0x2b7EEEAEc982E59F18621650FedFf8C3723B5226) |
+
+**Flare system contracts used.** These are canonical and were read on 19 October 2026:
 
 | Contract | Coston2 address |
 |---|---|
@@ -92,7 +143,7 @@ The Flare system contracts used here are canonical. They were read on 19 October
 | WC2FLR (WNat) | [`0xC67DCE33D7A8efA5FfEB961899C73fe01bCe9273`](https://coston2-explorer.flare.network/address/0xC67DCE33D7A8efA5FfEB961899C73fe01bCe9273) |
 | FLR/USD feed ID | `0x01464c522f55534400000000000000000000000000` |
 
-YieldShield's own contracts get their addresses when the deployment is broadcast. [config/deployment.json](config/deployment.json) will then record every address, transaction and the source commit.
+Every transaction hash and the artifact hashes are in [config/deployment.json](config/deployment.json).
 
 ## Run and verify
 
@@ -100,13 +151,14 @@ Requirements: Node.js 22+ and [Foundry](https://getfoundry.sh).
 
 ```sh
 npm ci --ignore-scripts
-npm run dev                 # 127.0.0.1:5191, reading live Coston2 (writes stay disabled until deployed)
+npm run dev                 # 127.0.0.1:5191, reading the live Coston2 deployment
 npm run build               # static output: dist/
 npm test                    # JavaScript arithmetic, lifecycle and FTSOv2 normalization tests
 npm run test:contracts      # Solidity tests, including fuzz cases
 npm run test:browser        # public routes, mobile, wallet and context regressions
 npm run probe:coston2       # read-only simulation of the whole plan against live Coston2
-npm run deploy:coston2      # read-only preflight; --broadcast needs the funded test signer
+npm run verify:coston2      # read back the deployment: runtime code, wiring, terms and receipts
+npm run deploy:coston2      # read-only preflight (or --replace-featured preflight); --broadcast needs the test signer
 ```
 
 Rehearsal on a disposable chain-114 Anvil, where nothing reaches Coston2:

@@ -1,56 +1,64 @@
 # Operations
 
-## Coston2 deployment: awaiting testnet gas (19 October 2026)
+## Coston2 deployment: deployed and verified (19 October 2026)
 
-**Signer.** On 19 October 2026 a new dedicated Coston2-only test signer was created with `cast wallet new`:
+**Deployment.** `coston2-2026-10-19T07-50-55Z-34db01` is `deployed-and-verified`:
 
-- address `0x2b7EEEAEc982E59F18621650FedFf8C3723B5226`;
+- 25 transactions from source commit `2fcea40`;
+- blocks 36792295–36792333;
+- 25,107,922 gas used;
+- no reverted steps.
+
+Factory [`0xd6488c73f25663f3ba252aab053932cb5fae1f3c`](https://coston2-explorer.flare.network/address/0xd6488c73f25663f3ba252aab053932cb5fae1f3c), exchange [`0xc453cd991c48c920e6191219939e0a1bc61a4694`](https://coston2-explorer.flare.network/address/0xc453cd991c48c920e6191219939e0a1bc61a4694). Every other address is in the [README](../README.md#addresses) and [config/deployment.json](../config/deployment.json).
+
+**Next action: replace the featured markets.** They accept protection until **18 November 2026, 07:51 UTC**. Run the replacement round from 11 November (see [Monthly featured-market replacement](#monthly-featured-market-replacement)) and put it in the calendar.
+
+**Signer.** The dedicated Coston2-only test signer is `0x2b7EEEAEc982E59F18621650FedFf8C3723B5226`:
+
+- created with `cast wallet new`;
 - private key only in the ignored `.secrets/coston2-test-signer.json` (mode 600), never in source, browser code, logs or commits;
-- never funded, on Coston2 or Flare mainnet.
+- funded once by the owner from Flare's faucet, https://faucet.flare.network/coston2, which needs a reCAPTCHA.
 
-Only faucet-funded test C2FLR may ever be sent to it.
+After deploying, funding the journey tester and the journey's transfer exit, it held about 33.6 C2FLR. That covers about two replacement rounds at today's fees (14.45M gas each, about 14 C2FLR with headroom). Only faucet-funded test C2FLR may ever be sent to it.
 
-**Funding is an owner step.** Flare's only official faucet is https://faucet.flare.network/coston2. It gives 100 C2FLR, 10 USDT0 and 10 FXRP per address per 24 hours, and it is protected by Google reCAPTCHA, so no script requests from it. To fund the signer:
+**Gas finding (fixed in `b74576a`).** The first journey attempt's native protection, [`0x2cf5…a9ee`](https://coston2-explorer.flare.network/tx/0x2cf501cc27882a6e60f44e7e424ba66ec120a1ba55a67b7995f1ceb530f2a9ee):
 
-1. Open the faucet with Coston2 selected.
-2. Paste `0x2b7EEEAEc982E59F18621650FedFf8C3723B5226` and click **Request C2FLR**.
-3. Complete the check yourself.
+- was sent with an exact `eth_estimateGas` limit;
+- used all 341,025 gas, ending in `ReentrancySentryOOG` after `Protected`.
 
-One claim is enough.
+An exact estimate is not safe for transactions that read FTSOv2. The app's transaction path (`src/state.tsx`) and `scripts/coston2-journey.mjs` now send 1.3× the estimate. The retry used 334,550 gas.
 
-**Steps after funding:**
+The deploy and replacement scripts sign intents through viem's `prepareTransactionRequest`, which estimates gas. Their FTSOv2-reading steps (reference-market creations) succeeded in the deployment and the rehearsal. If one ever runs out of gas, it is recorded under `failedTransactions`; resume with `--retry-reverted <label>`.
+
+**Plan gas.** The deployment used 25.11M gas, about 2% above the preflight's `PLAN_GAS` estimate of 24.6M. The 30% headroom covered it. Update `PLAN_GAS` to about 25.2M before any fresh deployment.
+
+### How the deployment was run
 
 1. Build and verify the exact checkout: `npm ci --ignore-scripts`, `npm run test:contracts`, `npm test`, `npm run build`.
 2. `npm run deploy:coston2` runs a read-only preflight. It checks:
    - the chain ID;
    - that the manifest names Flare's canonical `FlareContractRegistry`;
-   - that the registry's `WNat` is the manifest's WC2FLR, reporting `WC2FLR` with 18 decimals;
+   - that the registry's `WNat` is the manifest's WC2FLR (`WC2FLR`, 18 decimals);
    - that `FtsoV2` resolves to code;
    - that the FLR/USD read fee is zero and the feed is fresh (`maxPriceAge` 300 s);
    - the signer's balance, the git commit and artifact freshness.
 
-   Each failure is printed as a reason, and nothing is sent. On 19 October the only blocker was funding ([evidence](evidence/coston2-preflight.json)).
-3. `npm run deploy:coston2 -- --broadcast` executes the 25-step plan. The preflight sizes the required balance as 24.6M gas × the node's `maxFeePerGas` × 1.3, plus the 20 C2FLR the plan sends:
-   - 10 wrapped into WC2FLR for exchange inventory;
-   - 10 as native exchange inventory.
-
-   At Coston2's 500 gwei base fee that was 43.985 C2FLR. The gas figure is the chain-114 rehearsal's 24.26M plus about 250k: Coston2's WNat deposit and transfer cost 188k and 133k execution gas against the local stand-in's 48k and 26k ([probe](evidence/coston2-plan-probe.json)).
+   Each failure is printed as a reason, and nothing is sent ([pre-funding evidence](evidence/coston2-preflight.json)).
+3. `npm run deploy:coston2 -- --broadcast` executes the 25-step plan. The required balance is `PLAN_GAS` × `maxFeePerGas` × 1.3, plus the 20 C2FLR the plan sends (10 wrapped into WC2FLR for exchange inventory, 10 as native inventory).
 4. `npm run verify:coston2` reads back:
    - every deployed contract's runtime code against `contracts/out`, with immutables masked;
-   - the factory wiring, including that `wrapper` is the registry's WNat;
-   - the adapter's `registry()`, `feedId()`, `maxAge()` and `ftsoV2()` against the manifest and the registry;
+   - the factory wiring, including `wrapper` = the registry's WNat;
+   - the adapter's `registry()`, `feedId()`, `maxAge()` and `ftsoV2()`;
    - asset identities and featured terms, and that each featured market still accepts protection;
    - the vault seeds, creation receipts and exchange funding.
 
-   It then marks the manifest `deployed-and-verified`. The website enables writes only for that status.
-5. `npm run journey:coston2` runs the public-testnet journey from a **second fresh wallet**:
-   - the key is created in the ignored `.secrets/coston2-journey-wallet.json`, and only the address is printed;
-   - the deployer funds it with 15 C2FLR;
-   - it sends 19 transactions: faucet, provider capital, native and WC2FLR protection, partial asset exit, backing exit, position transfer and the new owner's exit, a trade, a vault deposit, provider notice and redemption, and an unwrap;
-   - evidence goes to `docs/evidence/coston2-e2e.json`.
+   It then marks the manifest `deployed-and-verified`, the only status for which the website enables writes. It can be re-run at any time; it reads the chain only and updates `verifiedAt`.
+5. `npm run journey:coston2` ran the public journey from a second fresh wallet ([evidence](evidence/coston2-e2e.json); [failed first attempt](evidence/coston2-e2e-attempt1.json)). Journey wallet keys stay in the ignored `.secrets/`.
 
-   The same script passed on the chain-114 rehearsal ([evidence](evidence/coston2-rehearsal-journey.json)).
-6. Commit the manifest and evidence, then publish the website ([HOSTING](HOSTING.md)). Then do one real wallet-extension transaction. Every recorded run so far used scripted keys or a test provider.
+Still open:
+- one real wallet-extension transaction;
+- publishing the website ([HOSTING](HOSTING.md));
+- optional source verification on the Coston2 explorer.
 
 The scripts have no mainnet mode. Every contract also rejects any chain other than 114 or the local 31337.
 
