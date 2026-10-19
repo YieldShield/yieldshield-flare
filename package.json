@@ -1,17 +1,17 @@
 {
-  "name": "yieldshield-avalanche",
+  "name": "yieldshield-flare",
   "version": "0.1.0",
   "private": true,
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "dev": "vite --host 127.0.0.1 --port 5181",
+    "dev": "vite --host 127.0.0.1 --port 5191",
     "build": "tsc --noEmit && vite build",
-    "preview": "vite preview --host 127.0.0.1 --port 4181",
+    "preview": "vite preview --host 127.0.0.1 --port 4191",
     "test": "node --test tests/*.test.mjs",
     "test:contracts": "forge test --root contracts",
-    "deploy:fuji": "node scripts/deploy-fuji.mjs",
-    "verify:fuji": "node scripts/verify-fuji.mjs",
+    "deploy:coston2": "node scripts/deploy-coston2.mjs",
+    "verify:coston2": "node scripts/verify-coston2.mjs",
     "test:browser": "playwright test",
     "test:journey": "node scripts/local-journey.mjs"
   },

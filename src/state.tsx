@@ -130,7 +130,7 @@ export function ShieldProvider({ children }: { children: ReactNode }) {
     readsInFlight = useRef(0);
   const generation = useRef(0),
     currentAccount = useRef<Address | null>(null);
-  // Production writes require a verified Fuji manifest; only the dev-only local mode accepts local evidence.
+  // Production writes require a verified Coston2 manifest; only the dev-only local mode accepts local evidence.
   const ready = Boolean(
     config.factory &&
     config.referencePool &&
@@ -204,11 +204,11 @@ export function ShieldProvider({ children }: { children: ReactNode }) {
             (m) => m.address?.toLowerCase() === address.toLowerCase(),
           ),
       );
-      // Community pools are priced by an approved oracle or its bvaDEMO-unit adapter; name the source
-      // so a synthetic scenario pool cannot pass for a Chainlink-priced one.
+      // Community pools are priced by an approved oracle or its bvsDEMO-unit adapter; name the source
+      // so a synthetic scenario pool cannot pass for an FTSOv2-priced one.
       const sources: [Address | null, string][] = [
-        [config.referenceOracle, "Chainlink AVAX/USD"],
-        [config.scenarioOracle, "Synthetic 25 → 35 → 15 cycle"],
+        [config.referenceOracle, "FTSOv2 FLR/USD"],
+        [config.scenarioOracle, "Synthetic 0.0060 → 0.0084 → 0.0036 cycle"],
         [config.vaultOracle, "Vault redemption backing"],
       ];
       const [details, adapters] = await Promise.all([
@@ -254,8 +254,8 @@ export function ShieldProvider({ children }: { children: ReactNode }) {
           backing,
           backingSymbol:
             backing.toLowerCase() === config.backingVault?.toLowerCase()
-              ? "bvaDEMO"
-              : "aDEMO",
+              ? "bvsDEMO"
+              : "sDEMO",
           oracle,
           source: source < 0 ? "Factory-approved oracle" : sources[source][1],
         });
@@ -429,7 +429,7 @@ export function ShieldProvider({ children }: { children: ReactNode }) {
     }
     const provider = walletProvider();
     if (!remembered || !provider) return;
-    // eth_accounts and eth_chainId never prompt; restore only an already-authorized account on Fuji.
+    // eth_accounts and eth_chainId never prompt; restore only an already-authorized account on Coston2.
     void Promise.all([
       provider.request({ method: "eth_accounts" }) as Promise<Address[]>,
       provider.request({ method: "eth_chainId" }) as Promise<string>,
@@ -484,7 +484,7 @@ export function ShieldProvider({ children }: { children: ReactNode }) {
     value?: bigint,
     assertReview?: () => void,
   ) {
-    if (!ready) throw new Error("Fuji contracts are awaiting deployment.");
+    if (!ready) throw new Error("Coston2 contracts are awaiting deployment.");
     if (!currentAccount.current) throw new Error("Connect your wallet first.");
     const expected = currentAccount.current;
     const expectedGeneration = generation.current;

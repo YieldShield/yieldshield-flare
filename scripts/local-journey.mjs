@@ -11,7 +11,7 @@ import {
 } from "viem";
 import { foundry } from "viem/chains";
 import { setupMarkets, artifact, terms } from "./setup-markets.mjs";
-const rpc = "http://127.0.0.1:8547",
+const rpc = "http://127.0.0.1:8557",
   c = createPublicClient({ chain: foundry, transport: http(rpc) });
 if ((await c.getChainId()) !== 31337) throw new Error("Local-only chain guard");
 await c.request({ method: "anvil_reset", params: [] });
@@ -28,7 +28,7 @@ const manifest = {
   ...JSON.parse(readFileSync("config/deployment.json")),
   chainId: 31337,
   rpcUrl: rpc,
-  explorer: "http://127.0.0.1:8547",
+  explorer: "http://127.0.0.1:8557",
   deployer: account,
   transactions: [],
   status: "local-only",

@@ -11,10 +11,16 @@ import {
   client,
   poolAbi,
   localMode,
+  networkName,
+  faucetUrl,
+  flareRegistryAbi,
+  ftsoV2ViewAbi,
+  ftsoOracleAbi,
 } from "./chain";
 import { useShield } from "./state";
 import { PageTitle, Facts, RouteLink, ActionButton, Empty } from "./ui";
-import { safeError } from "./math.mjs";
+import { safeError, ftsoPrice, feedValue } from "./math.mjs";
+import type { Address } from "viem";
 export function Portfolio() {
   const { account, balances, markets, snapshots, disconnect } = useShield();
   return (
@@ -42,8 +48,8 @@ export function Portfolio() {
             symbol: a.symbol,
             decimals: 18,
           })),
-          { key: "backing", symbol: "aDEMO", decimals: 6 },
-          { key: "backing-vault", symbol: "bvaDEMO", decimals: 6 },
+          { key: "backing", symbol: "sDEMO", decimals: 6 },
+          { key: "backing-vault", symbol: "bvsDEMO", decimals: 6 },
         ].map((a) => (
           <article className="market-card" key={a.key}>
             <div className="eyebrow">WALLET / {a.symbol}</div>
@@ -171,21 +177,22 @@ export function Faucet() {
       <PageTitle
         eyebrow="TESTNET SUPPLIES"
         title="Get ready for the route."
-        description="You need Fuji AVAX for gas and aDEMO for backing or trading. Every asset here is valueless; no mainnet funds are required."
+        description="You need Coston2 C2FLR for gas and sDEMO for backing or trading. Every asset here has no value; no mainnet funds are required."
       />
       <div className="market-grid">
         <section className="action-card">
-          <h2>Claim 10,000 aDEMO</h2>
+          <h2>Claim 10,000 sDEMO</h2>
           <p>
-            The contract faucet permits one claim per wallet per hour. aDEMO is
-            not Circle USDC and is not dollar redeemable.
+            The contract faucet permits one claim per wallet per hour. sDEMO is
+            not USDT0 or Flare’s testUSDT0, has no value and is not dollar
+            redeemable.
           </p>
           <Facts
             items={[
               [
                 "Wallet balance",
                 balances.backing !== undefined
-                  ? `${fmt(balances.backing)} aDEMO`
+                  ? `${fmt(balances.backing)} sDEMO`
                   : "Unavailable",
               ],
               [
@@ -202,14 +209,14 @@ export function Faucet() {
             disabled={next !== null && next > chainTime}
             onClick={() =>
               void transact(
-                "Claim test aDEMO",
+                "Claim test sDEMO",
                 config.backingToken,
                 tokenAbi,
                 "faucet",
               ).catch((e) => setError(safeError(e)))
             }
           >
-            Claim aDEMO
+            Claim sDEMO
           </ActionButton>
           {error && (
             <p className="error-note" role="alert">
@@ -218,18 +225,19 @@ export function Faucet() {
           )}
         </section>
         <section className="market-card">
-          <h2>Fuji AVAX for gas</h2>
+          <h2>Coston2 C2FLR for gas</h2>
           <p className="card-description">
-            Get gas from the official faucet using your test wallet. Never fund
-            the Alpine deployer.
+            Get gas from Flare’s official faucet with your own test wallet: 100
+            C2FLR per address per day. The faucet uses a reCAPTCHA check that
+            you complete yourself. Never fund the YieldShield deployer.
           </p>
           <a
             className="hero-link"
-            href="https://build.avax.network/console/primary-network/faucet"
+            href={faucetUrl}
             target="_blank"
             rel="noreferrer"
           >
-            Open Avalanche faucet ↗
+            Open the Flare faucet ↗
           </a>
           <div className="button-row">
             <RouteLink
@@ -250,6 +258,138 @@ export function Faucet() {
     </>
   );
 }
+type FeedReading = {
+  ftso: Address;
+  value: bigint;
+  decimals: number;
+  timestamp: bigint;
+  now: bigint;
+  fee: bigint;
+  adapterPrice: bigint | null;
+  adapterError: string;
+};
+/** Live FTSOv2 reading through the FlareContractRegistry; available before any deployment. */
+function FeedStatus() {
+  const [reading, setReading] = useState<FeedReading | null>(null),
+    [error, setError] = useState(""),
+    [loading, setLoading] = useState(false);
+  const feed = config.ftsoFeed as { name: string; id: `0x${string}` };
+  const maxAge = BigInt(config.maxPriceAge);
+  async function load() {
+    setLoading(true);
+    setError("");
+    try {
+      const ftso = (await read(
+        config.flareContractRegistry,
+        flareRegistryAbi,
+        "getContractAddressByName",
+        ["FtsoV2"],
+      )) as Address;
+      const [[value, decimals, timestamp], fee, block] = await Promise.all([
+        read(ftso, ftsoV2ViewAbi, "getFeedById", [feed.id]),
+        read(ftso, ftsoV2ViewAbi, "calculateFeeById", [feed.id]),
+        client.getBlock(),
+      ]);
+      let adapterPrice: bigint | null = null,
+        adapterError = "";
+      if (config.referenceOracle)
+        await read(config.referenceOracle, ftsoOracleAbi, "price")
+          .then((p) => (adapterPrice = p))
+          .catch((e) => (adapterError = safeError(e)));
+      setReading({
+        ftso,
+        value,
+        decimals: Number(decimals),
+        timestamp,
+        now: block.timestamp,
+        fee,
+        adapterPrice,
+        adapterError,
+      });
+    } catch (e) {
+      setReading(null);
+      setError(safeError(e));
+    } finally {
+      setLoading(false);
+    }
+  }
+  useEffect(() => {
+    void load();
+  }, []);
+  let check = "Unavailable";
+  if (reading) {
+    try {
+      const price = ftsoPrice(reading, reading.now, maxAge);
+      check =
+        reading.fee === 0n
+          ? `Valid: ${fmt(price, 6, 6)} sDEMO per C2FLR`
+          : "Read fee required: the adapter fails closed";
+    } catch (e) {
+      check = `Rejected (${(e as Error).message}): the adapter would revert`;
+    }
+  }
+  return (
+    <article className="market-card">
+      <div className="eyebrow">FLARE ENSHRINED ORACLE</div>
+      <h2>FTSOv2 {feed.name} feed</h2>
+      <Facts
+        items={[
+          ["Feed ID", short(feed.id)],
+          [
+            "Value",
+            reading
+              ? `${feedValue(reading.value, reading.decimals)} (${reading.decimals} decimals)`
+              : loading
+                ? "Loading…"
+                : "Unavailable",
+          ],
+          [
+            "Age",
+            reading
+              ? `${reading.now - reading.timestamp}s (maximum ${maxAge}s)`
+              : "—",
+          ],
+          ["Read fee", reading ? String(reading.fee) : "—"],
+          ["Adapter checks", check],
+          [
+            "Deployed adapter price",
+            !config.referenceOracle
+              ? "Adapter not deployed yet"
+              : reading?.adapterPrice != null
+                ? `${fmt(reading.adapterPrice, 6, 6)} sDEMO`
+                : reading?.adapterError || "Unavailable",
+          ],
+        ]}
+      />
+      {reading && (
+        <a
+          className="address"
+          href={explorer("address", reading.ftso)}
+          target="_blank"
+          rel="noreferrer"
+        >
+          FtsoV2 {reading.ftso} ↗
+        </a>
+      )}
+      <button
+        className="secondary-button"
+        disabled={loading}
+        onClick={() => void load()}
+      >
+        {loading ? "Reading…" : "Read the feed again"}
+      </button>
+      <p className="card-description">
+        A reference price for valueless C2FLR, read from the registry-resolved
+        FtsoV2 contract. It does not give test assets any value.
+      </p>
+      {error && (
+        <p className="error-note" role="alert">
+          Feed read: {error}
+        </p>
+      )}
+    </article>
+  );
+}
 export function Status() {
   const { ready, markets, snapshots, errors, loading, refresh } = useShield();
   return (
@@ -260,19 +400,20 @@ export function Status() {
         description="Check deployment, contracts and price availability."
       />
       <div className="market-grid">
+        <FeedStatus />
         <article className="market-card">
           <h2>
             {ready
               ? "Contracts configured"
               : config.factory
                 ? "Verification pending"
-                : "Fuji deployment pending"}
+                : "Coston2 deployment pending"}
           </h2>
           <Facts
             items={[
               [
                 "Network",
-                localMode ? "Local Anvil test chain" : "Avalanche Fuji C-Chain",
+                networkName,
               ],
               ["Chain ID", String(config.chainId)],
               ["Manifest state", config.status],
@@ -298,12 +439,14 @@ export function Status() {
             {loading ? "Refreshing…" : "Refresh network reads"}
           </button>
           <p className="card-description">
-            Local test results do not confirm a Fuji deployment.
+            Local test results do not confirm a Coston2 deployment.
           </p>
         </article>
         <article className="market-card">
           <h2>Deployment addresses</h2>
           {[
+            "flareContractRegistry",
+            "referenceOracle",
             "factory",
             "exchange",
             "backingToken",
@@ -350,7 +493,7 @@ export function Status() {
                 [
                   "Oracle",
                   snapshots[m.key]?.price
-                    ? `${fmt(snapshots[m.key].price!)} ${m.backingSymbol}`
+                    ? `${fmt(snapshots[m.key].price!, 6, 6)} ${m.backingSymbol}`
                     : "Unavailable",
                 ],
                 ["Source", m.source],
@@ -390,21 +533,21 @@ export function Assets() {
           ...assets,
           {
             key: "backing",
-            symbol: "aDEMO",
-            name: "Alpine Demo Dollar",
+            symbol: "sDEMO",
+            name: "Shield Demo Dollar",
             address: config.backingToken,
             decimals: 6,
             description:
-              "Faucet-issued valueless demo backing. Not USDC and not dollar redeemable.",
+              "Faucet-issued demo backing. Not USDT0, not Flare’s testUSDT0, no value and not dollar redeemable.",
           },
           {
             key: "backing-vault",
-            symbol: "bvaDEMO",
-            name: "Alpine Backing Vault",
+            symbol: "bvsDEMO",
+            name: "Shield Backing Vault",
             address: config.backingVault,
             decimals: 6,
             description:
-              "Funded aDEMO ERC-4626 receipts used as junior backing. Floors are fixed receipt units, not guaranteed fixed aDEMO value.",
+              "Funded sDEMO ERC-4626 receipts used as junior backing. Floors are fixed receipt units, not guaranteed fixed sDEMO value.",
           },
         ].map((a) => (
           <article key={a.key}>
@@ -427,7 +570,7 @@ export function Assets() {
                 {a.address}
               </a>
             ) : (
-              <small>Contract pending Fuji deployment</small>
+              <small>Contract pending Coston2 deployment</small>
             )}
           </article>
         ))}
@@ -435,18 +578,21 @@ export function Assets() {
       <div className="field-note">
         <h2>Research references</h2>
         <p>
-          BENQI sAVAX and Circle USDC are not integrated in this deployment.
-          They cannot be bought, protected or provided here. A production
-          integration requires separate oracle, redemption, liquidity and
-          security review.
+          FAssets FXRP (Coston2 FTestXRP, six decimals), Flare’s testUSDT0
+          and Sceptre sFLR are not integrated in this deployment. They cannot
+          be bought, protected or provided here. FXRP needs six-decimal asset
+          support, testUSDT0 is distributed only by the CAPTCHA-protected
+          faucet, and sFLR and its FTSO custom feed exist on Flare mainnet
+          only. Each integration needs separate oracle, redemption, liquidity
+          and security review.
         </p>
         <a
           className="hero-link"
-          href="https://docs.benqi.fi/benqi-liquid-staking/overview"
+          href="https://dev.flare.network/fassets/reference"
           target="_blank"
           rel="noreferrer"
         >
-          BENQI documentation ↗
+          FAssets reference ↗
         </a>
       </div>
     </>

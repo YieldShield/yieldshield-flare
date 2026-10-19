@@ -1,11 +1,11 @@
 import { readFileSync } from "node:fs";
 import { spawn } from "node:child_process";
 const manifest = JSON.parse(readFileSync(".local/deployment.json"));
-if (manifest.chainId !== 31337 || manifest.rpcUrl !== "http://127.0.0.1:8547")
+if (manifest.chainId !== 31337 || manifest.rpcUrl !== "http://127.0.0.1:8557")
   throw new Error("Local-only configuration required");
 const child = spawn(
   "npm",
-  ["run", "dev", "--", "--port", "5184", "--strictPort"],
+  ["run", "dev", "--", "--port", "5194", "--strictPort"],
   {
     stdio: "inherit",
     env: {

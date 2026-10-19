@@ -43,7 +43,7 @@ test("funding detour retains asset, amount, role and backing conversion", async 
     "wrapped",
   );
   await expect(page.getByLabel("Amount", { exact: true })).toHaveValue("0.25");
-  await page.getByRole("link", { name: "Get aDEMO", exact: true }).click();
+  await page.getByRole("link", { name: "Get sDEMO", exact: true }).click();
   expect(page.url()).toContain("amount=0.25");
   await page.getByRole("link", { name: "Return to acquisition" }).click();
   await page

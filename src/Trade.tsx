@@ -61,9 +61,10 @@ export function Trade() {
     [success, setSuccess] = useState<string | null>(null),
     [working, setWorking] = useState(false);
   const asset = assets.find((a) => a.key === assetKey) || assets[0];
-  // Quick amounts stay within the seeded exchange inventory (0.01 AVAX / awAVAX, 100 vaDEMO).
+  // Quick amounts stay within the seeded exchange inventory (10 C2FLR / 10 WC2FLR, 100 vsDEMO)
+  // and above the 0.01 sDEMO minimum entry claim at FLR prices (about 1.6 C2FLR at 0.0064).
   const presets =
-    assetKey === "vault" ? ["1", "10", "50"] : ["0.001", "0.005", "0.01"];
+    assetKey === "vault" ? ["1", "10", "50"] : ["2", "5", "10"];
   const guard = useReviewGuard([assetKey, side, amount, identity]);
   useEffect(() => {
     setQ(null);
@@ -192,7 +193,7 @@ export function Trade() {
       <PageTitle
         eyebrow="FUND YOUR POSITION"
         title="Trade. Then protect."
-        description="Buy and sell test assets for aDEMO. Trade fee: 0.3%."
+        description="Buy and sell test assets for sDEMO. Trade fee: 0.3%."
       />
       {params.get("return") && (
         <RouteLink
@@ -242,7 +243,7 @@ export function Trade() {
               <p>
                 {side === "buy"
                   ? `${amount} ${asset.symbol} is now in your wallet. Protection is a separate transaction.`
-                  : "Your aDEMO proceeds are now in your wallet."}
+                  : "Your sDEMO proceeds are now in your wallet."}
               </p>
               {success !== "sold" && (
                 <RouteLink className="hero-link" to={success}>
@@ -285,7 +286,7 @@ export function Trade() {
               <p className="amount-help">
                 Wallet:{" "}
                 {balances.backing !== undefined ? fmt(balances.backing) : "—"}{" "}
-                aDEMO ·{" "}
+                sDEMO ·{" "}
                 {balances[assetKey] !== undefined
                   ? fmt(balances[assetKey], 18, 6)
                   : "—"}{" "}
@@ -297,12 +298,12 @@ export function Trade() {
                     items={[
                       [
                         side === "buy" ? "You pay" : "You receive",
-                        `${fmt(q.output, 6, 6)} aDEMO`,
+                        `${fmt(q.output, 6, 6)} sDEMO`,
                       ],
-                      ["Included 0.3% fee", `${fmt(q.fee, 6, 6)} aDEMO`],
+                      ["Included 0.3% fee", `${fmt(q.fee, 6, 6)} sDEMO`],
                       [
                         side === "buy" ? "Maximum payment" : "Minimum proceeds",
-                        `${fmt(q.bound, 6, 6)} aDEMO`,
+                        `${fmt(q.bound, 6, 6)} sDEMO`,
                       ],
                       ["Tolerance", "0.5%"],
                       [
@@ -345,12 +346,12 @@ export function Trade() {
           <p className="card-description">{asset.description}</p>
           <Facts
             items={[
-              ["Settlement token", "aDEMO · valueless / six decimals"],
+              ["Settlement token", "sDEMO · not USDT0, no value / six decimals"],
               [
                 "Price source",
                 assetKey === "vault"
                   ? "Vault redemption backing"
-                  : "Chainlink AVAX/USD adapter",
+                  : "FTSOv2 FLR/USD (block-latency feed)",
               ],
               ["Trade execution", "Only within actual inventory"],
               ["Protection", "Separate opt-in transaction"],
@@ -369,7 +370,7 @@ export function Trade() {
               className="secondary-button"
               to={`/faucet?${params.toString()}`}
             >
-              Get aDEMO
+              Get sDEMO
             </RouteLink>
             <RouteLink className="secondary-button" to="/assets">
               Asset identities
@@ -430,22 +431,22 @@ export function Conversions() {
     outDecimals = wrapping ? 18 : deposit ? (backingVault ? 6 : 18) : 6;
   const inSymbol = wrapping
     ? kind === "wrap"
-      ? "AVAX"
-      : "awAVAX"
+      ? "C2FLR"
+      : "WC2FLR"
     : deposit
-      ? "aDEMO"
+      ? "sDEMO"
       : backingVault
-        ? "bvaDEMO"
-        : "vaDEMO";
+        ? "bvsDEMO"
+        : "vsDEMO";
   const outSymbol = wrapping
     ? kind === "wrap"
-      ? "awAVAX"
-      : "AVAX"
+      ? "WC2FLR"
+      : "C2FLR"
     : deposit
       ? backingVault
-        ? "bvaDEMO"
-        : "vaDEMO"
-      : "aDEMO";
+        ? "bvsDEMO"
+        : "vsDEMO"
+      : "sDEMO";
   const balanceKey = wrapping
     ? kind === "wrap"
       ? "native"
@@ -540,14 +541,17 @@ export function Conversions() {
       <div>
         <div className="eyebrow">DIRECT CONVERSIONS</div>
         <h2>Wrap or enter a funded vault.</h2>
-        <p>Wrap AVAX 1:1 or exchange aDEMO for funded vault receipts.</p>
-        <p>vaDEMO can be protected; bvaDEMO backs markets.</p>
+        <p>
+          Wrap C2FLR 1:1 into Flare’s canonical WC2FLR, or exchange sDEMO for
+          funded vault receipts.
+        </p>
+        <p>vsDEMO can be protected; bvsDEMO backs markets.</p>
         <details className="help-details">
           <summary>How vault receipts work</summary>
           <p>
-            Receipts redeem against the aDEMO held by their vault. Only funded
+            Receipts redeem against the sDEMO held by their vault. Only funded
             donations can increase redemption value; no yield is promised.
-            vaDEMO has 18 decimals, while bvaDEMO has six. They are separate
+            vsDEMO has 18 decimals, while bvsDEMO has six. They are separate
             contracts.
           </p>
         </details>
@@ -561,12 +565,12 @@ export function Conversions() {
             value={kind}
             onChange={(e) => setKind(e.target.value)}
           >
-            <option value="wrap">AVAX → awAVAX</option>
-            <option value="unwrap">awAVAX → AVAX</option>
-            <option value="deposit">aDEMO → vaDEMO</option>
-            <option value="redeem">vaDEMO → aDEMO</option>
-            <option value="deposit-backing">aDEMO → bvaDEMO</option>
-            <option value="redeem-backing">bvaDEMO → aDEMO</option>
+            <option value="wrap">C2FLR → WC2FLR</option>
+            <option value="unwrap">WC2FLR → C2FLR</option>
+            <option value="deposit">sDEMO → vsDEMO</option>
+            <option value="redeem">vsDEMO → sDEMO</option>
+            <option value="deposit-backing">sDEMO → bvsDEMO</option>
+            <option value="redeem-backing">bvsDEMO → sDEMO</option>
           </select>
         </label>
         <Amount

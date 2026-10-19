@@ -92,7 +92,7 @@ export function CreatePool() {
       const held = await read(collateral, tokenAbi, "balanceOf", [account]);
       if (held < seed)
         throw new Error(
-          `Seeding needs ${fmt(seed)} ${backing === "cash" ? "aDEMO" : "bvaDEMO"}; this wallet holds ${fmt(held)}. ${backing === "cash" ? "Claim aDEMO from the faucet" : "Convert aDEMO to bvaDEMO on Trade"} first.`,
+          `Seeding needs ${fmt(seed)} ${backing === "cash" ? "sDEMO" : "bvsDEMO"}; this wallet holds ${fmt(held)}. ${backing === "cash" ? "Claim sDEMO from the faucet" : "Convert sDEMO to bvsDEMO on Trade"} first.`,
         );
       if (
         terms.collateralBps < 12500 ||
@@ -215,9 +215,9 @@ export function CreatePool() {
                   value={backing}
                   onChange={(e) => setBacking(e.target.value)}
                 >
-                  <option value="cash">aDEMO · six-decimal demo token</option>
+                  <option value="cash">sDEMO · six-decimal demo token</option>
                   <option value="vault">
-                    bvaDEMO · funded backing-vault receipts
+                    bvsDEMO · funded backing-vault receipts
                   </option>
                 </select>
               </label>
@@ -229,7 +229,7 @@ export function CreatePool() {
                     value={source}
                     onChange={(e) => setSource(e.target.value)}
                   >
-                    <option value="reference">Chainlink reference</option>
+                    <option value="reference">FTSOv2 FLR/USD reference</option>
                     <option value="scenario">
                       Synthetic scenario · 25 / 35 / 15
                     </option>
@@ -267,7 +267,7 @@ export function CreatePool() {
                     items={[
                       [
                         "Initial provider seed",
-                        `${fmt(review.seed)} ${backing === "cash" ? "aDEMO" : "bvaDEMO"}`,
+                        `${fmt(review.seed)} ${backing === "cash" ? "sDEMO" : "bvsDEMO"}`,
                       ],
                       ["Protocol gain fee", "Fixed 1%"],
                       ["Fees taken from", "Positive realized gains only"],
@@ -305,14 +305,14 @@ export function CreatePool() {
           </p>
           <Facts
             items={[
-              ["Approved protected assets", "AVAX · awAVAX · vaDEMO"],
-              ["Approved backing", "aDEMO · bvaDEMO"],
+              ["Approved protected assets", "C2FLR · WC2FLR · vsDEMO"],
+              ["Approved backing", "sDEMO · bvsDEMO"],
               ["Position cap", "100 open positions; 0.01 minimum entry claim"],
               ["Creation limit", "2 markets per wallet; 22 community slots"],
               ["Creator control", "Immutable terms; no seizure function"],
             ]}
           />
-          <Risk provider backing={backing === "cash" ? "aDEMO" : "bvaDEMO"} />
+          <Risk provider backing={backing === "cash" ? "sDEMO" : "bvsDEMO"} />
           <RouteLink className="hero-link" to="/trade#convert">
             Create backing-vault receipts ↗
           </RouteLink>

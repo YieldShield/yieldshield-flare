@@ -4,7 +4,7 @@ import { createHash } from "node:crypto";
 import { execFileSync } from "node:child_process";
 import assert from "node:assert/strict";
 import { createPublicClient, http, decodeFunctionData } from "viem";
-const rpc = "http://127.0.0.1:8547";
+const rpc = "http://127.0.0.1:8557";
 const client = createPublicClient({ transport: http(rpc) });
 if ((await client.getChainId()) !== 31337)
   throw new Error("Evidence capture is local-only");

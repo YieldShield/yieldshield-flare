@@ -4,7 +4,7 @@ test("undeployed UI, no-wallet feedback and scenario disclosures", async ({
 }) => {
   await page.goto("/protect");
   await expect(
-    page.getByRole("button", { name: "Awaiting Fuji deployment" }),
+    page.getByRole("button", { name: "Awaiting Coston2 deployment" }),
   ).toBeDisabled();
   await page
     .getByRole("button", { name: "Connect wallet", exact: true })
@@ -35,7 +35,7 @@ test("wallet account and network changes clear the connected session", async ({
 }) => {
   await page.addInitScript(() => {
     let account = "0x1111111111111111111111111111111111111111";
-    let chain = "0xa869";
+    let chain = "0x72";
     const listeners: Record<string, Set<(...args: unknown[]) => void>> = {};
     const provider = {
       async request({ method }: { method: string }) {
@@ -43,7 +43,7 @@ test("wallet account and network changes clear the connected session", async ({
           return [account];
         if (method === "eth_chainId") return chain;
         if (method === "wallet_switchEthereumChain") {
-          chain = "0xa869";
+          chain = "0x72";
           return null;
         }
         throw new Error(`Unexpected wallet method ${method}`);

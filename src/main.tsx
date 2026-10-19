@@ -43,12 +43,12 @@ function App() {
       <main id="main-content" tabIndex={-1}>
         <header>
           <div className="breadcrumb">
-            Alpine <span>/</span> {routeName(location.pathname)}
+            Flare <span>/</span> {routeName(location.pathname)}
           </div>
           <div className="header-actions">
             <span className="network">
               <i />
-              {localMode ? "LOCAL CHAIN" : "AVALANCHE FUJI"}
+              {localMode ? "LOCAL CHAIN" : "FLARE COSTON2 TESTNET"}
             </span>
             <button className="wallet-button" onClick={() => void connect()}>
               {account ? short(account) : "Connect wallet"}
@@ -115,7 +115,7 @@ function App() {
             </Suspense>
           )}
           <footer>
-            <span>▲ YieldShield Alpine</span>
+            <span>✦ YieldShield Flare</span>
             <p>Capital at risk</p>
             <RouteLink to="/legal">Terms & risks</RouteLink>
           </footer>

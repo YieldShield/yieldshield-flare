@@ -29,7 +29,7 @@ export function Guide() {
           <div className="eyebrow">02 / CAPITAL PROVIDER</div>
           <h2>Back the downside.</h2>
           <p>
-            Deposit aDEMO or backing-vault receipts into a market. Positive
+            Deposit sDEMO or backing-vault receipts into a market. Positive
             asset exits create independently claimable fees. Backing exits
             consume your collateral and leave you the surrendered asset.
             Redemption returns a basket of backing and asset inventory.
@@ -42,7 +42,7 @@ export function Guide() {
           <div className="eyebrow">ILLUSTRATION / NOT A LIVE QUOTE</div>
           <h2>Walk through the outcome.</h2>
           <p>
-            Example: 10 asset units, entry price 25 aDEMO, default 10% provider
+            Example: a position worth 250 sDEMO at entry, default 10% provider
             + 1% creator + 1% protocol fee on gains. This slider does not move
             an oracle or send a transaction.
           </p>
@@ -69,19 +69,19 @@ export function Guide() {
         <div className="scenario-results">
           <Facts
             items={[
-              ["Asset value at selected price", `${spot.toFixed(2)} aDEMO`],
+              ["Asset value at selected price", `${spot.toFixed(2)} sDEMO`],
               [
                 "Asset exit value after gain fees",
-                `${(spot - fee).toFixed(2)} aDEMO`,
+                `${(spot - fee).toFixed(2)} sDEMO`,
               ],
-              ["Backing exit claim", "250.00 aDEMO"],
+              ["Backing exit claim", "250.00 sDEMO"],
               [
                 "Providers’ gain fee",
-                `${(gain * 0.1).toFixed(2)} aDEMO equivalent`,
+                `${(gain * 0.1).toFixed(2)} sDEMO equivalent`,
               ],
               [
                 "Providers’ surrendered-asset loss on backing exit",
-                `${Math.max(entry - spot, 0).toFixed(2)} aDEMO equivalent`,
+                `${Math.max(entry - spot, 0).toFixed(2)} sDEMO equivalent`,
               ],
             ]}
           />
@@ -110,9 +110,9 @@ export function Guide() {
         </p>
         <h2>What is a vault-backed floor?</h2>
         <p>
-          A bvaDEMO-backed position promises a number of vault receipts. The
-          underlying aDEMO those receipts redeem for can change. There is no
-          fixed dollar guarantee, and bvaDEMO is not a stablecoin.
+          A bvsDEMO-backed position promises a number of vault receipts. The
+          underlying sDEMO those receipts redeem for can change. There is no
+          fixed dollar guarantee, and bvsDEMO is not a stablecoin.
         </p>
       </div>
     </>
@@ -124,14 +124,16 @@ export function Legal() {
       <PageTitle
         eyebrow="TERMS & RISKS"
         title="An experiment with clear limits."
-        description="Alpine is an unaudited, valueless testnet prototype. It is not insurance, a guaranteed return or a production investment product."
+        description="YieldShield Flare is an unaudited testnet prototype using assets with no value. It is not insurance, a guaranteed return or a production investment product."
       />
       <div className="field-note">
         <h2>Use test assets only</h2>
         <p>
-          All contracts are gated to Fuji or local test chains. aDEMO, awAVAX,
-          vaDEMO and bvaDEMO are Alpine test assets. Nothing here represents
-          Circle USDC, BENQI sAVAX, canonical WAVAX or redeemable dollars.
+          All contracts are gated to Flare Coston2 or local test chains. sDEMO,
+          vsDEMO and bvsDEMO are YieldShield test assets with no value; sDEMO
+          is not USDT0 or Flare’s testUSDT0. C2FLR and WC2FLR are Coston2 test
+          assets. Nothing here represents FLR, WFLR, FXRP, sFLR, USDT0 or
+          redeemable dollars. FTSOv2 prices are reference prices only.
         </p>
         <h2>Economic and technical risks</h2>
         <p>

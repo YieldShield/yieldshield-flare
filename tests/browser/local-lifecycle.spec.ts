@@ -8,7 +8,7 @@ test("local signed browser journey: faucet → provider → funded buy → prote
   test.skip(!enabled, "Explicit local-only chain setup required.");
   test.setTimeout(180000);
   const m = JSON.parse(readFileSync(".local/deployment.json", "utf8"));
-  const rpc = createPublicClient({ transport: http("http://127.0.0.1:8547") });
+  const rpc = createPublicClient({ transport: http("http://127.0.0.1:8557") });
   expect(await rpc.getChainId()).toBe(31337);
   const accounts = (await rpc.request({
     method: "eth_accounts",
@@ -31,18 +31,18 @@ test("local signed browser journey: faucet → provider → funded buy → prote
       removeListener: () => {},
     };
   });
-  await page.goto("http://127.0.0.1:5184/faucet");
+  await page.goto("http://127.0.0.1:5194/faucet");
   await page
     .getByRole("button", { name: "Connect wallet", exact: true })
     .first()
     .click();
-  await expect(page.getByRole("button", { name: "Claim aDEMO" })).toBeEnabled();
-  await page.getByRole("button", { name: "Claim aDEMO" }).click();
+  await expect(page.getByRole("button", { name: "Claim sDEMO" })).toBeEnabled();
+  await page.getByRole("button", { name: "Claim sDEMO" }).click();
   await expect(page.getByRole("status")).toContainText(
-    "Claim test aDEMO confirmed.",
+    "Claim test sDEMO confirmed.",
     { timeout: 30000 },
   );
-  await page.goto("http://127.0.0.1:5184/provide?pool=wrapped");
+  await page.goto("http://127.0.0.1:5194/provide?pool=wrapped");
   // The authorized wallet is restored after a full page load without another prompt.
   await expect(
     page.getByRole("button", { name: "Connect wallet", exact: true }),
@@ -58,7 +58,7 @@ test("local signed browser journey: faucet → provider → funded buy → prote
     .getByRole("link", { name: "Trade", exact: true })
     .click();
   await page.getByLabel("Asset", { exact: true }).selectOption("wrapped");
-  await page.getByLabel("Amount", { exact: true }).fill("0.001");
+  await page.getByLabel("Amount", { exact: true }).fill("5");
   await page.getByRole("button", { name: "Review trade", exact: true }).click();
   await expect(page.getByText("Maximum payment")).toBeVisible();
   await page.getByRole("button", { name: "Confirm buy" }).click();
@@ -66,7 +66,7 @@ test("local signed browser journey: faucet → provider → funded buy → prote
     page.getByRole("heading", { name: "Trade confirmed." }),
   ).toBeVisible({ timeout: 30000 });
   await page.getByRole("link", { name: "Protect this exact amount" }).click();
-  await expect(page.getByLabel("Amount", { exact: true })).toHaveValue("0.001");
+  await expect(page.getByLabel("Amount", { exact: true })).toHaveValue("5");
   await page.getByRole("button", { name: "Review protection" }).click();
   await page.getByRole("button", { name: "Confirm protection" }).click();
   await expect(
@@ -80,16 +80,17 @@ test("local signed browser journey: faucet → provider → funded buy → prote
     params: [
       {
         from: accounts[0],
-        to: m.referenceOracle,
+        // The local FTSOv2 stand-in doubles FLR/USD; the real adapter reads it.
+        to: m.mockFtsoV2,
         data: encodeFunctionData({
-          abi: parseAbi(["function set(uint256)"]),
-          functionName: "set",
-          args: [50000000n],
+          abi: parseAbi(["function setFeed(bytes21,uint256,int8)"]),
+          functionName: "setFeed",
+          args: [m.ftsoFeed.id, 1279856n, 8],
         }),
       },
     ],
   } as any);
-  await page.getByLabel("Amount to exit", { exact: true }).fill("0.0005");
+  await page.getByLabel("Amount to exit", { exact: true }).fill("2.5");
   await page.getByRole("button", { name: "Review exit", exact: true }).click();
   await page.getByRole("button", { name: "Confirm exit", exact: true }).click();
   await expect(page.getByRole("status")).toContainText(
@@ -128,7 +129,7 @@ test("an in-flight quote cannot revive a previous asset review", async ({
 }) => {
   test.skip(!enabled, "Explicit local-only chain setup required.");
   const m = JSON.parse(readFileSync(".local/deployment.json", "utf8"));
-  const rpc = createPublicClient({ transport: http("http://127.0.0.1:8547") });
+  const rpc = createPublicClient({ transport: http("http://127.0.0.1:8557") });
   expect(await rpc.getChainId()).toBe(31337);
   const accounts = (await rpc.request({
     method: "eth_accounts",
@@ -160,17 +161,17 @@ test("an in-flight quote cannot revive a previous asset review", async ({
       removeListener: () => {},
     };
   });
-  await page.goto("http://127.0.0.1:5184/trade");
+  await page.goto("http://127.0.0.1:5194/trade");
   await page
     .getByRole("button", { name: "Connect wallet", exact: true })
     .first()
     .click();
   await page.getByLabel("Asset", { exact: true }).selectOption("wrapped");
-  await page.getByLabel("Amount", { exact: true }).fill("0.001");
+  await page.getByLabel("Amount", { exact: true }).fill("5");
   let release!: () => void, intercepted!: () => void;
   const held = new Promise<void>((r) => (release = r)),
     arrived = new Promise<void>((r) => (intercepted = r));
-  await page.route("http://127.0.0.1:8547/", async (route) => {
+  await page.route("http://127.0.0.1:8557/", async (route) => {
     const body = route.request().postDataJSON();
     // Local reads may arrive as JSON-RPC batches.
     if (

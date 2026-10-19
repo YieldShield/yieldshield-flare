@@ -107,7 +107,7 @@ export function Navigation() {
         <RouteLink to="/" className="brand">
           <img src="/mark.svg" alt="" width="38" height="38" />
           <span>
-            YieldShield<small>ALPINE / AVALANCHE</small>
+            YieldShield<small>FLARE / COSTON2</small>
           </span>
         </RouteLink>
         <button
@@ -145,7 +145,7 @@ export function Navigation() {
         </ul>
       </nav>
       <div className="sidebar-bottom">
-        <small>Avalanche · Testnet</small>
+        <small>Flare Coston2 · Testnet</small>
       </div>
     </aside>
   );

@@ -77,7 +77,7 @@ export function RoleFlow({ role }: { role: "protect" | "provide" }) {
   const balance =
     balances[
       provider
-        ? market.backingSymbol === "bvaDEMO"
+        ? market.backingSymbol === "bvsDEMO"
           ? "backing-vault"
           : "backing"
         : market.asset
@@ -382,7 +382,7 @@ export function RoleFlow({ role }: { role: "protect" | "provide" }) {
           <div className="button-row">
             <RouteLink
               className="secondary-button"
-              to={`/trade?pool=${market.key}&asset=${market.asset}&amount=${encodeURIComponent(amount)}&return=${role}${provider && market.backingSymbol === "bvaDEMO" ? "&convert=deposit-backing" : ""}`}
+              to={`/trade?pool=${market.key}&asset=${market.asset}&amount=${encodeURIComponent(amount)}&return=${role}${provider && market.backingSymbol === "bvsDEMO" ? "&convert=deposit-backing" : ""}`}
             >
               Get an asset
             </RouteLink>
@@ -439,7 +439,7 @@ export function Positions() {
           }
         >
           {!ready
-            ? "Position tracking becomes live after Fuji deployment."
+            ? "Position tracking becomes live after Coston2 deployment."
             : "Open protection or provide backing in an available market."}
         </Empty>
       ) : null}

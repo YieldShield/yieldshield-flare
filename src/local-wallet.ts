@@ -1,12 +1,12 @@
 import { setLocalWallet } from "./chain";
 /** Disposable local verification wallet. This module is excluded from production builds. */
 export async function installLocalWallet() {
-  const rpc = "http://127.0.0.1:8547";
+  const rpc = "http://127.0.0.1:8557";
   if (
     !import.meta.env.DEV ||
     import.meta.env.VITE_LOCAL_WALLET !== "true" ||
     location.hostname !== "127.0.0.1" ||
-    location.port !== "5184"
+    location.port !== "5194"
   )
     throw new Error(
       "The verification wallet is restricted to local development.",

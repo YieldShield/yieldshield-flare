@@ -103,7 +103,7 @@ export function Notice() {
       <strong>Valueless test assets.</strong>{" "}
       {config.factory
         ? "Contract verification pending. Transactions disabled."
-        : "Fuji deployment pending. Transactions disabled."}{" "}
+        : "Coston2 deployment pending. Transactions disabled."}{" "}
       <RouteLink className="inline-link" to="/status">
         Network status
       </RouteLink>
@@ -136,7 +136,7 @@ export function ActionButton({
         : !ready
           ? config.factory
             ? "Awaiting verification"
-            : "Awaiting Fuji deployment"
+            : "Awaiting Coston2 deployment"
           : !account
             ? "Connect wallet"
             : children}
@@ -158,7 +158,7 @@ export function Amount({
   max?: string;
 }) {
   const id = useId();
-  const native = symbol === "AVAX";
+  const native = symbol === "C2FLR";
   return (
     <div className="field-label">
       <label htmlFor={id}>{label}</label>
@@ -180,7 +180,7 @@ export function Amount({
       </div>
       <span className="amount-help" id={`${id}-hint`}>
         Amount in {symbol}.
-        {native ? " Keep some AVAX available for network fees." : ""}
+        {native ? " Keep some C2FLR available for network fees." : ""}
       </span>
       {max && !native && (
         <button
@@ -196,7 +196,7 @@ export function Amount({
 }
 export function Risk({
   provider = false,
-  backing = "aDEMO",
+  backing = "sDEMO",
 }: {
   provider?: boolean;
   backing?: string;
@@ -211,10 +211,10 @@ export function Risk({
           ? "You absorb losses. Deposits and withdrawals pause while protection is open. After maturity, anyone can settle it to lift the pause. Redemptions can include surrendered assets; fees and returns are not guaranteed."
           : "At maturity, remaining assets are surrendered for the fixed entry claim, even if their price rose. Exit earlier to keep upside. Partial exits reduce the claim proportionally."}
       </p>
-      {backing === "bvaDEMO" && (
+      {backing === "bvsDEMO" && (
         <p>
-          Your floor is fixed in bvaDEMO receipts, not dollars. Their redeemable
-          aDEMO value can change.
+          Your floor is fixed in bvsDEMO receipts, not dollars. Their redeemable
+          sDEMO value can change.
         </p>
       )}
     </div>
@@ -235,11 +235,11 @@ export function MarketCard({
     <article className="market-card">
       <div className="card-top">
         <div className="token-stack">
-          <span className="avax-symbol">
-            {market.asset === "vault" ? "v" : "▲"}
+          <span className="asset-symbol">
+            {market.asset === "vault" ? "v" : market.asset === "wrapped" ? "W" : "F"}
           </span>
           <span className="backing-symbol">
-            {market.backingSymbol === "bvaDEMO" ? "v" : "a"}
+            {market.backingSymbol === "bvsDEMO" ? "v" : "s"}
           </span>
         </div>
         <span className="test-pill">
@@ -263,7 +263,7 @@ export function MarketCard({
         items={[
           [
             `Price · ${market.backingSymbol}`,
-            s?.price ? fmt(s.price) : "Unavailable",
+            s?.price ? fmt(s.price, 6, 6) : "Unavailable",
           ],
           [
             "Available entry claims",

@@ -40,7 +40,7 @@ export function RouteOrientation() {
     navigationType = useNavigationType();
   const previous = useRef(location.pathname);
   useEffect(() => {
-    document.title = `${routeName(location.pathname)} · YieldShield Alpine`;
+    document.title = `${routeName(location.pathname)} · YieldShield Flare`;
     const changed = previous.current !== location.pathname;
     previous.current = location.pathname;
     if (!changed && !location.hash) return;

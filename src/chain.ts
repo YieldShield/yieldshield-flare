@@ -1,5 +1,6 @@
 import {
   createPublicClient,
+  defineChain,
   createWalletClient,
   custom,
   http,
@@ -11,12 +12,13 @@ import {
   type Abi,
   type EIP1193Provider,
 } from "viem";
-import { avalancheFuji, foundry } from "viem/chains";
+import { flareTestnet, foundry } from "viem/chains";
 import deployment from "../config/deployment.json";
 import pool from "../config/abi/ShieldPool.json";
 import factory from "../config/abi/ShieldFactory.json";
 import exchange from "../config/abi/ShieldExchange.json";
 import vault from "../config/abi/ShieldDemoVault.json";
+import ftsoOracle from "../config/abi/ShieldFtsoV2Oracle.json";
 import wrapper from "../config/abi/WNat.json";
 import token from "../config/abi/ShieldDemoDollar.json";
 export const localMode =
@@ -24,8 +26,20 @@ export const localMode =
 export const config: Record<string, any> = localMode
   ? JSON.parse(import.meta.env.VITE_LOCAL_MANIFEST)
   : deployment;
-export const chain = localMode ? foundry : avalancheFuji;
-// Fuji has Multicall3, so concurrent reads are aggregated into a few eth_calls.
+/** Flare Testnet Coston2 (chain 114). viem's definition lacks Multicall3, which Coston2 has at the
+ * canonical address (runtime code checked against the canonical deployment on 19 October 2026). */
+export const coston2 = defineChain({
+  ...flareTestnet,
+  contracts: {
+    multicall3: { address: "0xcA11bde05977b3631167028862bE2a173976CA11" },
+  },
+});
+export const chain = localMode ? foundry : coston2;
+export const networkName = localMode
+  ? "Local Anvil test chain"
+  : "Flare Testnet Coston2";
+export const faucetUrl = "https://faucet.flare.network/coston2";
+// Coston2 has Multicall3, so concurrent reads are aggregated into a few eth_calls.
 // The local chain has none, so its reads share JSON-RPC batches instead.
 const multicall = Boolean(
   (chain as { contracts?: { multicall3?: unknown } }).contracts?.multicall3,
@@ -58,8 +72,17 @@ export const poolAbi = withErrors(pool),
   exchangeAbi = withErrors(exchange),
   vaultAbi = withErrors(vault),
   wrapperAbi = withErrors(wrapper),
-  tokenAbi = withErrors(token);
+  tokenAbi = withErrors(token),
+  ftsoOracleAbi = withErrors(ftsoOracle);
 export const oracleAbi = parseAbi(["function price() view returns(uint256)"]);
+/** Direct FTSOv2 reads through the FlareContractRegistry, available before any YieldShield deployment. */
+export const flareRegistryAbi = parseAbi([
+  "function getContractAddressByName(string) view returns (address)",
+]);
+export const ftsoV2ViewAbi = parseAbi([
+  "function getFeedById(bytes21) view returns (uint256, int8, uint64)",
+  "function calculateFeeById(bytes21) view returns (uint256)",
+]);
 export const read = async (
   address: Address,
   abi: Abi,
@@ -101,29 +124,30 @@ export type AssetKey = "native" | "wrapped" | "vault";
 export const assets = [
   {
     key: "native" as AssetKey,
-    symbol: "AVAX",
-    name: "Native Fuji AVAX",
+    symbol: "C2FLR",
+    name: "Native Coston2 FLR",
     address: ZERO,
     decimals: 18,
-    description: "Fuji gas token. Native transfers; valueless test network.",
+    description:
+      "Coston2 gas token from Flare's official faucet. Native transfers; test network, no value.",
   },
   {
     key: "wrapped" as AssetKey,
-    symbol: "awAVAX",
-    name: "Alpine Test Wrapped AVAX",
+    symbol: "WC2FLR",
+    name: "Wrapped Coston2Flare",
     address: config.wrapper as Address | null,
     decimals: 18,
     description:
-      "Actually backed 1:1 by deposited Fuji AVAX. An Alpine test wrapper, not canonical WAVAX.",
+      "Flare's canonical wrapped C2FLR (WNat), backed 1:1 by deposited C2FLR. Not a YieldShield contract; test network, no value.",
   },
   {
     key: "vault" as AssetKey,
-    symbol: "vaDEMO",
-    name: "Alpine Demo Vault",
+    symbol: "vsDEMO",
+    name: "Shield Demo Vault",
     address: config.vault as Address | null,
     decimals: 18,
     description:
-      "Funded ERC-4626 aDEMO vault receipts. Value comes from assets held by this vault; no promised yield.",
+      "Funded ERC-4626 sDEMO vault receipts. Value comes from sDEMO held by this vault; no value and no promised yield.",
   },
 ];
 export type Market = {
@@ -139,23 +163,23 @@ export type Market = {
 export const featured: Market[] = [
   {
     key: "reference",
-    name: "AVAX reference",
+    name: "FLR reference",
     asset: "native",
     address: config.referencePool,
     backing: config.backingToken,
-    backingSymbol: "aDEMO",
+    backingSymbol: "sDEMO",
     oracle: config.referenceOracle,
-    source: "Chainlink AVAX/USD",
+    source: "FTSOv2 FLR/USD",
   },
   {
     key: "wrapped",
-    name: "Wrapped AVAX",
+    name: "Wrapped FLR",
     asset: "wrapped",
     address: config.wrappedPool,
     backing: config.backingToken,
-    backingSymbol: "aDEMO",
+    backingSymbol: "sDEMO",
     oracle: config.referenceOracle,
-    source: "Chainlink AVAX/USD",
+    source: "FTSOv2 FLR/USD",
   },
   {
     key: "vault",
@@ -163,29 +187,29 @@ export const featured: Market[] = [
     asset: "vault",
     address: config.vaultPool,
     backing: config.backingToken,
-    backingSymbol: "aDEMO",
+    backingSymbol: "sDEMO",
     oracle: config.vaultOracle,
     source: "Vault redemption backing",
   },
   {
     key: "vault-backed",
-    name: "AVAX · vault collateral",
+    name: "FLR · vault collateral",
     asset: "native",
     address: config.vaultBackingPool,
     backing: config.backingVault,
-    backingSymbol: "bvaDEMO",
+    backingSymbol: "bvsDEMO",
     oracle: null,
-    source: "Chainlink / vault redemption backing",
+    source: "FTSOv2 FLR/USD in vault receipts",
   },
   {
     key: "scenario",
-    name: "AVAX scenario lab",
+    name: "FLR scenario lab",
     asset: "native",
     address: config.scenarioPool,
     backing: config.backingToken,
-    backingSymbol: "aDEMO",
+    backingSymbol: "sDEMO",
     oracle: config.scenarioOracle,
-    source: "Synthetic 25 → 35 → 15 cycle",
+    source: "Synthetic 0.0060 → 0.0084 → 0.0036 cycle",
   },
 ];
 declare global {
@@ -220,7 +244,7 @@ export async function wallet() {
   const provider = walletProvider();
   if (!provider)
     throw new Error(
-      "Install Core or an Ethereum-compatible wallet to connect.",
+      "Install MetaMask or another Ethereum-compatible wallet to connect.",
     );
   const w = createWalletClient({ chain, transport: custom(provider) });
   const [account] = await w.requestAddresses();
