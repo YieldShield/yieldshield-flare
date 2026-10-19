@@ -1,7 +1,7 @@
 {
   "network": "Flare Testnet Coston2",
   "chainId": 114,
-  "status": "awaiting-testnet-gas",
+  "status": "deployed-and-verified",
   "rpcUrl": "https://coston2-api.flare.network/ext/C/rpc",
   "explorer": "https://coston2-explorer.flare.network",
   "faucet": "https://faucet.flare.network/coston2",
@@ -26,19 +26,278 @@
     "testUsdt0": "0x21709E63fC7F264F329e0826Ea82197694B82775",
     "fxrp": "0x0b6A3645c240605887a5532109323A3E12273dc7"
   },
-  "backingToken": null,
-  "scenarioOracle": null,
-  "referenceOracle": null,
-  "vault": null,
-  "backingVault": null,
-  "vaultOracle": null,
-  "factory": null,
-  "exchange": null,
-  "referencePool": null,
-  "scenarioPool": null,
-  "wrappedPool": null,
-  "vaultPool": null,
-  "vaultBackingPool": null,
-  "transactions": [],
-  "version": 2
+  "backingToken": "0x57f808d4f176278ce5e8bbe49db6745aff5b13b0",
+  "scenarioOracle": "0x9be0ee303fc95969d3f0ac331dd3ccd6d0b19606",
+  "referenceOracle": "0xe2e3fde725dc0f6b1646e7d3b0d750e7a7a9690b",
+  "vault": "0xedcf7be107a9e4fbe147a1b54aa62744659388b2",
+  "backingVault": "0x6b6da602f1cec85a0973d83ba34a283382e128e6",
+  "vaultOracle": "0xc86e147efe8ac68e9a0d8f504cc320534eb39b7a",
+  "factory": "0xd6488c73f25663f3ba252aab053932cb5fae1f3c",
+  "exchange": "0xc453cd991c48c920e6191219939e0a1bc61a4694",
+  "referencePool": "0xb92Ba82B221Efc73e5CE9936939aD47c7F800cC6",
+  "scenarioPool": "0xFacA576fEA1e10Ef2823066ba498220ABd3c8a73",
+  "wrappedPool": "0x33A133B04743986581Da486557F42135812A3823",
+  "vaultPool": "0x0AC5a9865D21589BD8ecf7764a08989822993cA6",
+  "vaultBackingPool": "0x5FfD8fF08604Fb27FFd20Bc988Ce387fe7F1c94f",
+  "transactions": [
+    {
+      "label": "backingToken",
+      "hash": "0x095139192da53e1f1a2e7a54733b9d331afdb90043338305d4582ebb8ed8f020",
+      "nonce": 0,
+      "blockNumber": "36792295",
+      "contractAddress": "0x57f808d4f176278ce5e8bbe49db6745aff5b13b0",
+      "gasUsed": "584762"
+    },
+    {
+      "label": "scenarioOracle",
+      "hash": "0x96fd87b315ceb7a542a7a9207c57f9b194ee22a38801adc422d2d7a9d32f3271",
+      "nonce": 1,
+      "blockNumber": "36792297",
+      "contractAddress": "0x9be0ee303fc95969d3f0ac331dd3ccd6d0b19606",
+      "gasUsed": "135917"
+    },
+    {
+      "label": "referenceOracle",
+      "hash": "0x5b4ea4ecf61fa926494c72609fef8bc64ceef0daa4126e70b0f470f8bdabfd91",
+      "nonce": 2,
+      "blockNumber": "36792298",
+      "contractAddress": "0xe2e3fde725dc0f6b1646e7d3b0d750e7a7a9690b",
+      "gasUsed": "647705"
+    },
+    {
+      "label": "vault",
+      "hash": "0xea2d336d150777462b48a8cad75848557962df664da85736bc3493c781e18ec4",
+      "nonce": 3,
+      "blockNumber": "36792300",
+      "contractAddress": "0xedcf7be107a9e4fbe147a1b54aa62744659388b2",
+      "gasUsed": "1254582"
+    },
+    {
+      "label": "backingVault",
+      "hash": "0x72a5cabc7e826ac44f8336cacdfcc80d3fda022b264f7a465c6dfee83c17374d",
+      "nonce": 4,
+      "blockNumber": "36792302",
+      "contractAddress": "0x6b6da602f1cec85a0973d83ba34a283382e128e6",
+      "gasUsed": "1223040"
+    },
+    {
+      "label": "vaultOracle",
+      "hash": "0x30bf822472042a5114a68f6754a0641b8b466915929117eb476926341d26a8fc",
+      "nonce": 5,
+      "blockNumber": "36792304",
+      "contractAddress": "0xc86e147efe8ac68e9a0d8f504cc320534eb39b7a",
+      "gasUsed": "135270"
+    },
+    {
+      "label": "factory",
+      "hash": "0xf41af4ee83b17692dcc5b7cd57e4b834171ea864bdd1e507fc4b145c2ceba229",
+      "nonce": 6,
+      "blockNumber": "36792305",
+      "contractAddress": "0xd6488c73f25663f3ba252aab053932cb5fae1f3c",
+      "gasUsed": "4612205"
+    },
+    {
+      "label": "exchange",
+      "hash": "0xb3b0d5195ffdfb853dc8334bc3f58340d99ae0c44438f45d53f0913d6847919a",
+      "nonce": 7,
+      "blockNumber": "36792307",
+      "contractAddress": "0xc453cd991c48c920e6191219939e0a1bc61a4694",
+      "gasUsed": "1002941"
+    },
+    {
+      "label": "seed-faucet",
+      "hash": "0x83e31b72fd3496936efa78d9a62c05e4b55847911b558b387d48b0cdb8fef377",
+      "nonce": 8,
+      "blockNumber": "36792309",
+      "contractAddress": null,
+      "gasUsed": "90121"
+    },
+    {
+      "label": "vault-approve",
+      "hash": "0x97b045c534329d85d0de056d571265c72a3d4c07f719e7e3becdfc1bd55cdfb7",
+      "nonce": 9,
+      "blockNumber": "36792310",
+      "contractAddress": null,
+      "gasUsed": "46330"
+    },
+    {
+      "label": "vault-funded-deposit",
+      "hash": "0xe956c7b3b4725e56926820c52a3b87b209adb58840e8829a24dddeb0fa7d5a7e",
+      "nonce": 10,
+      "blockNumber": "36792312",
+      "contractAddress": null,
+      "gasUsed": "112092"
+    },
+    {
+      "label": "backing-vault-approve",
+      "hash": "0x94018658be75ef3e8597244908d88741912eb309fea906a88823cdd51e704f02",
+      "nonce": 11,
+      "blockNumber": "36792314",
+      "contractAddress": null,
+      "gasUsed": "46330"
+    },
+    {
+      "label": "backing-vault-funded-deposit",
+      "hash": "0xa0b33cd0b721bb03937f85f5f257319d862e0359325ad5bd1601cb7d78b9d516",
+      "nonce": 12,
+      "blockNumber": "36792315",
+      "contractAddress": null,
+      "gasUsed": "111853"
+    },
+    {
+      "label": "wrapper-funded-deposit",
+      "hash": "0xeaab77a1c2d2ff3f20f437af8a950aaf9ca6ada389e96b63e756d857c7f23d22",
+      "nonce": 13,
+      "blockNumber": "36792316",
+      "contractAddress": null,
+      "gasUsed": "199759"
+    },
+    {
+      "label": "factory-cash-approve",
+      "hash": "0xa04388a75c6a6463e002c55ab683dbcc5744093f53c7ba80fd5f3de4a1e80a4c",
+      "nonce": 14,
+      "blockNumber": "36792318",
+      "contractAddress": null,
+      "gasUsed": "46330"
+    },
+    {
+      "label": "factory-vault-approve",
+      "hash": "0x4a4d27c73bac375561088cd38dba51494c202517febf15be79494cd9472cd7ab",
+      "nonce": 15,
+      "blockNumber": "36792320",
+      "contractAddress": null,
+      "gasUsed": "46349"
+    },
+    {
+      "label": "referencePool-factory-create",
+      "hash": "0x41822daa14ef9d54cadc24276b486c864b6f14cae1d04c865dd9251bfd25cea9",
+      "nonce": 16,
+      "blockNumber": "36792321",
+      "contractAddress": null,
+      "gasUsed": "2946834"
+    },
+    {
+      "label": "scenarioPool-factory-create",
+      "hash": "0xe7c6f175f33df67ae18f9d685d97ebd67903d7db3f89c0dfd847a464369a7184",
+      "nonce": 17,
+      "blockNumber": "36792322",
+      "contractAddress": null,
+      "gasUsed": "2821337"
+    },
+    {
+      "label": "wrappedPool-factory-create",
+      "hash": "0x735d4bcd55da978547ae811e3c30423145b048b7bbb2704a41e47057d300591f",
+      "nonce": 18,
+      "blockNumber": "36792324",
+      "contractAddress": null,
+      "gasUsed": "2918298"
+    },
+    {
+      "label": "vaultPool-factory-create",
+      "hash": "0x83728960c3389c5566150c83475277439f6e72e167432a37e70110ca60551023",
+      "nonce": 19,
+      "blockNumber": "36792326",
+      "contractAddress": null,
+      "gasUsed": "2831541"
+    },
+    {
+      "label": "vaultBackingPool-factory-create",
+      "hash": "0x13cfb672e20b3d45ce74d1bd0af3e5e6cc4c8e66b7c95988c1cddc1e4fe7e44c",
+      "nonce": 20,
+      "blockNumber": "36792327",
+      "contractAddress": null,
+      "gasUsed": "2932901"
+    },
+    {
+      "label": "exchange-cash-inventory",
+      "hash": "0x2a24478f3b22be895e49979b10e94666a8770da2c96e621981ae7a3aa77d37d1",
+      "nonce": 21,
+      "blockNumber": "36792328",
+      "contractAddress": null,
+      "gasUsed": "51555"
+    },
+    {
+      "label": "exchange-wrapper-inventory",
+      "hash": "0x4e8cba1480c9df27e6aed9192076e00dc72394e7225ad2c50df5334ce2d0d61e",
+      "nonce": 22,
+      "blockNumber": "36792330",
+      "contractAddress": null,
+      "gasUsed": "235354"
+    },
+    {
+      "label": "exchange-vault-inventory",
+      "hash": "0x5304709ca28f92784825c73ce870fa991a6835d113a25d7fecc33f856dc3b89e",
+      "nonce": 23,
+      "blockNumber": "36792332",
+      "contractAddress": null,
+      "gasUsed": "51645"
+    },
+    {
+      "label": "exchange-native-inventory",
+      "hash": "0x9461fb18c7fd8da87b478250e7b0cbc4fd58ca89770b52e6240a5e46cc55b130",
+      "nonce": 24,
+      "blockNumber": "36792333",
+      "contractAddress": null,
+      "gasUsed": "22871"
+    }
+  ],
+  "version": 2,
+  "deploymentId": "coston2-2026-10-19T07-50-55Z-34db01",
+  "failedTransactions": [],
+  "source": {
+    "commit": "2fcea4056f8e1a6ce300223163ce987a505af837",
+    "uncommitted": [],
+    "compiler": "0.8.35+commit.47b9dedd",
+    "artifacts": {
+      "DemoAssets.sol:ShieldDemoDollar": {
+        "bytecode": "0x48d00956213439004b104cb33a4fb2ed9a16339d9e5e4c56aa79a00458c2e989",
+        "deployedBytecode": "0xaed2cc1217db3c64fc48e5ba46c48c6e188fd18a8d057f154141941be3cc78dd"
+      },
+      "DemoAssets.sol:ShieldScenarioOracle": {
+        "bytecode": "0x3304c27f2a221e5203f2174d3570530a382f303c026d6a4db6f638413bd9be35",
+        "deployedBytecode": "0x35c8948fa86dce031478ddff36efb40cfc7c4ca6ec67174fcb7eb344a7753831"
+      },
+      "ShieldFtsoV2Oracle.sol:ShieldFtsoV2Oracle": {
+        "bytecode": "0x4ed69458b746a9cd0623482c04679f5ecce9b39faeb66f56eea2bac6f52f336a",
+        "deployedBytecode": "0x9ffc5aa7ffb6fbb3ca67af1886bec1594fc34fbd462b26ec97ec819fcdd3d37b"
+      },
+      "ShieldMarket.sol:ShieldDemoVault": {
+        "bytecode": "0x7950644de402143c068d1c09900e00e8c2803f841e283455e6ecea73e6dc0c13",
+        "deployedBytecode": "0xd41d50763acb2dbce410d8d1c6eff7e09b3aa8e76e05a643f1e91787a42b9215"
+      },
+      "ShieldMarket.sol:ShieldBackingVault": {
+        "bytecode": "0xd396decb10930ea6b3c86407b323dd1aa28727434df66ead150544006558f8f8",
+        "deployedBytecode": "0x91b039fd453c523a2898353983d06795dd6117c2c17ba590e144f4601e328b7f"
+      },
+      "ShieldMarket.sol:ShieldVaultOracle": {
+        "bytecode": "0x30639b4664075b8635881fe3ae35fd5a1a86a39df4ad182d95ce541f49f56df7",
+        "deployedBytecode": "0x440a9fe03cc1fd4a8d4075f865c7f64b1c9485286ec93c812471d30ee36a8aa3"
+      },
+      "ShieldMarket.sol:ShieldFactory": {
+        "bytecode": "0x4a75b8f4f7335f0a04d6a24571add42d7e2e5ae42ff88b153c35925c87934eac",
+        "deployedBytecode": "0xbe41e33ba2c81b6d2b82b741c08bc6e0e707729503f0063f7203cce050f2b7b1"
+      },
+      "ShieldMarket.sol:ShieldExchange": {
+        "bytecode": "0x492ba5c2be263b57ce42ed846b5fdbd01f0899a64f5afc1879b0ce08bad464e0",
+        "deployedBytecode": "0x991415755c82797a60e27d060d50012ed1ca6c151f376463a726e57dd5feaed1"
+      },
+      "ShieldPool.sol:ShieldPool": {
+        "bytecode": "0x5252b4dcf946dac470b1021868b850451c4509a53c48cc228d370192c39f8b75",
+        "deployedBytecode": "0x1156f9b9199a306c6493d67fdc098c355c261b4c78a03fdab1ea11947d2146e3"
+      },
+      "ShieldMarket.sol:ShieldBackingOracle": {
+        "bytecode": "0x92152b203fc3df317870741e94f412c1c060dddc83e5effd7c9364edd1ad936f",
+        "deployedBytecode": "0xdd44a39aa893dfd6df08ccb906c55feb06d5e8d80c0158e6f4f26f84f571b550"
+      }
+    }
+  },
+  "defaultTerms": {
+    "collateralBps": 15000,
+    "juniorFeeBps": 1000,
+    "creatorFeeBps": 100,
+    "epochSeconds": 2592000,
+    "exitDelay": 60,
+    "juniorNotice": 120
+  },
+  "verifiedAt": "2026-10-19T07:51:45.299Z"
 }
