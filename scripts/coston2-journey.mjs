@@ -98,9 +98,14 @@ const save = (extra = {}) =>
     ) + "\n",
   );
 async function send(label, wallet, request) {
+  // An exact estimate can run out of gas once FTSOv2 reads are mined, so add a 30% margin.
+  const estimate = request.abi
+    ? await c.estimateContractGas({ ...request, account: wallet.account })
+    : await c.estimateGas({ ...request, account: wallet.account });
+  const gas = (estimate * 13n) / 10n;
   const hash = request.abi
-    ? await wallet.writeContract({ ...request, chain: flareTestnet })
-    : await wallet.sendTransaction({ ...request, chain: flareTestnet });
+    ? await wallet.writeContract({ ...request, gas, chain: flareTestnet })
+    : await wallet.sendTransaction({ ...request, gas, chain: flareTestnet });
   const r = await c.waitForTransactionReceipt({ hash, timeout: 180_000 });
   steps.push({
     label,

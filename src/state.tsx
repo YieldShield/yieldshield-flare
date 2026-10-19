@@ -508,6 +508,8 @@ export function ShieldProvider({ children }: { children: ReactNode }) {
         chain,
       };
       const simulation = await client.simulateContract(request);
+      // FTSOv2 reads cost slightly more gas when mined than when estimated, so an exact estimate can run out of gas.
+      const gas = ((await client.estimateContractGas(request)) * 13n) / 10n;
       const [signingAccount] = await w.getAddresses();
       const signingChain = await w.getChainId();
       if (
@@ -518,7 +520,7 @@ export function ShieldProvider({ children }: { children: ReactNode }) {
       )
         throw new Error("Wallet changed before signing. Review again.");
       assertReview?.();
-      hash = await w.writeContract(simulation.request as any);
+      hash = await w.writeContract({ ...simulation.request, gas } as any);
       setActivity((old) => [
         {
           hash: hash!,

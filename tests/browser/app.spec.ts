@@ -1,13 +1,14 @@
 import { test, expect } from "@playwright/test";
-test("undeployed UI, no-wallet feedback and scenario disclosures", async ({
+test("deployed UI, no-wallet feedback and scenario disclosures", async ({
   page,
 }) => {
   await page.goto("/protect");
   await expect(
     page.getByRole("button", { name: "Awaiting Coston2 deployment" }),
-  ).toBeDisabled();
+  ).toHaveCount(0);
   await page
     .getByRole("button", { name: "Connect wallet", exact: true })
+    .first()
     .click();
   await expect(page.getByRole("status")).toContainText(
     "Ethereum-compatible wallet",
