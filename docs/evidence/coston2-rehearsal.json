@@ -1,7 +1,7 @@
 {
   "network": "Disposable local Anvil with chain ID 114 (Coston2's); Flare stand-ins at the canonical Coston2 addresses. Not Coston2 activity.",
   "chainId": 114,
-  "createdAt": "2026-10-19T07:31:09.095Z",
+  "createdAt": "2026-10-19T08:05:36.926Z",
   "deployer": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 (Anvil development account 0, publicly known; funded with 100 C2FLR, one faucet claim)",
   "fees": "Anvil's own base fee, not Coston2's 500 gwei; gas amounts are comparable, costs are not",
   "standIns": [
@@ -24,8 +24,8 @@
       "runtimeHash": "0x69d7ade5afb070517df2cf5b523bc19b1eac3808652e01a8f1b3162d1b25c36a"
     }
   ],
-  "deploymentId": "rehearsal-2026-10-19T07-31-00Z-599eaa",
-  "sourceCommit": "ba4bb06070d0f97d3462f857b47efc11cdc91a59",
+  "deploymentId": "rehearsal-2026-10-19T08-05-26Z-c81a5a",
+  "sourceCommit": "32b4296ce0c60533e2d0bd6bc0981d7e3c181439",
   "artifacts": {
     "DemoAssets.sol:ShieldDemoDollar": {
       "bytecode": "0x48d00956213439004b104cb33a4fb2ed9a16339d9e5e4c56aa79a00458c2e989",
@@ -98,9 +98,8 @@
       "command": "node scripts/deploy-coston2.mjs --local",
       "ok": true,
       "output": [
-        "{\"chainId\":114,\"rehearsal\":true,\"deployer\":\"0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266\",\"balanceWei\":\"100000000000000000000\",\"requiredWei\":\"20061386787791420000\",\"deploymentId\":null,\"recordedTransactions\":0,\"replacementRound\":null,\"commit\":\"ba4bb06070d0f97d3462f857b47efc11cdc91a59\",\"uncommitted\":[\"scripts/coston2-journey.mjs\"],\"staleSources\":0,\"broadcast\":false}",
-        "Funding: requires 20.06138678779142 C2FLR = 24600000 gas x 1.919536829 gwei max fee x 1.3 (0.06138678779142 C2FLR) + 20 C2FLR sent by the plan. Balance: 100 C2FLR.",
-        "Uncommitted deployment inputs: scripts/coston2-journey.mjs",
+        "{\"chainId\":114,\"rehearsal\":true,\"deployer\":\"0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266\",\"balanceWei\":\"100000000000000000000\",\"requiredWei\":\"20062884026518040000\",\"deploymentId\":null,\"recordedTransactions\":0,\"replacementRound\":null,\"commit\":\"32b4296ce0c60533e2d0bd6bc0981d7e3c181439\",\"uncommitted\":[],\"staleSources\":0,\"broadcast\":false}",
+        "Funding: requires 20.06288402651804 C2FLR = 25200000 gas x 1.919536829 gwei max fee x 1.3 (0.06288402651804 C2FLR) + 20 C2FLR sent by the plan. Balance: 100 C2FLR.",
         "FlareContractRegistry 0xaD67FE66660Fb8dFE9d6b1b4240d8650e30F6019: WNat 0xC67DCE33D7A8efA5FfEB961899C73fe01bCe9273, FtsoV2 0xC4e9c78EA53db782E28f28Fdf80BaF59336B304d.",
         "FTSOv2 FLR/USD via 0xC4e9c78EA53db782E28f28Fdf80BaF59336B304d: 639928 with 8 decimals, updated 0s ago (maxPriceAge 300s), read fee 0.",
         "Preflight: ready. --broadcast is required to spend test C2FLR."
@@ -110,37 +109,36 @@
       "command": "node scripts/deploy-coston2.mjs --local --broadcast",
       "ok": true,
       "output": [
-        "{\"chainId\":114,\"rehearsal\":true,\"deployer\":\"0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266\",\"balanceWei\":\"100000000000000000000\",\"requiredWei\":\"20061386787791420000\",\"deploymentId\":null,\"recordedTransactions\":0,\"replacementRound\":null,\"commit\":\"ba4bb06070d0f97d3462f857b47efc11cdc91a59\",\"uncommitted\":[\"scripts/coston2-journey.mjs\"],\"staleSources\":0,\"broadcast\":true}",
-        "Funding: requires 20.06138678779142 C2FLR = 24600000 gas x 1.919536829 gwei max fee x 1.3 (0.06138678779142 C2FLR) + 20 C2FLR sent by the plan. Balance: 100 C2FLR.",
-        "Uncommitted deployment inputs: scripts/coston2-journey.mjs",
+        "{\"chainId\":114,\"rehearsal\":true,\"deployer\":\"0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266\",\"balanceWei\":\"100000000000000000000\",\"requiredWei\":\"20062884026518040000\",\"deploymentId\":null,\"recordedTransactions\":0,\"replacementRound\":null,\"commit\":\"32b4296ce0c60533e2d0bd6bc0981d7e3c181439\",\"uncommitted\":[],\"staleSources\":0,\"broadcast\":true}",
+        "Funding: requires 20.06288402651804 C2FLR = 25200000 gas x 1.919536829 gwei max fee x 1.3 (0.06288402651804 C2FLR) + 20 C2FLR sent by the plan. Balance: 100 C2FLR.",
         "FlareContractRegistry 0xaD67FE66660Fb8dFE9d6b1b4240d8650e30F6019: WNat 0xC67DCE33D7A8efA5FfEB961899C73fe01bCe9273, FtsoV2 0xC4e9c78EA53db782E28f28Fdf80BaF59336B304d.",
         "FTSOv2 FLR/USD via 0xC4e9c78EA53db782E28f28Fdf80BaF59336B304d: 639928 with 8 decimals, updated 0s ago (maxPriceAge 300s), read fee 0.",
-        "Started deployment rehearsal-2026-10-19T07-31-00Z-599eaa; its signed intents live in .local/rehearsal/transactions/rehearsal-2026-10-19T07-31-00Z-599eaa/.",
-        "backingToken: 0x57aa5a3e0f1edc1346ac887667a5a3513e934350a868e3ffed98817d703495aa",
-        "scenarioOracle: 0xf5b826d7e1e47de615e083130c4eab80b2bb573cbb1331e16889da12b5f0d813",
-        "referenceOracle: 0x157711cb1b2887947e5b7cd9e8c54619e7d702f6b42efdd3418015d1d84ebe23",
-        "vault: 0x62be99a6a2294293e44a0fb70720fe76dff2ec758ec0b24af00cdd9178e140de",
-        "backingVault: 0x383b566189c6adf235a10d0f02f8c19782f9eec1595319f91353746ad5519213",
-        "vaultOracle: 0x8beb18cfae4674c13a0cc00a87b5cf47f01c6810a6dd23fea7aed225e2fd3a9a",
-        "factory: 0x8cb1400f0abdf46e52644605424625dfc85044e9e8688fbc2d7773e0cf59f2a8",
-        "exchange: 0xc171ccb8f9b97acf2edb2429f5087e6e177eb72c8cc64016feae9d2c65dcc873",
-        "seed-faucet: 0x89574c143d4b70ff338e59873c5c821b4e0bb1e7b44abca98e375949ac0a3ddf",
-        "vault-approve: 0x1ff9fb881873a636d7fedc0d267e72df91cbf1a46eb395bd295ef453e0923c0f",
-        "vault-funded-deposit: 0x321cc6cf2d8f8368b8d69b695e84be993c88440ab9e444d3571922aeff7dfdc7",
-        "backing-vault-approve: 0x91285b01b9728300f26b488855f6eed5efcd2eed22f661800079a171bc6fa59c",
-        "backing-vault-funded-deposit: 0xdb8ebafbc86048e23b3100c6a53d0d10ee5e5b7ca399284c60924ac2d5e16c09",
-        "wrapper-funded-deposit: 0xb810dafa6f738f2cbc1a4284374c4eb412137f76b072c352d13417214789abfd",
-        "factory-cash-approve: 0x62ddceb3c1f6718e03fff46848368cb4609153a7095ba227b92dfb7d33bbb6c9",
-        "factory-vault-approve: 0x996e6bff9c3afefe9816552f01ff0742736c2719f650493b49ea6ce4b9c4e117",
-        "referencePool-factory-create: 0xd0bde62b1405bbe66e456c630fefea626abc65c95e249f87028e6e5ee247a9b7",
-        "scenarioPool-factory-create: 0x6c4cfbedd3b22a134d754d706eec46397e3b1faf268f24f9ec8c661b8b68c9cc",
-        "wrappedPool-factory-create: 0x422ce5b6c71a9c80527c8fe269068316b0e9a834f79e6979c7bb1f889d12d5af",
-        "vaultPool-factory-create: 0xa08c885c5b63b01d2f91d5918c0ed9d83620eb6c617c3836996d2d2c2780827d",
-        "vaultBackingPool-factory-create: 0x670a430e0563dd10880737be0ba63d2e2684f6f0460f66cf87a7669f43b239f3",
-        "exchange-cash-inventory: 0xc42d0ac1d02396a1eb76372df7b948d339bb00c88962b958fe42a631c150c3de",
-        "exchange-wrapper-inventory: 0x710d9d6f398381aeb54701a949e6b157aea4910116e9c8464cd573b5fd46864c",
-        "exchange-vault-inventory: 0x31836723296e77a6f2e7f291af0caa8c71b31eb066a37764d94eb655f7482ef8",
-        "exchange-native-inventory: 0x21723faa52c43f697ed148137f312dd092ac5621cc7eaa65449dd693a77c24d2",
+        "Started deployment rehearsal-2026-10-19T08-05-26Z-c81a5a; its signed intents live in .local/rehearsal/transactions/rehearsal-2026-10-19T08-05-26Z-c81a5a/.",
+        "backingToken: 0xb9d8f43d995eaff7943a88e56a7d9ad67e0d6b9f4d0cfe049cd929cdd55f4953",
+        "scenarioOracle: 0xe7890e675dcbd53f0a8d329ae662cd73d2ae031b44acc32929a314563fe0b851",
+        "referenceOracle: 0x604ea2cebe533d3d86a8f7c591b8d2c2a363ebf036476edc17cc57e78a0f5e03",
+        "vault: 0x747d88ffe9c89f756fe9c7a2d8acd82f577a311ae24d28e90198cbe7305d1ba6",
+        "backingVault: 0xabf692f4c763b70f726efce86ef48da0c2d5aef3070b5900169cf77a1b2bf9ed",
+        "vaultOracle: 0xb35eff4b025f9fc4488e500c3d43266fcbdf4d76b30a460b7ef698d8e66f110c",
+        "factory: 0x697039eb589d8a69f1fbe690a03d457810398b6aea25246d7bf172f68f176658",
+        "exchange: 0x009f96f5d9a6d10fb7bcd6120df48069c3f85670fcb35132819cd52995bda1e9",
+        "seed-faucet: 0xe10f366e88cd162d51c9af850dc4a9db0e18350dae48ad9e4602c27933e985fe",
+        "vault-approve: 0x6166305bc0588400e9cd286bbcd8daa955c0b3ec060d0ff555bf5b66bc0f14b4",
+        "vault-funded-deposit: 0x854ba618b5986fd887daecf4031a145a345473e95253d0b0095546d1133c6ac9",
+        "backing-vault-approve: 0x036ae276304ce98fc8766597f7e3a792b572843bb4aad2b92a6fba689f17af9c",
+        "backing-vault-funded-deposit: 0xbccb8719c06961e100bc55a507c8d34b56484e2c6165fcb4033d35ac97892126",
+        "wrapper-funded-deposit: 0xc0a46a3b4dc75fac83913942634386446ac6a1936d9127827c6a2762af8ac26c",
+        "factory-cash-approve: 0xe9b670aad30c85e1631d48261c545668eebc13e326192a0a610fdb40aa2b8115",
+        "factory-vault-approve: 0x0abc33d5f42b7ee82ab10d20b65ad927a436310e98244d2999d02e440a5112ee",
+        "referencePool-factory-create: 0x0bd1ff9fa0daebf5749a087cc1f4a154724bc2fc28735b5cd542c9f6f40c5e56",
+        "scenarioPool-factory-create: 0x1a965c3af417f0ae2c10608e942003a0aacf7204b7e60864dd590c552f680b45",
+        "wrappedPool-factory-create: 0x0ae1160e477b82a13d7d9a452a5547082cfa58f147e79018dd73a04451dc26d0",
+        "vaultPool-factory-create: 0x3c5fbe189334bdb7fe1b6fbf150308c8fa5098418fe19bd6fcf8de1572d6b54f",
+        "vaultBackingPool-factory-create: 0xde3121768b75308742abe1baf8a1cfc330cc311b4bac7175d2c1a72d62807402",
+        "exchange-cash-inventory: 0x7043e8bac45ad2ba9a0b386431d2b174e959c74c4d3be7bf11dc63b6b941784b",
+        "exchange-wrapper-inventory: 0x8f761388bc051fa0e47491db0ccf29a5850cf2b0c32756bd973cf6815b018057",
+        "exchange-vault-inventory: 0x5c807581c6788a1032d06bceb9638e8fad1aa0c8b7d2dd53fc81952f07ceee55",
+        "exchange-native-inventory: 0x2502e3d65cb57d45338554924fd2677e7898634239841386d5e58e6a8ee120e8",
         "Deployment mined (25 new transaction(s)). Run npm run verify:coston2 -- --local before presenting the markets as verified."
       ]
     },
@@ -149,26 +147,25 @@
       "ok": true,
       "output": [
         "Reference oracle: FTSOv2 FLR/USD from 0xC4e9c78EA53db782E28f28Fdf80BaF59336B304d = 6399 sDEMO base units per C2FLR.",
-        "referencePool accepts protection until 2026-11-18T07:30:59.000Z (30.0 days left).",
-        "scenarioPool accepts protection until 2026-11-18T07:30:59.000Z (30.0 days left).",
-        "wrappedPool accepts protection until 2026-11-18T07:30:59.000Z (30.0 days left).",
-        "vaultPool accepts protection until 2026-11-18T07:31:00.000Z (30.0 days left).",
-        "vaultBackingPool accepts protection until 2026-11-18T07:31:00.000Z (30.0 days left).",
+        "referencePool accepts protection until 2026-11-18T08:05:25.000Z (30.0 days left).",
+        "scenarioPool accepts protection until 2026-11-18T08:05:27.000Z (30.0 days left).",
+        "wrappedPool accepts protection until 2026-11-18T08:05:27.000Z (30.0 days left).",
+        "vaultPool accepts protection until 2026-11-18T08:05:28.000Z (30.0 days left).",
+        "vaultBackingPool accepts protection until 2026-11-18T08:05:30.000Z (30.0 days left).",
         "Live exchange inventory (base units): C2FLR 10000000000000000000, WC2FLR 10000000000000000000, vsDEMO 100000000000000000000, sDEMO 1000000000",
-        "Verified the chain-114 rehearsal's runtime code (immutables masked) against contracts/out, factory, FTSOv2 and WC2FLR wiring, exact asset identities, terms, open epochs, vault and creation seeds, exchange funding and all deployment receipts for source ba4bb06070d0f97d3462f857b47efc11cdc91a59."
+        "Verified the chain-114 rehearsal's runtime code (immutables masked) against contracts/out, factory, FTSOv2 and WC2FLR wiring, exact asset identities, terms, open epochs, vault and creation seeds, exchange funding and all deployment receipts for source 32b4296ce0c60533e2d0bd6bc0981d7e3c181439."
       ]
     },
     {
       "command": "node scripts/deploy-coston2.mjs --local --replace-featured",
       "ok": true,
       "output": [
-        "{\"chainId\":114,\"rehearsal\":true,\"deployer\":\"0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266\",\"balanceWei\":\"79971032038468530201\",\"requiredWei\":\"19301806965155000\",\"deploymentId\":\"rehearsal-2026-10-19T07-31-00Z-599eaa\",\"recordedTransactions\":25,\"replacementRound\":1,\"commit\":\"ba4bb06070d0f97d3462f857b47efc11cdc91a59\",\"uncommitted\":[\"scripts/coston2-journey.mjs\"],\"staleSources\":0,\"broadcast\":false}",
+        "{\"chainId\":114,\"rehearsal\":true,\"deployer\":\"0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266\",\"balanceWei\":\"79971032038468530201\",\"requiredWei\":\"19301806965155000\",\"deploymentId\":\"rehearsal-2026-10-19T08-05-26Z-c81a5a\",\"recordedTransactions\":25,\"replacementRound\":1,\"commit\":\"32b4296ce0c60533e2d0bd6bc0981d7e3c181439\",\"uncommitted\":[],\"staleSources\":0,\"broadcast\":false}",
         "Funding: requires 0.019301806965155 C2FLR = 14450000 gas x 1.027511683 gwei max fee x 1.3 (0.019301806965155 C2FLR) + 0 C2FLR sent by the plan. Balance: 79.971032038468530201 C2FLR.",
-        "Uncommitted deployment inputs: scripts/coston2-journey.mjs",
         "FlareContractRegistry 0xaD67FE66660Fb8dFE9d6b1b4240d8650e30F6019: WNat 0xC67DCE33D7A8efA5FfEB961899C73fe01bCe9273, FtsoV2 0xC4e9c78EA53db782E28f28Fdf80BaF59336B304d.",
         "FTSOv2 FLR/USD via 0xC4e9c78EA53db782E28f28Fdf80BaF59336B304d: 639928 with 8 decimals, updated 0s ago (maxPriceAge 300s), read fee 0.",
         "Factory market slots: 5 of 32 lifetime slots used; this round needs 5.",
-        "Replacement round 1: the earliest featured market closes 2026-11-18T07:30:59.000Z.",
+        "Replacement round 1: the earliest featured market closes 2026-11-18T08:05:25.000Z.",
         "Preflight: ready. --broadcast is required to spend test C2FLR."
       ]
     },
@@ -176,20 +173,19 @@
       "command": "node scripts/deploy-coston2.mjs --local --broadcast --replace-featured",
       "ok": true,
       "output": [
-        "{\"chainId\":114,\"rehearsal\":true,\"deployer\":\"0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266\",\"balanceWei\":\"79971032038468530201\",\"requiredWei\":\"19301806965155000\",\"deploymentId\":\"rehearsal-2026-10-19T07-31-00Z-599eaa\",\"recordedTransactions\":25,\"replacementRound\":1,\"commit\":\"ba4bb06070d0f97d3462f857b47efc11cdc91a59\",\"uncommitted\":[\"scripts/coston2-journey.mjs\"],\"staleSources\":0,\"broadcast\":true}",
+        "{\"chainId\":114,\"rehearsal\":true,\"deployer\":\"0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266\",\"balanceWei\":\"79971032038468530201\",\"requiredWei\":\"19301806965155000\",\"deploymentId\":\"rehearsal-2026-10-19T08-05-26Z-c81a5a\",\"recordedTransactions\":25,\"replacementRound\":1,\"commit\":\"32b4296ce0c60533e2d0bd6bc0981d7e3c181439\",\"uncommitted\":[],\"staleSources\":0,\"broadcast\":true}",
         "Funding: requires 0.019301806965155 C2FLR = 14450000 gas x 1.027511683 gwei max fee x 1.3 (0.019301806965155 C2FLR) + 0 C2FLR sent by the plan. Balance: 79.971032038468530201 C2FLR.",
-        "Uncommitted deployment inputs: scripts/coston2-journey.mjs",
         "FlareContractRegistry 0xaD67FE66660Fb8dFE9d6b1b4240d8650e30F6019: WNat 0xC67DCE33D7A8efA5FfEB961899C73fe01bCe9273, FtsoV2 0xC4e9c78EA53db782E28f28Fdf80BaF59336B304d.",
         "FTSOv2 FLR/USD via 0xC4e9c78EA53db782E28f28Fdf80BaF59336B304d: 639928 with 8 decimals, updated 0s ago (maxPriceAge 300s), read fee 0.",
         "Factory market slots: 5 of 32 lifetime slots used; this round needs 5.",
-        "Replacement round 1: the earliest featured market closes 2026-11-18T07:30:59.000Z.",
-        "r1-factory-cash-approve: 0x45443b14cb0e718e510796a535c4685fb327b0a289d25f9f009b13786fb2cb62",
-        "r1-factory-vault-approve: 0xa41b17460b7b861a7547fb9854ba97f55a9a9b8d3268356e454deb77043e1d2b",
-        "r1-referencePool-factory-create: 0xf600de7b305be6301f9d6347b684ae4423f941c11be628dd0e62bd6bcf930d00",
-        "r1-scenarioPool-factory-create: 0x00e527c4544f1075cc77f43776637423e8f4e29b20b29836f076f7ffca00307c",
-        "r1-wrappedPool-factory-create: 0x628121a0c4ad0235a8236b507caa4759d8579b5d54a1be38e9e6dc9209dee859",
-        "r1-vaultPool-factory-create: 0x9da13770d514529f358e702e300a7b4007be9fa9ec5186f3374f4994960603f9",
-        "r1-vaultBackingPool-factory-create: 0xb5b0415283d9d1ad410bf1ff8457e452b94e84f399639f470ed72e40e2c28ee5",
+        "Replacement round 1: the earliest featured market closes 2026-11-18T08:05:25.000Z.",
+        "r1-factory-cash-approve: 0xa2ae4c356c3cdddda073c16c87e57bf5b32fcfb2a2a7ea056f9a7a62c1b0c012",
+        "r1-factory-vault-approve: 0xfc21a28815d9ce53fbf0aafe3048352da35f2b4df4daec44d5778d3b6720bc93",
+        "r1-referencePool-factory-create: 0xaa96a7d94d5d122ece1f6cee8df04a39d8412aba9785402c71586fd23ce6d7dc",
+        "r1-scenarioPool-factory-create: 0x9a8c2abe05c877c919601bedde6520b8e5fdb0685fb83a05e69629e7a2226893",
+        "r1-wrappedPool-factory-create: 0x7316871ed9450aa55ecbc43292b02f2c60e923dae8250ac07468eb5434e8710c",
+        "r1-vaultPool-factory-create: 0xd54fd07365fe861e2b5ac15674670b3d5d8f5b0d4d146f2f40df6886a2685bd3",
+        "r1-vaultBackingPool-factory-create: 0x0e1bad400b41eb82f1adea839ae46aaf7fbbff505a281782c66a2fbf6c9c389c",
         "Replacement round 1 switched the featured markets: referencePool 0xc8CB5439c767A63aca1c01862252B2F3495fDcFE -> 0x09F428b7D940ED8Bff862e81a103bf022F5E50F0; scenarioPool 0xD79aE87F2c003Ec925fB7e9C11585709bfe41473 -> 0xD6A92bCABC5ce884fD7322959dFc6E3066CD62de; wrappedPool 0xB7aa4c318000BB9bD16108F81C40D02E48af1C42 -> 0x333008b49f3Cd34CCEf370296B384A336364155A; vaultPool 0x12653A08808F651D5BB78514F377d3BD5E17934C -> 0xa886b05719FE95475c94cd740b7206Cbee481A46; vaultBackingPool 0xCaA29B65446aBF1A513A178402A0408eB3AEee75 -> 0x492a72624a270837f1FC746546715C9c18670466.",
         "Deployment mined (7 new transaction(s)). Run npm run verify:coston2 -- --local before presenting the markets as verified."
       ]
@@ -199,20 +195,20 @@
       "ok": true,
       "output": [
         "Reference oracle: FTSOv2 FLR/USD from 0xC4e9c78EA53db782E28f28Fdf80BaF59336B304d = 6399 sDEMO base units per C2FLR.",
-        "referencePool accepts protection until 2026-12-12T07:31:00.000Z (30.0 days left).",
-        "scenarioPool accepts protection until 2026-12-12T07:31:00.000Z (30.0 days left).",
-        "wrappedPool accepts protection until 2026-12-12T07:31:01.000Z (30.0 days left).",
-        "vaultPool accepts protection until 2026-12-12T07:31:03.000Z (30.0 days left).",
-        "vaultBackingPool accepts protection until 2026-12-12T07:31:04.000Z (30.0 days left).",
+        "referencePool accepts protection until 2026-12-12T08:05:26.000Z (30.0 days left).",
+        "scenarioPool accepts protection until 2026-12-12T08:05:27.000Z (30.0 days left).",
+        "wrappedPool accepts protection until 2026-12-12T08:05:27.000Z (30.0 days left).",
+        "vaultPool accepts protection until 2026-12-12T08:05:29.000Z (30.0 days left).",
+        "vaultBackingPool accepts protection until 2026-12-12T08:05:29.000Z (30.0 days left).",
         "Live exchange inventory (base units): C2FLR 10000000000000000000, WC2FLR 10000000000000000000, vsDEMO 100000000000000000000, sDEMO 1000000000",
-        "Verified the chain-114 rehearsal's runtime code (immutables masked) against contracts/out, factory, FTSOv2 and WC2FLR wiring, exact asset identities, terms, open epochs, vault and creation seeds, exchange funding and all deployment receipts for source ba4bb06070d0f97d3462f857b47efc11cdc91a59."
+        "Verified the chain-114 rehearsal's runtime code (immutables masked) against contracts/out, factory, FTSOv2 and WC2FLR wiring, exact asset identities, terms, open epochs, vault and creation seeds, exchange funding and all deployment receipts for source 32b4296ce0c60533e2d0bd6bc0981d7e3c181439."
       ]
     }
   ],
   "transactions": [
     {
       "label": "backingToken",
-      "hash": "0x57aa5a3e0f1edc1346ac887667a5a3513e934350a868e3ffed98817d703495aa",
+      "hash": "0xb9d8f43d995eaff7943a88e56a7d9ad67e0d6b9f4d0cfe049cd929cdd55f4953",
       "nonce": 0,
       "blockNumber": "4",
       "contractAddress": "0x5fbdb2315678afecb367f032d93f642f64180aa3",
@@ -220,7 +216,7 @@
     },
     {
       "label": "scenarioOracle",
-      "hash": "0xf5b826d7e1e47de615e083130c4eab80b2bb573cbb1331e16889da12b5f0d813",
+      "hash": "0xe7890e675dcbd53f0a8d329ae662cd73d2ae031b44acc32929a314563fe0b851",
       "nonce": 1,
       "blockNumber": "5",
       "contractAddress": "0xe7f1725e7734ce288f8367e1bb143e90bb3f0512",
@@ -228,7 +224,7 @@
     },
     {
       "label": "referenceOracle",
-      "hash": "0x157711cb1b2887947e5b7cd9e8c54619e7d702f6b42efdd3418015d1d84ebe23",
+      "hash": "0x604ea2cebe533d3d86a8f7c591b8d2c2a363ebf036476edc17cc57e78a0f5e03",
       "nonce": 2,
       "blockNumber": "6",
       "contractAddress": "0x9fe46736679d2d9a65f0992f2272de9f3c7fa6e0",
@@ -236,7 +232,7 @@
     },
     {
       "label": "vault",
-      "hash": "0x62be99a6a2294293e44a0fb70720fe76dff2ec758ec0b24af00cdd9178e140de",
+      "hash": "0x747d88ffe9c89f756fe9c7a2d8acd82f577a311ae24d28e90198cbe7305d1ba6",
       "nonce": 3,
       "blockNumber": "7",
       "contractAddress": "0xcf7ed3acca5a467e9e704c703e8d87f634fb0fc9",
@@ -244,7 +240,7 @@
     },
     {
       "label": "backingVault",
-      "hash": "0x383b566189c6adf235a10d0f02f8c19782f9eec1595319f91353746ad5519213",
+      "hash": "0xabf692f4c763b70f726efce86ef48da0c2d5aef3070b5900169cf77a1b2bf9ed",
       "nonce": 4,
       "blockNumber": "8",
       "contractAddress": "0xdc64a140aa3e981100a9beca4e685f962f0cf6c9",
@@ -252,7 +248,7 @@
     },
     {
       "label": "vaultOracle",
-      "hash": "0x8beb18cfae4674c13a0cc00a87b5cf47f01c6810a6dd23fea7aed225e2fd3a9a",
+      "hash": "0xb35eff4b025f9fc4488e500c3d43266fcbdf4d76b30a460b7ef698d8e66f110c",
       "nonce": 5,
       "blockNumber": "9",
       "contractAddress": "0x5fc8d32690cc91d4c39d9d3abcbd16989f875707",
@@ -260,7 +256,7 @@
     },
     {
       "label": "factory",
-      "hash": "0x8cb1400f0abdf46e52644605424625dfc85044e9e8688fbc2d7773e0cf59f2a8",
+      "hash": "0x697039eb589d8a69f1fbe690a03d457810398b6aea25246d7bf172f68f176658",
       "nonce": 6,
       "blockNumber": "10",
       "contractAddress": "0x0165878a594ca255338adfa4d48449f69242eb8f",
@@ -268,7 +264,7 @@
     },
     {
       "label": "exchange",
-      "hash": "0xc171ccb8f9b97acf2edb2429f5087e6e177eb72c8cc64016feae9d2c65dcc873",
+      "hash": "0x009f96f5d9a6d10fb7bcd6120df48069c3f85670fcb35132819cd52995bda1e9",
       "nonce": 7,
       "blockNumber": "11",
       "contractAddress": "0xa513e6e4b8f2a923d98304ec87f64353c4d5c853",
@@ -276,7 +272,7 @@
     },
     {
       "label": "seed-faucet",
-      "hash": "0x89574c143d4b70ff338e59873c5c821b4e0bb1e7b44abca98e375949ac0a3ddf",
+      "hash": "0xe10f366e88cd162d51c9af850dc4a9db0e18350dae48ad9e4602c27933e985fe",
       "nonce": 8,
       "blockNumber": "12",
       "contractAddress": null,
@@ -284,7 +280,7 @@
     },
     {
       "label": "vault-approve",
-      "hash": "0x1ff9fb881873a636d7fedc0d267e72df91cbf1a46eb395bd295ef453e0923c0f",
+      "hash": "0x6166305bc0588400e9cd286bbcd8daa955c0b3ec060d0ff555bf5b66bc0f14b4",
       "nonce": 9,
       "blockNumber": "13",
       "contractAddress": null,
@@ -292,7 +288,7 @@
     },
     {
       "label": "vault-funded-deposit",
-      "hash": "0x321cc6cf2d8f8368b8d69b695e84be993c88440ab9e444d3571922aeff7dfdc7",
+      "hash": "0x854ba618b5986fd887daecf4031a145a345473e95253d0b0095546d1133c6ac9",
       "nonce": 10,
       "blockNumber": "14",
       "contractAddress": null,
@@ -300,7 +296,7 @@
     },
     {
       "label": "backing-vault-approve",
-      "hash": "0x91285b01b9728300f26b488855f6eed5efcd2eed22f661800079a171bc6fa59c",
+      "hash": "0x036ae276304ce98fc8766597f7e3a792b572843bb4aad2b92a6fba689f17af9c",
       "nonce": 11,
       "blockNumber": "15",
       "contractAddress": null,
@@ -308,7 +304,7 @@
     },
     {
       "label": "backing-vault-funded-deposit",
-      "hash": "0xdb8ebafbc86048e23b3100c6a53d0d10ee5e5b7ca399284c60924ac2d5e16c09",
+      "hash": "0xbccb8719c06961e100bc55a507c8d34b56484e2c6165fcb4033d35ac97892126",
       "nonce": 12,
       "blockNumber": "16",
       "contractAddress": null,
@@ -316,7 +312,7 @@
     },
     {
       "label": "wrapper-funded-deposit",
-      "hash": "0xb810dafa6f738f2cbc1a4284374c4eb412137f76b072c352d13417214789abfd",
+      "hash": "0xc0a46a3b4dc75fac83913942634386446ac6a1936d9127827c6a2762af8ac26c",
       "nonce": 13,
       "blockNumber": "17",
       "contractAddress": null,
@@ -324,7 +320,7 @@
     },
     {
       "label": "factory-cash-approve",
-      "hash": "0x62ddceb3c1f6718e03fff46848368cb4609153a7095ba227b92dfb7d33bbb6c9",
+      "hash": "0xe9b670aad30c85e1631d48261c545668eebc13e326192a0a610fdb40aa2b8115",
       "nonce": 14,
       "blockNumber": "18",
       "contractAddress": null,
@@ -332,7 +328,7 @@
     },
     {
       "label": "factory-vault-approve",
-      "hash": "0x996e6bff9c3afefe9816552f01ff0742736c2719f650493b49ea6ce4b9c4e117",
+      "hash": "0x0abc33d5f42b7ee82ab10d20b65ad927a436310e98244d2999d02e440a5112ee",
       "nonce": 15,
       "blockNumber": "19",
       "contractAddress": null,
@@ -340,7 +336,7 @@
     },
     {
       "label": "referencePool-factory-create",
-      "hash": "0xd0bde62b1405bbe66e456c630fefea626abc65c95e249f87028e6e5ee247a9b7",
+      "hash": "0x0bd1ff9fa0daebf5749a087cc1f4a154724bc2fc28735b5cd542c9f6f40c5e56",
       "nonce": 16,
       "blockNumber": "20",
       "contractAddress": null,
@@ -348,7 +344,7 @@
     },
     {
       "label": "scenarioPool-factory-create",
-      "hash": "0x6c4cfbedd3b22a134d754d706eec46397e3b1faf268f24f9ec8c661b8b68c9cc",
+      "hash": "0x1a965c3af417f0ae2c10608e942003a0aacf7204b7e60864dd590c552f680b45",
       "nonce": 17,
       "blockNumber": "21",
       "contractAddress": null,
@@ -356,7 +352,7 @@
     },
     {
       "label": "wrappedPool-factory-create",
-      "hash": "0x422ce5b6c71a9c80527c8fe269068316b0e9a834f79e6979c7bb1f889d12d5af",
+      "hash": "0x0ae1160e477b82a13d7d9a452a5547082cfa58f147e79018dd73a04451dc26d0",
       "nonce": 18,
       "blockNumber": "22",
       "contractAddress": null,
@@ -364,7 +360,7 @@
     },
     {
       "label": "vaultPool-factory-create",
-      "hash": "0xa08c885c5b63b01d2f91d5918c0ed9d83620eb6c617c3836996d2d2c2780827d",
+      "hash": "0x3c5fbe189334bdb7fe1b6fbf150308c8fa5098418fe19bd6fcf8de1572d6b54f",
       "nonce": 19,
       "blockNumber": "23",
       "contractAddress": null,
@@ -372,7 +368,7 @@
     },
     {
       "label": "vaultBackingPool-factory-create",
-      "hash": "0x670a430e0563dd10880737be0ba63d2e2684f6f0460f66cf87a7669f43b239f3",
+      "hash": "0xde3121768b75308742abe1baf8a1cfc330cc311b4bac7175d2c1a72d62807402",
       "nonce": 20,
       "blockNumber": "24",
       "contractAddress": null,
@@ -380,7 +376,7 @@
     },
     {
       "label": "exchange-cash-inventory",
-      "hash": "0xc42d0ac1d02396a1eb76372df7b948d339bb00c88962b958fe42a631c150c3de",
+      "hash": "0x7043e8bac45ad2ba9a0b386431d2b174e959c74c4d3be7bf11dc63b6b941784b",
       "nonce": 21,
       "blockNumber": "25",
       "contractAddress": null,
@@ -388,7 +384,7 @@
     },
     {
       "label": "exchange-wrapper-inventory",
-      "hash": "0x710d9d6f398381aeb54701a949e6b157aea4910116e9c8464cd573b5fd46864c",
+      "hash": "0x8f761388bc051fa0e47491db0ccf29a5850cf2b0c32756bd973cf6815b018057",
       "nonce": 22,
       "blockNumber": "26",
       "contractAddress": null,
@@ -396,7 +392,7 @@
     },
     {
       "label": "exchange-vault-inventory",
-      "hash": "0x31836723296e77a6f2e7f291af0caa8c71b31eb066a37764d94eb655f7482ef8",
+      "hash": "0x5c807581c6788a1032d06bceb9638e8fad1aa0c8b7d2dd53fc81952f07ceee55",
       "nonce": 23,
       "blockNumber": "27",
       "contractAddress": null,
@@ -404,7 +400,7 @@
     },
     {
       "label": "exchange-native-inventory",
-      "hash": "0x21723faa52c43f697ed148137f312dd092ac5621cc7eaa65449dd693a77c24d2",
+      "hash": "0x2502e3d65cb57d45338554924fd2677e7898634239841386d5e58e6a8ee120e8",
       "nonce": 24,
       "blockNumber": "28",
       "contractAddress": null,
@@ -412,7 +408,7 @@
     },
     {
       "label": "r1-factory-cash-approve",
-      "hash": "0x45443b14cb0e718e510796a535c4685fb327b0a289d25f9f009b13786fb2cb62",
+      "hash": "0xa2ae4c356c3cdddda073c16c87e57bf5b32fcfb2a2a7ea056f9a7a62c1b0c012",
       "nonce": 25,
       "blockNumber": "32",
       "contractAddress": null,
@@ -420,7 +416,7 @@
     },
     {
       "label": "r1-factory-vault-approve",
-      "hash": "0xa41b17460b7b861a7547fb9854ba97f55a9a9b8d3268356e454deb77043e1d2b",
+      "hash": "0xfc21a28815d9ce53fbf0aafe3048352da35f2b4df4daec44d5778d3b6720bc93",
       "nonce": 26,
       "blockNumber": "33",
       "contractAddress": null,
@@ -428,7 +424,7 @@
     },
     {
       "label": "r1-referencePool-factory-create",
-      "hash": "0xf600de7b305be6301f9d6347b684ae4423f941c11be628dd0e62bd6bcf930d00",
+      "hash": "0xaa96a7d94d5d122ece1f6cee8df04a39d8412aba9785402c71586fd23ce6d7dc",
       "nonce": 27,
       "blockNumber": "34",
       "contractAddress": null,
@@ -436,7 +432,7 @@
     },
     {
       "label": "r1-scenarioPool-factory-create",
-      "hash": "0x00e527c4544f1075cc77f43776637423e8f4e29b20b29836f076f7ffca00307c",
+      "hash": "0x9a8c2abe05c877c919601bedde6520b8e5fdb0685fb83a05e69629e7a2226893",
       "nonce": 28,
       "blockNumber": "35",
       "contractAddress": null,
@@ -444,7 +440,7 @@
     },
     {
       "label": "r1-wrappedPool-factory-create",
-      "hash": "0x628121a0c4ad0235a8236b507caa4759d8579b5d54a1be38e9e6dc9209dee859",
+      "hash": "0x7316871ed9450aa55ecbc43292b02f2c60e923dae8250ac07468eb5434e8710c",
       "nonce": 29,
       "blockNumber": "36",
       "contractAddress": null,
@@ -452,7 +448,7 @@
     },
     {
       "label": "r1-vaultPool-factory-create",
-      "hash": "0x9da13770d514529f358e702e300a7b4007be9fa9ec5186f3374f4994960603f9",
+      "hash": "0xd54fd07365fe861e2b5ac15674670b3d5d8f5b0d4d146f2f40df6886a2685bd3",
       "nonce": 30,
       "blockNumber": "37",
       "contractAddress": null,
@@ -460,7 +456,7 @@
     },
     {
       "label": "r1-vaultBackingPool-factory-create",
-      "hash": "0xb5b0415283d9d1ad410bf1ff8457e452b94e84f399639f470ed72e40e2c28ee5",
+      "hash": "0x0e1bad400b41eb82f1adea839ae46aaf7fbbff505a281782c66a2fbf6c9c389c",
       "nonce": 31,
       "blockNumber": "38",
       "contractAddress": null,
@@ -473,7 +469,7 @@
     "contracts/src/DemoAssets.sol": "0x0b260aab26f56c996767993dca0ec536610f810ed19847724694d85b97c62973",
     "contracts/src/ShieldFtsoV2Oracle.sol": "0x1af15cb2016fb1d0e62e4ed5be29f4ae617b591519759ddd09ba625d813bd7d6",
     "contracts/test/mocks/FlareMocks.sol": "0x2dcdf497691b5816dc428adfd4f75aadbcf10dcddfe0410266eda83440f58ce0",
-    "scripts/deploy-coston2.mjs": "0x31b5af25932082975678f0740937bde5d3d9816d48e2d02e7f83c12db7565b44",
+    "scripts/deploy-coston2.mjs": "0x76f4115fa7e37e531e796767bb06bab8f3ceb6c986bb97c096aaf6abf82be1ab",
     "scripts/verify-coston2.mjs": "0x9805869b698f847f203180f454e0f3f5af267e138fcf4b253e5978a1378f621b",
     "scripts/setup-markets.mjs": "0x1933a7886dc51ead39223abd4b4dec74d7a5ab6e9cfdbdd60a97ab814729a076",
     "scripts/rehearse-coston2.mjs": "0xd0302491b9a3457332ef9e8310343307c8a0df78895e557b0b71197d9d89713a"
