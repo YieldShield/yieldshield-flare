@@ -1,6 +1,6 @@
 # Flare Grants Program: YieldShield Flare
 
-**Status: draft, not submitted.** Prepared 19 October 2026. Nothing has been entered into the form, no terms have been accepted and nothing has been posted. The Coston2 build is complete in [`YieldShield/yieldshield-flare`](https://github.com/YieldShield/yieldshield-flare) (private). The Coston2 broadcast waits for faucet gas, which is an owner step. Proposed request: **$40,000 equivalent in FLR, paid per milestone.**
+**Status: draft, not submitted.** Prepared 19 October 2026. Nothing has been entered into the form, no terms have been accepted and nothing has been posted. The contracts are **deployed and verified on Coston2**: deployment `coston2-2026-10-19T07-50-55Z-34db01`, factory `0xd6488c73f25663f3ba252aab053932cb5fae1f3c`. A fresh test wallet completed a 19-transaction journey there. The code lives in [`YieldShield/yieldshield-flare`](https://github.com/YieldShield/yieldshield-flare), which is private. The website is not published yet, and no real wallet-extension transaction has been made. Proposed request: **$40,000 equivalent in FLR, paid per milestone.**
 
 - **Program page:** https://flare.network/resources/grants
 - **Form (Airtable):** https://airtable.com/appyfl68ek3SOoCLh/shrqTkjFHruvr3dMk
@@ -10,6 +10,12 @@ The form was read on 19 October 2026 without entering anything; see [RESEARCH_AN
 ## What changed
 
 This section compares the draft with the 17 October application plan and the 14 October grants research. Both live in the main repository under `docs/` and are not published.
+
+**Since the first version of this draft (also 19 October):**
+- **Deployed and verified.** The owner funded the test signer from the faucet. Deployment `coston2-2026-10-19T07-50-55Z-34db01` broadcast 25 transactions from source `2fcea40` (25.11M gas). `verify:coston2` passed, and passed again on a read-only rerun.
+- **Public journey done.** Fresh tester `0x9E90…4113` completed 19 confirmed transactions on Coston2: faucet, provider capital, C2FLR and WC2FLR protection, a partial asset exit and a backing exit, a position transfer, a trade, a vault deposit, provider redemption and an unwrap.
+- **Gas finding fixed.** A first attempt stopped when a protection sent with an exact gas estimate ran out of gas (341,025 used of 341,025). The app and the journey script now add a 30% margin to transactions that read FTSOv2 (commit `b74576a`). The contracts are unchanged.
+- **Market dates.** The featured markets accept protection until **18 November 2026, 07:51 UTC** and must be replaced before then.
 
 **Program and form:**
 - **The form has no amount field.** Costs go inside the Milestones answer. The plan expected a requested-amount field.
@@ -25,14 +31,14 @@ This section compares the draft with the 17 October application plan and the 14 
 
 ## Check before submitting
 
-- [ ] **Fund and deploy.** Request 100 C2FLR at https://faucet.flare.network/coston2 for `0x2b7EEEAEc982E59F18621650FedFf8C3723B5226` (reCAPTCHA). Then run `npm run deploy:coston2 -- --broadcast`, `npm run verify:coston2` and `npm run journey:coston2`. Replace the "waits for testnet gas" sentences below with the verified deployment and journey numbers.
+- [x] **Fund and deploy.** Done on 19 October: faucet gas, deployment, `verify:coston2` and the 19-transaction journey. On the day you submit, rerun `npm run verify:coston2`. It only reads the chain and updates `verifiedAt` in the manifest.
 - [ ] **Publish the site.** Make https://flare.yieldshield.ai live ([HOSTING](../HOSTING.md)), or remove it from Links.
 - [ ] **Repository access.** It is private. Either make it public (MIT) and enable private vulnerability reporting, or share access with the committee. The Links answer currently assumes a public repo.
 - [ ] **Pitch deck.** The page asks for one. Add its link, or remove that line.
-- [ ] **Wallet-extension test.** Recommended: one real MetaMask transaction on Coston2. Every recorded run used scripted keys or an injected test provider. Then delete the sentence that says so.
+- [ ] **Wallet-extension test.** Still open. Do one real MetaMask transaction on the deployed Coston2 markets, ideally on the published site. Every recorded run so far used scripted keys or an injected test provider. Then update the Project Description sentence that says so.
 - [ ] **1-year commitment.** Decide the checkbox (see David-only actions). The answer must not contradict the Taiko ("early launch chain"), Circle ("Arc central") or Arbitrum Security Program (possible exclusivity) answers.
 - [ ] **Funding register.** The disclosure must still be true on the day. Add this application ($40,000, milestones M1–M5) to `docs/grants/FUNDING_REGISTER.md` in the main repo, and make sure no milestone below is billed elsewhere.
-- [ ] **Monthly markets.** Once deployed, put the monthly featured-market replacement in the calendar. Epochs last 30 days, and reviewers should not see closed markets.
+- [ ] **Monthly markets.** The featured markets close for new protection on **18 November 2026, 07:51 UTC**. Run `npm run deploy:coston2 -- --replace-featured --broadcast` from 11 November, verify, then republish the site. If you submit after 18 November, replace them first. The deployer has about 33.6 C2FLR, enough for about two rounds.
 - [ ] **Cookie banner.** The form shows one; choose "Reject All, Except Strictly Necessary".
 
 ## Form fields
@@ -66,6 +72,8 @@ david@yieldshield.ai
 ```
 Website (Coston2 testnet app): https://flare.yieldshield.ai
 GitHub (MIT): https://github.com/YieldShield/yieldshield-flare
+Live contracts on Coston2 (factory): https://coston2-explorer.flare.network/address/0xd6488c73f25663f3ba252aab053932cb5fae1f3c
+Public test journey (19 transactions): https://github.com/YieldShield/yieldshield-flare/blob/main/docs/evidence/coston2-e2e.json
 Pitch deck: [add link]
 Earlier live testnet prototypes (separate work, not billed): https://avalanche.yieldshield.ai and https://stellar.yieldshield.ai
 David Hawig: https://www.linkedin.com/in/david-hawig-206a44b1/
@@ -87,16 +95,24 @@ How it works
 Every reserve, exit and fee is enforced on-chain. There is no token and no promised yield.
 
 State on 19 October 2026
-The Coston2 build is complete in a dedicated MIT repository:
+YieldShield Flare is deployed and verified on Coston2, from a dedicated MIT repository:
 - an FTSOv2 adapter that resolves FtsoV2 through the FlareContractRegistry, requires a zero read fee, rejects stale, zero or future readings and normalizes decimals;
 - Flare's canonical WC2FLR as the wrapped asset;
 - five featured markets, a factory, a funded exchange and demo vaults;
 - 57 Solidity tests (four of them fuzz tests), 14 JavaScript tests and 9 browser tests, all passing.
 
-Evidence without spending gas:
-- A read-only simulation against live Coston2 deployed the whole plan against the real FtsoV2 and WC2FLR, created all five markets and opened positions at the live FLR/USD price.
-- A chain-114 rehearsal deployed, verified and replaced markets, then ran a 19-transaction journey from a fresh wallet.
-The Coston2 broadcast waits only for faucet gas.
+The deployment was 25 transactions. A verify script read back every contract's runtime code, the FTSOv2 and WC2FLR wiring, the terms, the seeds and every receipt.
+
+A second, fresh test wallet then completed 19 transactions on Coston2:
+- provided capital;
+- protected C2FLR and WC2FLR;
+- took a partial asset exit and a backing exit;
+- transferred a position;
+- traded, used the vault, and redeemed its provider shares.
+
+The first attempt stopped when a transaction sent with an exact gas estimate ran out of gas. We now add a 30% gas margin to transactions that read FTSOv2, and the retry passed.
+
+Before the broadcast, the whole plan was also rehearsed on a disposable test chain and simulated against live Coston2 state. Every transaction so far was signed by scripts; a real wallet-extension test and the public website are next.
 
 What we do not claim
 All assets are test tokens with no value; the demo backing token (sDEMO) is not USDT0. We claim no users, revenue or TVL, and test activity is not traction. The code is unaudited and was written with substantial AI assistance. A Flare mainnet release happens only after a separately funded independent audit and legal review.
@@ -121,7 +137,7 @@ Hawig Ventures UG (haftungsbeschränkt), a German limited-liability company (UG)
 - Oracle failure never traps a holder. Prices are needed only to enter, to take an asset exit or to trade. If FTSOv2 is stale, has an invalid reading or starts charging for reads, those actions revert (fail closed), while the fixed backing exit and maturity settlement keep working.
 - No arbitrage between providers. Provider entry and redemption freeze while any protection is open, and the fixed 1–30 day epochs settle permissionlessly. Unrealized losses therefore cannot be pushed onto newer providers.
 - Tokenless, with no emissions. Fees come only from realized gains.
-- Evidence-first engineering. Every deployment is gated by a read-only preflight, read back by a verify script, rehearsed on a disposable chain-114 test chain with Flare stand-ins, and simulated against live Coston2 state before any gas is spent.
+- Evidence-first engineering. Every deployment is gated by a read-only preflight, rehearsed on a disposable chain-114 test chain with Flare stand-ins, simulated against live Coston2 state before any gas is spent, and read back by a verify script afterwards. The Coston2 deployment passed that verification and a 19-transaction journey from a fresh wallet.
 - Audit once, deploy many. One small, immutable EVM core plus a small chain-specific adapter. A single audit of that core can cover each chain that funds a deployment.
 ```
 
@@ -160,7 +176,7 @@ There is no paid acquisition, airdrop, points programme or token incentive. Ever
 **Milestones**
 
 ```
-Five milestones over about 16 weeks after acceptance. Total $40,000 (400 hours at a blended $100/hour), paid in FLR at the payment-date rate, one installment per completed milestone. The working Coston2 prototype is prior work and is not billed.
+Five milestones over about 16 weeks after acceptance. Total $40,000 (400 hours at a blended $100/hour), paid in FLR at the payment-date rate, one installment per completed milestone. The deployed and verified Coston2 prototype is prior work and is not billed.
 
 M1. Real Flare assets on Coston2: FXRP and testUSDT0. Weeks 1–4, 120 h, $12,000.
 - Generalize the pool to 6-decimal protected assets (FXRP), with new fuzz and invariant tests.
@@ -259,7 +275,8 @@ Our own research into ecosystem grant programs, through the Flare grants page (f
   - the chain-114 rehearsal;
   - the live Coston2 plan probe;
   - the fresh-wallet journey script.
-- **App:** Coston2 chain config, asset catalog, branding, and a status page that reads FTSOv2 live.
+- **App:** Coston2 chain config, asset catalog, branding, a status page that reads FTSOv2 live, and the 30% gas margin for transactions that read FTSOv2.
+- **Coston2 deployment:** `coston2-2026-10-19T07-50-55Z-34db01`, 25 transactions, verified, plus the 19-transaction fresh-wallet journey ([evidence](../evidence/coston2-e2e.json)).
 - **Docs:** research, operations, security, E2E, hosting and provenance.
 
 | Milestone | Additional work | Acceptance evidence | Effort, budget |
@@ -286,7 +303,7 @@ These are owner steps; an agent must not do them.
 4. **Submission.** Review every field, then click Submit yourself. Submitting may accept Airtable or Flare terms.
 
 Related owner steps:
-- the reCAPTCHA faucet request for `0x2b7EEEAEc982E59F18621650FedFf8C3723B5226`;
+- the featured-market replacement before 18 November 2026, 07:51 UTC (more faucet C2FLR after about two rounds);
 - publishing `flare.yieldshield.ai`;
 - deciding whether to make the repository public;
 - updating the main repo's funding register.
