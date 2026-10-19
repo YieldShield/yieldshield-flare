@@ -70,9 +70,10 @@ const DEADLINE_MARGIN = 300n;
  * Gas for all 25 plan steps: 24.26M used in the chain-114 rehearsal
  * (docs/evidence/coston2-rehearsal.json) plus about 250k because Coston2's WNat deposit and
  * transfer cost 188k and 133k execution gas (docs/evidence/coston2-plan-probe.json) against the
- * local stand-in's 48k and 26k. Remeasure when contracts or the plan change.
+ * local stand-in's 48k and 26k. The real Coston2 deployment of 19 October 2026 used 25.11M,
+ * so the constant is 25.2M. Remeasure when contracts or the plan change.
  */
-const PLAN_GAS = 24_600_000n;
+const PLAN_GAS = 25_200_000n;
 const GAS_HEADROOM_PERCENT = 130n;
 /**
  * Gas for a replacement round including both top-ups (faucet and bvsDEMO deposit), two approvals
@@ -512,6 +513,9 @@ async function signIntent(label, plan, nonce) {
         { cause: error },
       );
     });
+  // Steps that read FTSOv2 can need slightly more gas when mined than the exact estimate,
+  // as the first Coston2 journey showed (ReentrancySentryOOG), so sign with a 30% margin.
+  prepared.gas = (prepared.gas * 13n) / 10n;
   const serialized = await account.signTransaction(prepared);
   return {
     version: 1,
