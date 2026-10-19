@@ -76,7 +76,6 @@ Website (Coston2 testnet app): https://flare.yieldshield.ai
 GitHub (MIT): https://github.com/YieldShield/yieldshield-flare
 Live contracts on Coston2 (factory): https://coston2-explorer.flare.network/address/0xd6488c73f25663f3ba252aab053932cb5fae1f3c
 Public test journey (19 transactions): https://github.com/YieldShield/yieldshield-flare/blob/main/docs/evidence/coston2-e2e.json
-Pitch deck: [add link]
 Earlier live testnet prototypes (separate work, not billed): https://avalanche.yieldshield.ai and https://stellar.yieldshield.ai
 David Hawig: https://www.linkedin.com/in/david-hawig-206a44b1/
 Santiago Balaguer: https://www.linkedin.com/in/santiagobalaguer/
@@ -114,7 +113,7 @@ A second, fresh test wallet then completed 19 transactions on Coston2:
 
 The first attempt stopped when a transaction sent with an exact gas estimate ran out of gas. We now add a 30% gas margin to transactions that read FTSOv2, and the retry passed.
 
-Before the broadcast, the whole plan was also rehearsed on a disposable test chain and simulated against live Coston2 state. Every transaction so far was signed by scripts; a real wallet-extension test and the public website are next.
+Before the broadcast, the whole plan was also rehearsed on a disposable test chain and simulated against live Coston2 state. The app is live at https://flare.yieldshield.ai. Every transaction so far was signed by scripts; a real wallet-extension test is next.
 
 What we do not claim
 All assets are test tokens with no value; the demo backing token (sDEMO) is not USDT0. We claim no users, revenue or TVL, and test activity is not traction. The code is unaudited and was written with substantial AI assistance. A Flare mainnet release happens only after a separately funded independent audit and legal review.
@@ -226,7 +225,7 @@ Not in this request: the audit itself, FTSOv2 Scaling anchor cross-checks, sFLR,
 ```
 None. YieldShield has no partnerships or announcements with Flare, Flare ecosystem projects or asset issuers.
 
-Self-funded; no grants or investment received to date. Pending applications: Avalanche Team1 Mini Grant (submitted 13 October 2026) and Stellar Community Fund #46 (interest form submitted 13 October 2026). Each chain deployment is separate work; shared core work is listed as already built and is not billed.
+Self-funded; no grants or investment received to date. Pending applications: Avalanche Team1 Mini Grant (submitted 13 October 2026) and Stellar Community Fund #46 (interest form submitted 13 October 2026). In preparation: Circle Developer Grants, for a separate Arc deployment. Each chain deployment is separate work; shared core work is listed as already built and is not billed.
 ```
 
 **How did you find the Flare grants program?** *
